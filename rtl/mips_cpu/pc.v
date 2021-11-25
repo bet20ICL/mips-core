@@ -4,4 +4,8 @@ module pc (
     output logic[31:0] curr_addr
 );
     
+    always @(posedge clk) begin
+        curr_addr <= next_addr;
+    end
+
 endmodule
