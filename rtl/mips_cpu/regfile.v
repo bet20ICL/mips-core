@@ -1,8 +1,8 @@
 module regfile(
 
-    input logic clk,
+    input logic r_clk,
     input logic reset,
-    input logic clk_enable,
+    input logic r_clk_enable,
     /* control line for writing data*/
     input logic write_control,
     /* registers being read */
@@ -54,7 +54,7 @@ module regfile(
         registers[31]=32'd0;
     end
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge r_clk) begin
         if (reset) begin
             registers[1]<=32'd0;
             registers[2]<=32'd0;
@@ -88,7 +88,7 @@ module regfile(
             registers[30]<=32'd0;
             registers[31]<=32'd0;
         end
-        else if(clk_enable) begin
+        else if(r_clk_enable) begin
             if(write_control) begin
                 registers[write_reg] <= write_data;
             end
