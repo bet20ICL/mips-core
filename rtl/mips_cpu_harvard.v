@@ -20,9 +20,13 @@ module mips_cpu_harvard(
     input logic[31:0]  data_readdata
 );
 
+    logic[31:0] reset_instr = 32'b;
+
+    logic[31:0] instr_w_reset;
+    assign instr_w_reset = reset ? reset_instr : instr_readdata;
     //Control Signals
     logic[5:0] instr_opcode;
-    assign instr_opcode = instr_readdata[31:26];
+    assign instr_opcode = instr_w_reset[31:26];
     
     //alu_src = 1 if instruction is i type (current implementation for simplified instruction set only, change later)
     logic alu_src;
@@ -54,7 +58,7 @@ module mips_cpu_harvard(
 
     //function code for r type instructions only
     logic[5:0] f_code;
-    assign f_code = instr_readdata[5:0];
+    assign f_code = instr_w_reset[5:0];
     
     
 
@@ -66,9 +70,9 @@ module mips_cpu_harvard(
     logic[31:0] reg_write_data;
     logic reg_write_enable;
 
-    assign reg_a_read_index = instr_readdata[25:21];
-    assign reg_b_read_index = instr_readdata[20:16];
-    assign reg_write_index = reg_dst ? instr_readdata[15:11] : instr_readdata[20:16];
+    assign reg_a_read_index = instr_w_reset[25:21];
+    assign reg_b_read_index = instr_w_reset[20:16];
+    assign reg_write_index = reg_dst ? instr_w_reset[15:11] : instr_w_reset[20:16];
     assign reg_write_data = mem_to_reg ? data_readdata : alu_out;
     assign reg_write_enable = reg_write;
     
@@ -108,7 +112,7 @@ module mips_cpu_harvard(
     assign alu_op1 = reg_a_read_data;
 
     logic[31:0] offset;
-    assign offset = {16'h0, instr_readdata[15:0]};
+    assign offset = {16'h0, instr_w_reset[15:0]};
     assign alu_op2 = alu_src ? offset : reg_b_read_data;
 
     //Assigning ALU outputs
