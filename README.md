@@ -6,10 +6,8 @@ Components:
 - ALU : done 
 - skeleton : done
 - testbench : work in progress
+- control :
 
-TODO:
-- Control
-- PC 
-
-
-test
+questions:
+- memory byte how to determine if it's word or byte (how do we implement this?)
+- reset  (can we use a jump instruction that jump to reset address, can jumps go to every address? no, how do we resolve 
