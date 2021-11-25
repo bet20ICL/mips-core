@@ -10,5 +10,3 @@ Components:
 TODO:
 - Control
 - PC 
-- sign extend
-- shift left 2
