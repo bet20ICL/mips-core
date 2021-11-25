@@ -8,18 +8,21 @@
 :vpi_module "/usr/local/lib/ivl/v2005_math.vpi";
 :vpi_module "/usr/local/lib/ivl/va_math.vpi";
 :vpi_module "/usr/local/lib/ivl/v2009.vpi";
-S_0x5611320084d0 .scope package, "$unit" "$unit" 2 1;
+S_0x55e4731f74d0 .scope package, "$unit" "$unit" 2 1;
  .timescale 0 0;
-S_0x561131ff6e20 .scope module, "instruction_ram" "instruction_ram" 3 3;
+S_0x55e4731e5df0 .scope module, "alu_control" "alu_control" 3 1;
  .timescale 0 0;
-    .port_info 0 /INPUT 32 "instr_address";
-    .port_info 1 /OUTPUT 32 "instr_readdata";
-o0x7ff37107b018 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
-v0x561132009270_0 .net "instr_address", 31 0, o0x7ff37107b018;  0 drivers
-v0x561132009690_0 .var "instr_readdata", 31 0;
+    .port_info 0 /INPUT 6 "alu_opcode";
+    .port_info 1 /INPUT 6 "alu_fcode";
+    .port_info 2 /OUTPUT 3 "alu_control_out";
+v0x55e4731f8270_0 .var "alu_control_out", 2 0;
+o0x7fb411fc9048 .functor BUFZ 6, C4<zzzzzz>; HiZ drive
+v0x55e4731f8690_0 .net "alu_fcode", 5 0, o0x7fb411fc9048;  0 drivers
+o0x7fb411fc9078 .functor BUFZ 6, C4<zzzzzz>; HiZ drive
+v0x55e47322ba10_0 .net "alu_opcode", 5 0, o0x7fb411fc9078;  0 drivers
 # The file index is used to find the file name in the following table.
 :file_names 4;
     "N/A";
     "<interactive>";
     "-";
-    "mips_cpu/instruction_ram.v";
+    "mips_cpu/alu_control.v";
