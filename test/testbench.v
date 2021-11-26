@@ -1,3 +1,0 @@
-module testbench();
-
-endmodule
