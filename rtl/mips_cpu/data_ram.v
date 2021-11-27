@@ -20,10 +20,8 @@ module data_ram (
     end
     always @(posedge clk) begin
         if (data_write)
-            ram[adress] <= data_writedata;
+            ram[data_address] <= data_writedata;
     end
     assign data_readdata = ram[data_address];
-endmodule
-    
 endmodule
 

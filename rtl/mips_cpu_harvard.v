@@ -20,7 +20,7 @@ module mips_cpu_harvard(
     input logic[31:0]  data_readdata
 );
 
-    logic[31:0] reset_instr = 32'b;
+    logic[31:0] reset_instr = 32'b 0;
 
     logic[31:0] instr_w_reset;
     assign instr_w_reset = reset ? reset_instr : instr_readdata;
