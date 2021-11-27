@@ -3,7 +3,7 @@
 module instruction_ram(
     input logic[31:0] instr_address,
     output logic[31:0] instr_readdata,
-    input logic[31:0]] test_inst,
+    input logic[31:0] test_inst,
     input logic test_write
 );
 
@@ -22,12 +22,11 @@ module instruction_ram(
     end
 
     always_comb begin
-        assign instr_readdata = memory[addr[1:0]];
+        instr_readdata = memory[instr_address];
     end
-    assign 
 
     if (test_write) begin
-        assign memory[instr_address] = test_inst;
+        memory[instr_address] = test_inst;
     end
 
 endmodule
