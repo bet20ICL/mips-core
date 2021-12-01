@@ -1,11 +1,3 @@
-/* 
-    JR: jumps to address in specified register
-    data_address will output the pc
-    we want to read data_address and make sure the output is what is in the reg
-    v0 is the register output
-    we compare data_address and v0_register
-*/
-
 module JR_tb();
 
     logic     clk;
@@ -28,9 +20,8 @@ module JR_tb();
     logic[31:0]  data_readdata;
 
     /* memory initialisation */
-    logic init_mem, instr_active;
+    logic init_mem;
     logic[31:0] init_mem_addr;
-    logic[31:0] init_instr;
 
     initial begin
         clk = 0;
@@ -49,20 +40,16 @@ module JR_tb();
         reset = 0;
         #1;
 
-        init_mem = 1;
-        init_mem_addr = 32'h 0;
+        
 
-        $display("succ");
+
     end
 
-
-    data_ram instr(
-        .clk(clk),
-        .data_address(init_mem_addr),
-        .data_write(init_mem),
-        .data_read(instr_active),
-        .data_writedata(init_instr),
-        .data_readdata(data_readdata)
+    instruction_ram dut(
+        .instr_address(instr_address),
+        .instr_readdata(instr_readdata),
+        .test_instr(init_mem_addr),
+        .test_write(init_mem)
     );
 
     mips_cpu_harvard dut(
@@ -79,5 +66,45 @@ module JR_tb();
         .data_writedata(data_writedata),
         .data_readdata(data_readdata)
     );
+
+endmodule
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------
+
+
+//Combinatorial read of data, no write
+
+module instruction_ram(
+    input logic[31:0] instr_address,
+    output logic[31:0] instr_readdata,
+    input logic[31:0] test_inst,
+    input logic test_write
+);
+
+    logic[1:0] addr = instr_address[1:0];
+
+    reg [31:0] memory [3:0];
+
+    initial begin
+    
+
+        memory[0] = 32'd3;
+        memory[1] = 32'd9;
+        memory[2] = 32'd14;
+        memory[3] = 32'd123;
+
+    end
+
+    always_comb begin
+        instr_readdata = memory[instr_address];
+    end
+
+    if (test_write) begin
+        memory[instr_address] = test_inst;
+    end
 
 endmodule
