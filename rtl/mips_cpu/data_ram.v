@@ -9,8 +9,6 @@ module data_ram (
     output logic[31:0]  data_readdata
 );
 
-
-
     reg [31:0] ram [65535:0];
     integer i;
     
@@ -20,10 +18,9 @@ module data_ram (
     end
     always @(posedge clk) begin
         if (data_write)
-            ram[adress] <= data_writedata;
+            ram[data_address] <= data_writedata;
     end
     assign data_readdata = ram[data_address];
-endmodule
     
 endmodule
 
