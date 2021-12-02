@@ -1,5 +1,5 @@
-module lw_harvard_tb.v();
+module lw_harvard_tb();
 
-err
+
 
 endmodule
