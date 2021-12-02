@@ -8,9 +8,9 @@
 :vpi_module "/usr/local/lib/ivl/v2005_math.vpi";
 :vpi_module "/usr/local/lib/ivl/va_math.vpi";
 :vpi_module "/usr/local/lib/ivl/v2009.vpi";
-S_0x55764a7f44d0 .scope package, "$unit" "$unit" 2 1;
+S_0x55d5343944d0 .scope package, "$unit" "$unit" 2 1;
  .timescale 0 0;
-S_0x55764a7e2df0 .scope module, "data_ram" "data_ram" 3 3;
+S_0x55d534382d90 .scope module, "data_ram" "data_ram" 3 3;
  .timescale 0 0;
     .port_info 0 /INPUT 1 "clk";
     .port_info 1 /INPUT 32 "data_address";
@@ -18,17 +18,55 @@ S_0x55764a7e2df0 .scope module, "data_ram" "data_ram" 3 3;
     .port_info 3 /INPUT 1 "data_read";
     .port_info 4 /INPUT 32 "data_writedata";
     .port_info 5 /OUTPUT 32 "data_readdata";
-o0x7f0d26c00018 .functor BUFZ 1, C4<z>; HiZ drive
-v0x55764a7e2f80_0 .net "clk", 0 0, o0x7f0d26c00018;  0 drivers
-o0x7f0d26c00048 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
-v0x55764a829620_0 .net "data_address", 31 0, o0x7f0d26c00048;  0 drivers
-o0x7f0d26c00078 .functor BUFZ 1, C4<z>; HiZ drive
-v0x55764a829700_0 .net "data_read", 0 0, o0x7f0d26c00078;  0 drivers
-v0x55764a8297a0_0 .var "data_readdata", 31 0;
-o0x7f0d26c000d8 .functor BUFZ 1, C4<z>; HiZ drive
-v0x55764a829880_0 .net "data_write", 0 0, o0x7f0d26c000d8;  0 drivers
-o0x7f0d26c00108 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
-v0x55764a829990_0 .net "data_writedata", 31 0, o0x7f0d26c00108;  0 drivers
+L_0x55d5343cd590 .functor BUFZ 32, L_0x55d5343cd4a0, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+v0x55d534382fe0_0 .net *"_ivl_0", 31 0, L_0x55d5343cd4a0;  1 drivers
+o0x7fb87f352048 .functor BUFZ 1, C4<z>; HiZ drive
+v0x55d5343ccd30_0 .net "clk", 0 0, o0x7fb87f352048;  0 drivers
+o0x7fb87f352078 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x55d5343ccdf0_0 .net "data_address", 31 0, o0x7fb87f352078;  0 drivers
+o0x7fb87f3520a8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x55d5343cceb0_0 .net "data_read", 0 0, o0x7fb87f3520a8;  0 drivers
+v0x55d5343ccf70_0 .net "data_readdata", 31 0, L_0x55d5343cd590;  1 drivers
+o0x7fb87f352108 .functor BUFZ 1, C4<z>; HiZ drive
+v0x55d5343cd0a0_0 .net "data_write", 0 0, o0x7fb87f352108;  0 drivers
+o0x7fb87f352138 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x55d5343cd160_0 .net "data_writedata", 31 0, o0x7fb87f352138;  0 drivers
+v0x55d5343cd240_0 .var/i "i", 31 0;
+v0x55d5343cd320 .array "ram", 0 65535, 31 0;
+E_0x55d5343bbd40 .event posedge, v0x55d5343ccd30_0;
+L_0x55d5343cd4a0 .array/port v0x55d5343cd320, o0x7fb87f352078;
+    .scope S_0x55d534382d90;
+T_0 ;
+    %pushi/vec4 0, 0, 32;
+    %store/vec4 v0x55d5343cd240_0, 0, 32;
+T_0.0 ;
+    %load/vec4 v0x55d5343cd240_0;
+    %cmpi/s 65535, 0, 32;
+    %jmp/0xz T_0.1, 5;
+    %pushi/vec4 0, 0, 32;
+    %ix/getv/s 3, v0x55d5343cd240_0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v0x55d5343cd320, 0, 4;
+    %load/vec4 v0x55d5343cd240_0;
+    %addi 1, 0, 32;
+    %store/vec4 v0x55d5343cd240_0, 0, 32;
+    %jmp T_0.0;
+T_0.1 ;
+    %end;
+    .thread T_0;
+    .scope S_0x55d534382d90;
+T_1 ;
+    %wait E_0x55d5343bbd40;
+    %load/vec4 v0x55d5343cd0a0_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_1.0, 8;
+    %load/vec4 v0x55d5343cd160_0;
+    %ix/getv 3, v0x55d5343ccdf0_0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v0x55d5343cd320, 0, 4;
+T_1.0 ;
+    %jmp T_1;
+    .thread T_1;
 # The file index is used to find the file name in the following table.
 :file_names 4;
     "N/A";

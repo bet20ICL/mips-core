@@ -60,8 +60,6 @@ module mips_cpu_harvard(
     logic[5:0] f_code;
     assign f_code = instr_w_reset[5:0];
     
-    
-
     //Regfile inputs
     logic[4:0] reg_a_read_index;
     logic[4:0] reg_b_read_index;

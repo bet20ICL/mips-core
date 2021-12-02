@@ -9,8 +9,6 @@ module data_ram (
     output logic[31:0]  data_readdata
 );
 
-
-
     reg [31:0] ram [65535:0];
     integer i;
     
