@@ -16,3 +16,8 @@ questions:
 answers:
 - have a flag that does it but can also do it at the recieving end ()
 - extra logic, aka hard code it
+
+fatal errors numbers:
+- 0 : no errors / success
+- 5 : cpu didn't return anything in time
+- 1 : wrong value
