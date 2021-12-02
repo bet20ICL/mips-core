@@ -21,6 +21,5 @@ module data_ram (
             ram[data_address] <= data_writedata;
     end
     assign data_readdata = ram[data_address];
-    
 endmodule
 

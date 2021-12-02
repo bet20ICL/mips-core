@@ -1,0 +1,110 @@
+module JR_tb();
+
+    logic     clk;
+    logic     reset;
+    logic    active;
+    logic[31:0] register_v0;
+
+    /* New clock enable. See below. */
+    logic     clk_enable;
+
+    /* Combinatorial read access to instructions */
+    logic[31:0]  instr_address;
+    logic[31:0]   instr_readdata;
+
+    /* Combinatorial read and single-cycle write access to instructions */
+    logic[31:0]  data_address, data_address_wanted;
+    logic        data_write;
+    logic        data_read;
+    logic[31:0]  data_writedata;
+    logic[31:0]  data_readdata;
+
+    /* memory initialisation */
+    logic init_mem;
+    logic[31:0] init_mem_addr;
+
+    initial begin
+        clk = 0;
+        #1;
+        repeat (1000) begin
+            clk = ~clk;
+            #1;
+        end
+    end
+
+    initial begin
+        reset = 0;
+        #1;
+        reset = 1;
+        #1;
+        reset = 0;
+        #1;
+
+        
+
+
+    end
+
+    instruction_ram dut(
+        .instr_address(instr_address),
+        .instr_readdata(instr_readdata),
+        .test_instr(init_mem_addr),
+        .test_write(init_mem)
+    );
+
+    mips_cpu_harvard dut(
+        .clk(clk),
+        .reset(reset),
+        .active(active),
+        .register_v0(register_v0),
+        .clk_enable(clk_enable),
+        .instr_address(instr_address),
+        .instr_readdata(instr_readdata),
+        .data_address(data_address),
+        .data_write(data_write),
+        .data_read(data_read),
+        .data_writedata(data_writedata),
+        .data_readdata(data_readdata)
+    );
+
+endmodule
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------
+
+
+//Combinatorial read of data, no write
+
+module instruction_ram(
+    input logic[31:0] instr_address,
+    output logic[31:0] instr_readdata,
+    input logic[31:0] test_inst,
+    input logic test_write
+);
+
+    logic[1:0] addr = instr_address[1:0];
+
+    reg [31:0] memory [3:0];
+
+    initial begin
+    
+
+        memory[0] = 32'd3;
+        memory[1] = 32'd9;
+        memory[2] = 32'd14;
+        memory[3] = 32'd123;
+
+    end
+
+    always_comb begin
+        instr_readdata = memory[instr_address];
+    end
+
+    if (test_write) begin
+        memory[instr_address] = test_inst;
+    end
+
+endmodule
