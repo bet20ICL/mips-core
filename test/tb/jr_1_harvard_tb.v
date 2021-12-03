@@ -40,24 +40,29 @@ module JR_tb();
             #1;
         end
 
-        $fatal(5, "clock ran to the end");
+        $fatal(2, "clock ran to the end");
     end
 
     initial begin
-        reset = 0;
-        #1;
-        reset = 1;
-        #2;
-        reset = 0;
-        #2;
-        $display(instr_address);
-        $display(register_v0);
-        #2;
-        $display(instr_address);
-        #2;
-        $display(instr_address);
-        #2;
-        $display(instr_address);
+        @(posedge clk) begin
+            reset = 0;     
+        end
+        @(posedge clk) begin
+            reset = 1;     
+        end
+        @(posedge clk) begin
+            reset = 0;     
+        end
+        @(posedge clk) begin 
+            instr_readdata = 32'b10001100011000100000000000000100;
+            data_readdata = 4;
+        end
+        @(posedge clk) begin
+            instr_readdata = 32'b00000000001000000000000000001000;
+        end
+        @(posedge clk) begin
+            $display(instr_address);
+        end
 
         $display("succ");
         $finish(0);

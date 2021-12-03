@@ -61,6 +61,7 @@ module lw_tb();
 
         instr_readdata = imm_instr;
         data_readdata = 32'd9;
+        #2;
 
         @(posedge clk);
         #2;
