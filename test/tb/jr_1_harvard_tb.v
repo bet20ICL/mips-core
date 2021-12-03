@@ -52,7 +52,7 @@ module JR_tb();
         #1;
 
         assert(instr_address==32'hBFC00000); else $fatal(2, "wrong instr addr");
-        assert(instr_address==0); else $fatal(5, "yeet");
+        assert(instr_address==0); else $fatal(2, "yeet");
 
         instr_readdata = 32'h23;
 
