@@ -13,9 +13,8 @@ then
 else
     set -u
     INSTRUCTION=$( < test/instruction_names.txt )
-    echo ${INSTRUCTION} | tr '[:upper:]' '[:lower:]'
 fi
 
 for i in ${INSTRUCTION} ; do
-    test/run_one_instr.sh ${FILES} ${i} | tr '[:upper:]' '[:lower:]'
+    test/run_one_instr.sh ${FILES} ${i}
 done

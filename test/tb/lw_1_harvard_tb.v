@@ -1,12 +1,4 @@
-/* 
-    JR: jumps to address in specified register
-    data_address will output the pc
-    we want to read data_address and make sure the output is what is in the reg
-    v0 is the register output
-    we compare data_address and v0_register
-*/
-
-module JR_tb();
+module lw_tb();
 
     logic     clk;
     logic     reset;
@@ -18,7 +10,7 @@ module JR_tb();
 
     /* Combinatorial read access to instructions */
     logic[31:0]  instr_address;
-    logic[31:0]   instr_readdata;
+    logic[31:0]  instr_readdata;
 
     /* Combinatorial read and single-cycle write access to instructions */
     logic[31:0]  data_address, data_address_wanted;
@@ -39,33 +31,26 @@ module JR_tb();
             clk = ~clk;
             #1;
         end
-
-        $fatal(5, "clock ran to the end");
     end
 
     initial begin
-        reset = 0;
+        
         #1;
-        reset = 1;
-        #1;
-        reset = 0;
-        #1;
+        /* $8=mem[$0+100] */
+        instr_readdata = 32'b10000000110010000000000001101000;
+        data_readdata = 32'd9;
 
-        init_mem = 1;
-        init_mem_addr = 32'h 0;
+        assert(!data_write) else $fatal(1, "data_write should not be active but is");
+        assert(data_read) else $fatal(1, "data_read isn't active but should be");
+        assert(data_address==100) else $fatal(1, "address from memory being loaded, incorrect");
+        #2;
+        /* checks register 8*/
+        instr_readdata = 32'b10101100000010000000000000000000;
 
-        $display("succ");
+        assert(data_writedata==9) else $fatal(1, "incorrect value loaded to register");
+       
     end
 
-
-    data_ram instr(
-        .clk(clk),
-        .data_address(init_mem_addr),
-        .data_write(init_mem),
-        .data_read(instr_active),
-        .data_writedata(init_instr),
-        .data_readdata(data_readdata)
-    );
 
     mips_cpu_harvard dut(
         .clk(clk),
