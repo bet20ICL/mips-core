@@ -20,15 +20,15 @@ module control(
     assign sw = (instr_opcode == 6'b101011);
     assign beq = (instr_opcode == 6'b000100);
 
-    assign reg_dst = (r_format && !lw);
-    assign alu_src = (!r_format && lw && sw && !beq);
-    assign mem_to_reg = (!r_format && lw);
-    assign reg_write = (r_format && lw && !sw && !beq);
-    assign mem_read = (!r_format && lw && !sw && !beq);
-    assign mem_write = (!r_format && !lw && sw && !beq);
-    assign branch = (!r_format && !lw && !sw && beq);
-    assign alu_op[1] = (r_format && !lw && !sw && !beq);
-    assign alu_op[0] = (!r_format && !lw && !sw && beq);
+    assign reg_dst = (r_format);
+    assign alu_src = (lw || sw);  
+    assign mem_to_reg = (lw);
+    assign reg_write = (lw);
+    assign mem_read = (lw);
+    assign mem_write = (sw);
+    assign branch = (beq);
+    assign alu_op[1] = (r_format);
+    assign alu_op[0] = (beq);
         
 endmodule
 

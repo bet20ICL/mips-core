@@ -25,6 +25,7 @@ module addu_tb();
     logic[31:0] init_instr;
 
     initial begin
+        $display("running");
         clk = 0;
         #4;
         repeat (1000) begin
@@ -34,11 +35,9 @@ module addu_tb();
     end
 
     initial begin
-        
-        @(posedge clk);
         reset = 1;
         clk_enable = 1;
-
+        
         @(posedge clk);
         reset = 0;
 
@@ -64,7 +63,7 @@ module addu_tb();
         
         $display(register_v0);
         assert(data_writedata==32'd7) else $fatal(1, "expected output=7, got output=%d",data_writedata);
-
+        
     end
 
 
