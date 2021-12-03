@@ -88,7 +88,7 @@ module regfile(
             registers[31]<=32'd0;
         end
         else if(r_clk_enable) begin
-            if(write_control) begin
+            if(write_control && write_reg!=0) begin
                 registers[write_reg] <= write_data;
             end
         end
