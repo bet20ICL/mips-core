@@ -16,7 +16,7 @@ module regfile(
     output logic[31:0] regfile_v0
 );
 
-    reg[31:0] registers[0:31];
+    reg[31:0] registers[31:0];
 
     // initial begin
     //     registers[0]=32'd0;
@@ -99,6 +99,5 @@ module regfile(
     assign read_data2 = registers[read_reg2];
     assign registers[0] = 32'd0;
     assign regfile_v0 = registers[2];
-
 
 endmodule
