@@ -12,7 +12,7 @@ module regfile(
     input logic[31:0] write_data,
     /* data read from registers*/
     output logic[31:0] read_data1,
-    output logic[31:0] read_data2
+    output logic[31:0] read_data2,
     output logic[31:0] regfile_v0
 );
 
@@ -55,6 +55,7 @@ module regfile(
 
     always_ff @(posedge r_clk) begin
         if (reset) begin
+            registers[0]<=32'd0;
             registers[1]<=32'd0;
             registers[2]<=32'd0;
             registers[3]<=32'd0;
@@ -96,6 +97,7 @@ module regfile(
 
     assign read_data1 = registers[read_reg1];
     assign read_data2 = registers[read_reg2];
+    assign registers[0] = 32'd0;
     assign regfile_v0 = registers[2];
 
 

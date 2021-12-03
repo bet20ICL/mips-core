@@ -128,7 +128,7 @@ module mips_cpu_harvard(
         if (reset) begin
             next_instr_addr = 32'hBFC00000;
         end
-        if (branch && alu_z_flag) begin
+        else if (branch && alu_z_flag) begin
             next_instr_addr = curr_addr_p4 + offset << 2;
         end
         else if (j_type) begin 
