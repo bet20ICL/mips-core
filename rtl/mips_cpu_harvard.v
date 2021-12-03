@@ -119,9 +119,10 @@ module mips_cpu_harvard(
     assign curr_addr_p4 = curr_addr + 4;
     
     logic j_type; //j or jal
-    assign j_type = (instr_opcode[31:26] == 2 || instr_opcode[5:0] == 3);
+
+    assign j_type = (instr_opcode == 2 || instr_opcode[5:0] == 3);
     logic jr_type; //jr or jrl
-    assign jr_type = (instr_opcode[31:26] == 0 && (alu_fcode == 001001 || alu_fcode == 001000));
+    assign jr_type = (instr_opcode == 0 && (alu_fcode == 001001 || alu_fcode == 001000));
 
     always @(*) begin
         if (branch && alu_z_flag) begin
@@ -138,6 +139,7 @@ module mips_cpu_harvard(
     assign instr_address = curr_addr;
     pc cpu_pc(
         .clk(clk),
+        .reset(reset),
         .next_addr(next_instr_addr),
         .curr_addr(curr_addr)
     );
