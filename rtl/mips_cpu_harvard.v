@@ -58,6 +58,14 @@ module mips_cpu_harvard(
     assign reg_write_index = reg_dst ? instr_readdata[15:11] : instr_readdata[20:16];
     assign reg_write_data = mem_to_reg ? data_readdata : alu_out;
     assign reg_write_enable = reg_write;
+
+    initial begin
+
+        repeat(10) begin
+            @(posedge clk)
+            $display("mem_to_reg=%b, instr_readdate=%b, reg_write_data=%b, clk_enable=%b, reg_write_index=%b, reg_write_enable=%b",mem_to_reg, instr_readdata, reg_write_data, clk_enable, reg_write_index, reg_write_enable);
+        end
+    end
     
     //Regfile outputs
     logic[31:0] reg_a_read_data;
@@ -74,7 +82,8 @@ module mips_cpu_harvard(
         .write_reg(reg_write_index),
         .write_data(reg_write_data),
         .read_data1(reg_a_read_data),
-        .read_data2(reg_b_read_data)
+        .read_data2(reg_b_read_data),
+        .register_v0(register_v0)
     );
 
     //ALU inputs

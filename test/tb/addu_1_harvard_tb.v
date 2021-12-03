@@ -62,7 +62,7 @@ module addu_tb();
         /* sw: xxxx=$3 */
         instr_readdata = 32'b10101100000000110000000000000000;
         
-
+        $display(register_v0);
         assert(data_writedata==32'd7) else $fatal(1, "expected output=7, got output=%d",data_writedata);
 
     end
