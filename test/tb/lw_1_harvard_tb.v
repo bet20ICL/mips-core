@@ -26,11 +26,11 @@ module lw_tb();
 
     initial begin
         clk = 0;
-        #1;
+        #4;
         repeat (1000) begin
             clk = ~clk;
-            #1;
-        end
+            #4;
+        end;
     end
 
     initial begin

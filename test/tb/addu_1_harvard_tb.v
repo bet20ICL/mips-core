@@ -39,6 +39,7 @@ module addu_tb();
         clk_enable = 1;
         
         @(posedge clk);
+        #1
         reset = 0;
 
         /* lw: $12=mem[xxxxx]
