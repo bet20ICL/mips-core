@@ -44,6 +44,9 @@ module mips_cpu_harvard(
         .alu_src(alu_src),
         .reg_write(reg_write)
     );
+
+    assign data_write = mem_write;
+    assign data_read = mem_read;
     
     //Regfile inputs
     logic[4:0] reg_a_read_index;
