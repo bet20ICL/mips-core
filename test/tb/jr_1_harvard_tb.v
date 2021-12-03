@@ -40,7 +40,7 @@ module JR_tb();
             #1;
         end
 
-        $fatal(5, "clock ran to the end");
+        $fatal(2, "clock ran to the end");
     end
 
     initial begin
