@@ -26,26 +26,40 @@ module addu_tb();
 
     initial begin
         clk = 0;
-        #1;
+        #4;
         repeat (1000) begin
             clk = ~clk;
-            #1;
+            #4;
         end
     end
 
     initial begin
         
-        #1;
+        @(posedge clk);
+        reset = 1;
+        clk_enable = 1;
+
+        @(posedge clk);
+        reset = 0;
+
+        /* lw: $12= mem[xxxxx]
+        actually does $12=4 */
+        @(posedge clk);
         instr_readdata = 32'b10001100000011000000000000000000;
         data_readdata = 32'd4;
-        #2;
+
+        /* lw: $9= mem[xxxxx]
+        actually does $12=3 */
+        @(posedge clk);
         instr_readdata = 32'b10001100000010010000000000000000;
         data_readdata = 32'd3;
-        #2;
+        
+        @(posedge clk);
         /* addu: $3 = $12 + $9 */
         instr_readdata = 32'b00000001100010010001100000100001;
-        #2;
-        /*important to get time delay correct, so it checks everything done in correct amount of clock cycles */
+        
+        @(posedge clk);
+        /* sw: xxxx=$3 */
         instr_readdata = 32'b10101100000000110000000000000000;
         
 
