@@ -35,7 +35,11 @@ module addiu_tb();
 
     initial begin
         
+        clk_enable = 1;
+        reset = 0;
+
         #1;
+        /* $12 = 4 */
         instr_readdata = 32'b10001100000011000000000000000000;
         data_readdata = 32'd4;
         #2;
@@ -44,9 +48,10 @@ module addiu_tb();
         #2;
         /*important to get time delay correct, so it checks everything done in correct amount of clock cycles */
         instr_readdata = 32'b10101100000000110000000000000000;
-        
+        #2;
+    
 
-        assert(data_writedata==32'd104) else $fatal(1, "expected output=7, got output=%d",data_writedata);
+        assert(data_writedata==32'd104) else $fatal(1, "expected output=104, got output=%d",data_writedata);
 
     end
 
