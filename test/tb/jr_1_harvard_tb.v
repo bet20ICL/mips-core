@@ -5,7 +5,6 @@
     v0 is the register output
     we compare data_address and v0_register
 */
-`timescale 10ps/1ps
 
 module JR_tb();
 
@@ -38,7 +37,7 @@ module JR_tb();
         #1;
         repeat (1000) begin
             clk = ~clk;
-            #0.5;
+            #1;
         end
 
         $fatal(5, "clock ran to the end");
@@ -48,17 +47,17 @@ module JR_tb();
         reset = 0;
         #1;
         reset = 1;
-
-        
-        #1;
-        $display(instr_address);
-        #1;
-        $display(instr_address);
-        #1;
-        $display(instr_address);
-        #1;
+        #2;
+        reset = 0;
+        #2;
         $display(instr_address);
         $display(register_v0);
+        #2;
+        $display(instr_address);
+        #2;
+        $display(instr_address);
+        #2;
+        $display(instr_address);
 
         $display("succ");
         $finish(0);
