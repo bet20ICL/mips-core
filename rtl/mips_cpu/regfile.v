@@ -54,6 +54,7 @@ module regfile(
 
     always_ff @(posedge r_clk) begin
         if (reset) begin
+            registers[0]<=32'd0;
             registers[1]<=32'd0;
             registers[2]<=32'd0;
             registers[3]<=32'd0;
