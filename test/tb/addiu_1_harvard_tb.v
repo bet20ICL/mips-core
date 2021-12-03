@@ -36,6 +36,7 @@ module addiu_tb();
     initial begin
         
         #1;
+        /* $12 = 4 */
         instr_readdata = 32'b10001100000011000000000000000000;
         data_readdata = 32'd4;
         #2;
@@ -46,7 +47,7 @@ module addiu_tb();
         instr_readdata = 32'b10101100000000110000000000000000;
         
 
-        assert(data_writedata==32'd104) else $fatal(1, "expected output=7, got output=%d",data_writedata);
+        assert(data_writedata==32'd104) else $fatal(1, "expected output=104, got output=%d",data_writedata);
 
     end
 
