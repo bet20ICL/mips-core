@@ -42,13 +42,13 @@ module addu_tb();
         @(posedge clk);
         reset = 0;
 
-        /* lw: $12= mem[xxxxx]
+        /* lw: $12=mem[xxxxx]
         actually does $12=4 */
         @(posedge clk);
         instr_readdata = 32'b10001100000011000000000000000000;
         data_readdata = 32'd4;
 
-        /* lw: $9= mem[xxxxx]
+        /* lw: $9=mem[xxxxx]
         actually does $12=3 */
         @(posedge clk);
         instr_readdata = 32'b10001100000010010000000000000000;
