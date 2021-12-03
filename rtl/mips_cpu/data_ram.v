@@ -13,7 +13,7 @@ module data_ram (
     integer i;
     
     initial begin
-        for(i=0;i<65535;i=i+1)
+        for(i=0;i<5;i=i+1)
             ram[i] <= 32'd0;
     end
     always @(posedge clk) begin

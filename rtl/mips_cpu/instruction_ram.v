@@ -8,7 +8,7 @@ module instruction_ram(
     reg [31:0] memory1 [1073741823:0];
     initial begin
         integer i;
-        for (i = 0; i < 1073741823; i++) begin
+        for (i = 0; i < 5; i++) begin
             memory1[i] = 0;
         end
         memory1[0] = 32'hffffffff;
