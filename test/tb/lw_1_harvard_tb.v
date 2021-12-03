@@ -67,7 +67,7 @@ module lw_tb();
         assert(!data_write) else $fatal(1, "data_write should not be active but is");
         assert(data_read) else $fatal(1, "data_read isn't active but should be");
         assert(data_address == ) else $fatal(1, "address from memory being loaded, incorrect");
-        assert(register_v0 == 9);
+        assert(register_v0 == 9) else $fatal(1, "wring value loaded");
        
     end
 
