@@ -25,12 +25,12 @@ do
         OUTPUT=$?
         set -e
 
-        if [[ RESULT -eq 0 ]] ; then
+        if [[ OUTPUT -eq 0 ]] ; then
             echo "$(basename ${i} _harvard_tb.v) ${INSTRUCTION} Pass"
-        elif [[ RESULT -eq 5 ]] ; then
-            echo "$(basename ${i} _harvard_tb.v) ${INSTRUCTION} Fail    cpu active for too long"
-        else 
-            echo "err"
+        elif [[ OUTPUT -eq 1 ]] ; then
+            echo "$(basename ${i} _harvard_tb.v) ${INSTRUCTION} Fail"
+        else
+            echo "$(basename ${i} _harvard_tb.v) ${INSTRUCTION} Fail"
         fi
     fi
 done

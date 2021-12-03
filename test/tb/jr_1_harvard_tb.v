@@ -51,34 +51,14 @@ module JR_tb();
         reset = 0;
         #1;
 
-        init_mem = 1;
-        init_mem_addr = 32'h BFC00000;
-        #1;
+        assert(instr_address==32'hBFC00000); else $fatal(2, "wrong instr addr");
+        assert(instr_address==0); else $fatal(2, "yeet");
 
-        
+        instr_readdata = 32'h23;
 
-        $finish(0);
         $display("succ");
+        $finish(0);
     end
-
-
-    data_ram instr(
-        .clk(clk),
-        .data_address(init_mem_addr),
-        .data_write(init_mem),
-        .data_read(instr_active),
-        .data_writedata(init_instr),
-        .data_readdata(instr_readdata)
-    );
-
-    data_ram data(
-        .clk(clk),
-        .data_address(data_address),
-        .data_write(data_write),
-        .data_read(data_read),
-        .data_writedata(data_writedata),
-        .data_readdata(data_readdata)
-    );
 
     mips_cpu_harvard dut(
         .clk(clk),
