@@ -146,6 +146,14 @@ module mips_cpu_harvard(
         end
     end
 
+    initial begin
+        repeat (10) begin
+            @(posedge clk) begin
+                $display("next_instr_addr=%d", reg_a_read_index);
+            end
+        end
+    end
+
     assign instr_address = curr_addr;
     pc cpu_pc(
         .clk(clk),
