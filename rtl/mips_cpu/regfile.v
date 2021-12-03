@@ -97,6 +97,6 @@ module regfile(
 
     assign read_data1 = registers[read_reg1];
     assign read_data2 = registers[read_reg2];
-    assign register_v0 = registers[1];
+    assign register_v0 = registers[2];
 
 endmodule
