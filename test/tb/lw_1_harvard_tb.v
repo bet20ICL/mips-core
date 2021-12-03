@@ -39,6 +39,7 @@ module lw_tb();
         /* $8=mem[$0+100] */
         instr_readdata = 32'b10000000110010000000000001101000;
         data_readdata = 32'd9;
+        #2;
 
         assert(!data_write) else $fatal(1, "data_write should not be active but is");
         assert(data_read) else $fatal(1, "data_read isn't active but should be");
