@@ -19,13 +19,7 @@ module mips_cpu_harvard(
     output logic[31:0]  data_writedata,
     input logic[31:0]  data_readdata
 );
-    initial begin
-        repeat(10) begin
-            @(posedge clk)
-            #1;
-            $display("mem_to_reg=%b, instr_readdate=%b, reg_write_data=%b, clk_enable=%b, reg_write_index=%b, reg_write_enable=%b",mem_to_reg, instr_readdata, reg_write_data, clk_enable, reg_write_index, reg_write_enable);
-        end
-    end
+    
     //Control Signals
     logic[5:0] instr_opcode;
     assign instr_opcode = instr_readdata[31:26];
@@ -50,7 +44,9 @@ module mips_cpu_harvard(
         .alu_src(alu_src),
         .reg_write(reg_write)
     );
-    
+
+    assign data_write = mem_write;
+    assign data_read = mem_read;
     
     //Regfile inputs
     logic[4:0] reg_a_read_index;
@@ -85,6 +81,8 @@ module mips_cpu_harvard(
         .register_v0(register_v0)
     );
 
+    assign data_writedata = reg_b_read_data;
+
     //ALU inputs
     logic[3:0] alu_control_out;
     logic[5:0] alu_fcode;
@@ -118,7 +116,6 @@ module mips_cpu_harvard(
         .result(alu_out),
         .z_flag(alu_z_flag)
     );
-
     
     //PC
     logic[31:0] next_instr_addr;

@@ -23,7 +23,7 @@ module control(
     assign reg_dst = (r_format);
     assign alu_src = (lw || sw);  
     assign mem_to_reg = (lw);
-    assign reg_write = (lw);
+    assign reg_write = (r_format || lw);
     assign mem_read = (lw);
     assign mem_write = (sw);
     assign branch = (beq);

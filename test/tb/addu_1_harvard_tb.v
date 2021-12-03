@@ -39,29 +39,37 @@ module addu_tb();
         clk_enable = 1;
         
         @(posedge clk);
+        #1;
         reset = 0;
 
         /* lw: $12=mem[xxxxx]
         actually does $12=4 */
         @(posedge clk);
+        #1;
         instr_readdata = 32'b10001100000011000000000000000000;
         data_readdata = 32'd4;
 
         /* lw: $9=mem[xxxxx]
         actually does $9=3 */
         @(posedge clk);
+        #1;
         instr_readdata = 32'b10001100000010010000000000000000;
         data_readdata = 32'd3;
         
         @(posedge clk);
+        #1;
         /* addu: $3 = $12 + $9 */
         instr_readdata = 32'b00000001100010010001100000100001;
         
         @(posedge clk);
+        #1;
         /* sw: xxxx=$3 */
         instr_readdata = 32'b10101100000000110000000000000000;
         
-        $display(register_v0);
+        
+        @(posedge clk);
+        #1;
+        
         assert(data_writedata==32'd7) else $fatal(1, "expected output=7, got output=%d",data_writedata);
         
     end
