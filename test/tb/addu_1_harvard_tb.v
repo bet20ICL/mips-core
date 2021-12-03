@@ -1,4 +1,4 @@
-module lw_tb();
+module addu_tb();
 
     logic     clk;
     logic     reset;
@@ -36,19 +36,21 @@ module lw_tb();
     initial begin
         
         #1;
-        /* $8=mem[$0+100] */
-        instr_readdata = 32'b10000000110010000000000001101000;
-        data_readdata = 32'd9;
-
-        assert(!data_write) else $fatal(1, "data_write should not be active but is");
-        assert(data_read) else $fatal(1, "data_read isn't active but should be");
-        assert(data_address==100) else $fatal(1, "address from memory being loaded, incorrect");
+        instr_readdata = 32'b10001100000011000000000000000000;
+        data_readdata = 32'd4;
         #2;
-        /* checks register 8*/
-        instr_readdata = 32'b10101100000010000000000000000000;
+        instr_readdata = 32'b10001100000010010000000000000000;
+        data_readdata = 32'd3;
+        #2;
+        /* addu: $3 = $12 + $9 */
+        instr_readdata = 32'b00000001100010010001100000100001;
+        #2;
+        /*important to get time delay correct, so it checks everything done in correct amount of clock cycles */
+        instr_readdata = 32'b10101100000000110000000000000000;
+        
 
-        assert(data_writedata==9) else $fatal(1, "incorrect value loaded to register");
-       
+        assert(data_writedata==32'd7) else $fatal(1, "expected output=7, got output=%d",data_writedata);
+
     end
 
 

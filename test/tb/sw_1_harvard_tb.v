@@ -1,4 +1,4 @@
-module lw_tb();
+module sw_tb();
 
     logic     clk;
     logic     reset;
@@ -36,18 +36,21 @@ module lw_tb();
     initial begin
         
         #1;
-        /* $8=mem[$0+100] */
-        instr_readdata = 32'b10000000110010000000000001101000;
-        data_readdata = 32'd9;
-
-        assert(!data_write) else $fatal(1, "data_write should not be active but is");
-        assert(data_read) else $fatal(1, "data_read isn't active but should be");
-        assert(data_address==100) else $fatal(1, "address from memory being loaded, incorrect");
+        /* $7=14 */
+        instr_readdata = 32'b10001100000001110000000000000000;
+        data_readdata = 32'd14;
         #2;
-        /* checks register 8*/
-        instr_readdata = 32'b10101100000010000000000000000000;
+        /* $2=10 */
+        instr_readdata = 32'b10001100000000100000000000000000;
+        data_readdata = 32'd10;
+        #2;
+        /* mem[$2+100]=$7 */
+        instr_readdata = 32'b10101100010001110000000001101000;
 
-        assert(data_writedata==9) else $fatal(1, "incorrect value loaded to register");
+        assert(data_write) else $fatal(1,"write signal not active, when it should be");
+        assert(!data_read) else $fatal(1, "read signal active when it should'nt be");
+        assert(data_address==110) else $fatal(1, "expected addres to be written to to be=110, got =%d",data_address);
+        assert(data_writedata==14) else $fatal(1, "expected data being written to be=14, got =%d",data_writedata);
        
     end
 
