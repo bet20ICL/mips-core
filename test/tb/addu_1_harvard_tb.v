@@ -49,7 +49,7 @@ module addu_tb();
         data_readdata = 32'd4;
 
         /* lw: $9=mem[xxxxx]
-        actually does $12=3 */
+        actually does $9=3 */
         @(posedge clk);
         instr_readdata = 32'b10001100000010010000000000000000;
         data_readdata = 32'd3;
