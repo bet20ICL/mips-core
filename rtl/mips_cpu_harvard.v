@@ -123,7 +123,18 @@ module mips_cpu_harvard(
 
     assign j_type = (instr_opcode == 2 || instr_opcode[5:0] == 3);
     logic jr_type; //jr or jrl
-    assign jr_type = (instr_opcode == 0 && (alu_fcode == 001001 || alu_fcode == 001000));
+    assign jr_type = ((instr_opcode == 0) && ((alu_fcode == 001001) || (alu_fcode == 001000)));
+    logic tmp;
+    assign tmp = (alu_fcode == 001000);
+
+    initial begin
+        repeat(10) begin 
+            @(posedge clk) begin
+                $display("tmp is %b", tmp);
+                $display("full instr is %b, instr is %d, alu_fcode is %b jr_type is %b",instr_readdata, instr_opcode, alu_fcode, jr_type);
+            end
+        end
+    end
 
     always @(*) begin
         if (branch && alu_z_flag) begin

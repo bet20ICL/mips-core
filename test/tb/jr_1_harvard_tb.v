@@ -44,20 +44,23 @@ module JR_tb();
     end
 
     initial begin
-        reset = 0;
-        #1;
-        reset = 1;
-        #2;
-        reset = 0;
-        #2;
+        @(posedge clk) begin
+            reset = 0;     
+        end
+        @(posedge clk) begin
+            reset = 1;     
+        end
+        @(posedge clk) begin
+            reset = 0;     
+        end
         $display(instr_address);
         $display(register_v0);
         #2;
-        $display(instr_address);
+        instr_readdata = 32'b10001100011000100000000000000100;
+        data_readdata = 4;
         #2;
-        $display(instr_address);
+        instr_readdata = 32'b00000000001000000000000000001000;
         #2;
-        $display(instr_address);
 
         $display("succ");
         $finish(0);
