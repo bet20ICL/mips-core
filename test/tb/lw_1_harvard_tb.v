@@ -51,13 +51,13 @@ module lw_tb();
         @(posedge clk);
         #2;
 
-        //lw v0, offset v1
+        //lw r2, offset r3
         //v0 -> 9 
         opcode = 6'b100011;
-        rt = 6'd2;
         rs = 6'd3;
+        rt = 6'd2;
         imm = 0;
-        imm_instr = {opcode, rt, rs, imm};
+        imm_instr = {opcode, rs, rt, imm};
 
         instr_readdata = imm_instr;
         data_readdata = 32'd9;
@@ -68,7 +68,42 @@ module lw_tb();
         assert(data_read) else $fatal(1, "data_read isn't active but should be");
         assert(data_address == 0) else $fatal(1, "address from memory being loaded, incorrect");
         assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
-       
+
+        //lw r3, offset r8
+        //r3 -> 1
+        opcode = 6'b100011;
+        rs = 6'd8;
+        rt = 6'd3;
+        imm = 32'h8;
+        imm_instr = {opcode, rs, rt, imm};
+
+        instr_readdata = imm_instr;
+        data_readdata = 32'd16;
+
+        @(posedge clk);
+        #2;
+        assert(!data_write) else $fatal(1, "data_write should not be active but is");
+        assert(data_read) else $fatal(1, "data_read isn't active but should be");
+        assert(data_address == {16'b0, imm} + 0) else $fatal(1, "address from memory being loaded, incorrect");
+        assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
+
+        //lw r2, offset r3
+        //r2 -> 1
+        opcode = 6'b100011;
+        rs = 6'd3;
+        rt = 6'd2;
+        imm = 32'h8;
+        imm_instr = {opcode, rs, rt, imm};
+
+        instr_readdata = imm_instr;
+        data_readdata = 32'd10;
+
+        @(posedge clk);
+        #2;
+        assert(!data_write) else $fatal(1, "data_write should not be active but is");
+        assert(data_read) else $fatal(1, "data_read isn't active but should be");
+        assert(data_address == {16'b0, imm} + 16) else $fatal(1, "address from memory being loaded, incorrect");
+        assert(register_v0 == 10) else $fatal(1, "wrong value loaded");
     end
 
     mips_cpu_harvard dut(
