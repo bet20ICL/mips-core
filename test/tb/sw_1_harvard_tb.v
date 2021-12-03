@@ -57,7 +57,7 @@ module sw_tb();
         @(posedge clk);
         #1;
         /* mem[$2+100]=$7 */
-        instr_readdata = 32'b10101100010001110000000001101000;
+        instr_readdata = 32'b10101100010001110000000001100100;
 
         @(posedge clk);
         #1;
