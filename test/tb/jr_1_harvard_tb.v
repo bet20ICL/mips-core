@@ -53,13 +53,7 @@ module JR_tb();
 
         assert(instr_address==32'hBFC00000); else $fatal(2, "wrong instr addr");
 
-        instr_readdata = 32'h8C620004;
-        data_readdata = 4;
-        #2;
-
-        instr_readdata = 32'h00800008;
-        #2;
-        
+        #1;
         $display(instr_address);
         $display(register_v0);
 
