@@ -5,7 +5,7 @@ module instruction_ram(
     output logic[31:0] instr_readdata
 );
     parameter RAM_INIT_FILE = "";
-    reg [31:0] memory1 [1073741823:0];
+    reg [31:0] memory1 [65535:0];
     initial begin
         integer i;
         for (i = 0; i < 5; i++) begin

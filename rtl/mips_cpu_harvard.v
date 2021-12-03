@@ -19,6 +19,13 @@ module mips_cpu_harvard(
     output logic[31:0]  data_writedata,
     input logic[31:0]  data_readdata
 );
+    initial begin
+        repeat(10) begin
+            @(posedge clk)
+            #1;
+            $display("mem_to_reg=%b, instr_readdate=%b, reg_write_data=%b, clk_enable=%b, reg_write_index=%b, reg_write_enable=%b",mem_to_reg, instr_readdata, reg_write_data, clk_enable, reg_write_index, reg_write_enable);
+        end
+    end
     //Control Signals
     logic[5:0] instr_opcode;
     assign instr_opcode = instr_readdata[31:26];

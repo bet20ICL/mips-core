@@ -20,6 +20,7 @@ do
     if [[ RESULT -ne 0 ]] ; then
         echo "$(basename ${i} _harvard_tb.v) ${INSTRUCTION} Fail     Failed to compile"
     else
+        echo "$(basename ${i} _harvard_tb.v) ${INSTRUCTION} Compiled"
         set +e
         ./test/tb_outputs/$(basename ${i} .v) > test/tb_outputs/$(basename ${i} .v).log
         OUTPUT=$?

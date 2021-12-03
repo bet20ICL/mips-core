@@ -2,7 +2,7 @@ module regfile(
     input logic r_clk,
     input logic reset,
     input logic r_clk_enable,
-    /* control line for writing data*/
+    /* control line for writing data */
     input logic write_control,
     /* registers being read */
     input logic[4:0] read_reg1,
@@ -97,6 +97,6 @@ module regfile(
 
     assign read_data1 = registers[read_reg1];
     assign read_data2 = registers[read_reg2];
-    assign register_v0 = registers[2];
+    assign register_v0 = registers[12];
 
 endmodule
