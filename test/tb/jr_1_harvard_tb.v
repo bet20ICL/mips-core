@@ -58,6 +58,8 @@ module JR_tb();
         #2;
 
         instr_readdata = 32'h00800008;
+        #2;
+        
         $display(instr_address);
         $display(register_v0);
 
