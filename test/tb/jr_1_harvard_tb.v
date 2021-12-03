@@ -44,23 +44,33 @@ module JR_tb();
     end
 
     initial begin
+        reset = 0;     
         @(posedge clk) begin
-            reset = 0;     
+        reset = 1;     
         end
         @(posedge clk) begin
-            reset = 1;     
+        reset = 0;     
         end
         @(posedge clk) begin
-            reset = 0;     
-        end
         $display(instr_address);
         $display(register_v0);
-        #2;
+        end
+        @(posedge clk) begin
         instr_readdata = 32'b10001100011000100000000000000100;
         data_readdata = 4;
-        #2;
-        instr_readdata = 32'b00000000001000000000000000001000;
-        #2;
+        end
+        @(posedge clk) begin
+        end
+        @(posedge clk) begin
+            instr_readdata = 32'b00000000010000000000000000001000;
+        end
+        @(posedge clk) begin
+            $display("instruction is now %b, which is in dec %d", instr_address, instr_address);
+        end
+        @(posedge clk) begin
+            $display("instruction is now %b, which is in dec %d", instr_address, instr_address);
+        end
+        
 
         $display("succ");
         $finish(0);
