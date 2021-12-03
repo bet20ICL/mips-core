@@ -53,16 +53,16 @@ module JR_tb();
         @(posedge clk) begin
             reset = 0;     
         end
-        @(posedge clk) begin 
-            instr_readdata = 32'b10001100011000100000000000000100;
-            data_readdata = 4;
-        end
-        @(posedge clk) begin
-            instr_readdata = 32'b00000000001000000000000000001000;
-        end
-        @(posedge clk) begin
-            $display(instr_address);
-        end
+        @(posedge clk);
+        #1;
+        instr_readdata = 32'b10001100000011000000000000000000;
+        data_readdata = 32'd4;
+        @(posedge clk);
+        #1;
+        instr_readdata = 32'b00000001100000000000000000001000;
+        @(posedge clk)
+        #1;
+        $display(instr_address);
 
         $display("succ");
         $finish(0);
