@@ -74,7 +74,8 @@ module mips_cpu_harvard(
         .write_reg(reg_write_index),
         .write_data(reg_write_data),
         .read_data1(reg_a_read_data),
-        .read_data2(reg_b_read_data)
+        .read_data2(reg_b_read_data),
+        .regfile_v0(register_v0)
     );
 
     //ALU inputs
@@ -111,7 +112,6 @@ module mips_cpu_harvard(
         .z_flag(alu_z_flag)
     );
 
-    
     //PC
     logic[31:0] next_instr_addr;
     logic[31:0] curr_addr;
@@ -124,6 +124,9 @@ module mips_cpu_harvard(
     assign jr_type = (instr_opcode[31:26] == 0 && (alu_fcode == 001001 || alu_fcode == 001000));
 
     always @(*) begin
+        if (reset) begin
+            next_instr_addr = 32'hBFC00000;
+        end
         if (branch && alu_z_flag) begin
             next_instr_addr = curr_addr_p4 + offset << 2;
         end
