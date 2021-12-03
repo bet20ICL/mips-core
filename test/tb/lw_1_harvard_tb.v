@@ -34,23 +34,42 @@ module lw_tb();
     end
 
     initial begin
+        //instantiate variables for easier instruction building
+        logic [5:0] opcode;
+        logic [4:0] rt;
+        logic [4:0] rs;
+        logic [15:0] imm;
+        logic [31:0] imm_instr;
         
-        #1;
-        /* $8=mem[$0+100] */
-        instr_readdata = 32'b10000000110010000000000001101000;
+        reset = 1;
+        clk_enable = 1;
+
+        @(posedge clk);
+        #2;
+        reset = 0;
+
+        @(posedge clk);
+        #2;
+
+        //lw v0, offset v1
+        //v0 -> 9 
+        opcode = 6'b100011;
+        rt = 6'd2;
+        rs = 6'd3;
+        imm = 0;
+        imm_instr = {opcode, rt, rs, imm};
+
+        instr_readdata = imm_instr;
         data_readdata = 32'd9;
 
+        @(posedge clk);
+        #2;
         assert(!data_write) else $fatal(1, "data_write should not be active but is");
         assert(data_read) else $fatal(1, "data_read isn't active but should be");
-        assert(data_address==100) else $fatal(1, "address from memory being loaded, incorrect");
-        #2;
-        /* checks register 8*/
-        instr_readdata = 32'b10101100000010000000000000000000;
-
-        assert(data_writedata==9) else $fatal(1, "incorrect value loaded to register");
+        assert(data_address == 0) else $fatal(1, "address from memory being loaded, incorrect");
+        assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
        
     end
-
 
     mips_cpu_harvard dut(
         .clk(clk),

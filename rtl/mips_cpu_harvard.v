@@ -44,7 +44,9 @@ module mips_cpu_harvard(
         .alu_src(alu_src),
         .reg_write(reg_write)
     );
-    
+
+    assign data_write = mem_write;
+    assign data_read = mem_read;
     
     //Regfile inputs
     logic[4:0] reg_a_read_index;
@@ -114,7 +116,6 @@ module mips_cpu_harvard(
         .result(alu_out),
         .z_flag(alu_z_flag)
     );
-
     
     //PC
     logic[31:0] next_instr_addr;
