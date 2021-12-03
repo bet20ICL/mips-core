@@ -34,25 +34,37 @@ module addiu_tb();
     end
 
     initial begin
+        //instantiate variables for easier instruction building
+        logic [5:0] opcode;
+        logic [4:0] rt;
+        logic [4:0] rs;
+        logic [15:0] imm;
+        logic [31:0] imm_instr;
         
+        reset = 1;
         clk_enable = 1;
+
+        @(posedge clk);
+        #2;
         reset = 0;
 
-        #1;
-        /* $12 = 4 */
-        instr_readdata = 32'b10001100000011000000000000000000;
-        data_readdata = 32'd4;
+        @(posedge clk);
         #2;
-        /* addiu: $3 = $12 + 100 */
-        instr_readdata = 32'b00100101100000110000000001101000;
-        #2;
-        /*important to get time delay correct, so it checks everything done in correct amount of clock cycles */
-        instr_readdata = 32'b10101100000000110000000000000000;
-        #2;
-    
 
-        assert(data_writedata==32'd104) else $fatal(1, "expected output=104, got output=%d",data_writedata);
+        //addiu r2, r3, 2
+        //v0 -> 9 
+        opcode = 6'd9;
+        rs = 6'd3;
+        rt = 6'd2;
+        imm = 16'd2;
+        imm_instr = {opcode, rs, rt, imm};
+        instr_readdata = imm_instr;     
 
+        @(posedge clk);
+        #2;
+        assert(!data_write) else $fatal(1, "data_write should not be active but is");
+        assert(!data_read) else $fatal(1, "data_read isn't active but should be");
+        assert(register_v0 == 2) else $fatal(1, "expected v0=2, got output=%d", register_v0);
     end
 
 
