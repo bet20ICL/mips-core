@@ -56,12 +56,12 @@ module JR_tb();
         $display(register_v0);
         end
         @(posedge clk) begin
-        instr_readdata = 32'b10001100011000100000000000000100;
-        data_readdata = 4;
+            #1;
+            instr_readdata = 32'b10001100011000100000000000000100;
+            data_readdata = 4;
         end
         @(posedge clk) begin
-        end
-        @(posedge clk) begin
+            #1;
             instr_readdata = 32'b00000000010000000000000000001000;
         end
         @(posedge clk) begin
