@@ -145,7 +145,6 @@ module mips_cpu_harvard(
             next_instr_addr = curr_addr_p4;
         end
     end
-    
 
     assign instr_address = curr_addr;
     pc cpu_pc(
