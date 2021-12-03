@@ -52,8 +52,12 @@ module JR_tb();
         #1;
 
         init_mem = 1;
-        init_mem_addr = 32'h 0;
+        init_mem_addr = 32'h BFC00000;
+        #1;
 
+        
+
+        $finish(0);
         $display("succ");
     end
 
@@ -64,6 +68,15 @@ module JR_tb();
         .data_write(init_mem),
         .data_read(instr_active),
         .data_writedata(init_instr),
+        .data_readdata(instr_readdata)
+    );
+
+    data_ram data(
+        .clk(clk),
+        .data_address(data_address),
+        .data_write(data_write),
+        .data_read(data_read),
+        .data_writedata(data_writedata),
         .data_readdata(data_readdata)
     );
 
