@@ -7,7 +7,7 @@ module pc (
     
     always @(posedge clk) begin
         if(reset) begin
-            curr_addr <= 8'hBFC00000;
+            curr_addr <= 32'hBFC00000;
         end
         else begin
             curr_addr <= next_addr;

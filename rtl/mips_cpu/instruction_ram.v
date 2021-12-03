@@ -2,32 +2,53 @@
 
 module instruction_ram(
     input logic[31:0] instr_address,
-    output logic[31:0] instr_readdata,
-    input logic[31:0] test_inst,
-    input logic test_write
+    output logic[31:0] instr_readdata
 );
-
-    logic[1:0] addr = instr_address[1:0];
-
-    reg [31:0] memory [3:0];
-
+    parameter RAM_INIT_FILE = "";
+    reg [31:0] memory1 [1073741823:0];
     initial begin
-    
-
-        memory[0] = 32'd3;
-        memory[1] = 32'd9;
-        memory[2] = 32'd14;
-        memory[3] = 32'd123;
-
-    end
-
-    always_comb begin
-        assign instr_readdata = memory[addr[1:0]];
-        if (test_write) begin
-            assign memory[instr_address] = test_inst;
+        integer i;
+        for (i = 0; i < 1073741823; i++) begin
+            memory1[i] = 0;
         end
+        memory1[0] = 32'hffffffff;
+        memory1[1] = 32'hfffffff0;
+        memory1[2] = 32'hffffff00;
     end
+    assign instr_readdata = memory1[instr_address[29:0]];
 
-    
+    // reg [31:0] memory1 [16777215:0];
+    // reg [31:0] memory2 [16777215:0];
+    // reg [31:0] memory3 [16777215:0];
+    // reg [31:0] memory4 [16777215:0];
+
+    // initial begin
+    //     integer i;
+    //     for (i = 0; i < 65536; i++) begin
+    //         memory1[i] = 0;
+    //         memory2[i] = 0;
+    //     end
+    //     memory1[0] = 32'hffffffff;
+    //     memory1[1] = 32'hfffffff0;
+    //     memory1[2] = 32'hffffff00;
+    //     memory2[0] = 32'hf;
+    //     memory2[1] = 32'hff;
+    //     memory2[2] = 32'hfff;
+    // end
+
+    // always @(*) begin
+    //     if (instr_address[31:30] == 0) begin
+    //         assign instr_readdata = memory1[instr_address[29:0]];
+    //     end
+    //     else if (instr_address[31:30] == 1) begin
+    //         assign instr_readdata = memory2[instr_address[29:0]];
+    //     end
+    //     else if (instr_address[31:30] == 2) begin
+    //         assign instr_readdata = memory3[instr_address[29:0]];
+    //     end
+    //     else begin
+    //         assign instr_readdata = memory4[instr_address[29:0]];
+    //     end        
+    // end
 
 endmodule

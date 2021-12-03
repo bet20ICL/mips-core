@@ -19,46 +19,31 @@ module mips_cpu_harvard(
     output logic[31:0]  data_writedata,
     input logic[31:0]  data_readdata
 );
-
-    logic[31:0] reset_instr = 32'b 0;
-
-    logic[31:0] instr_w_reset;
-    assign instr_w_reset = reset ? reset_instr : instr_readdata;
     //Control Signals
     logic[5:0] instr_opcode;
-    assign instr_opcode = instr_w_reset[31:26];
-    
-    //alu_src = 1 if instruction is i type (current implementation for simplified instruction set only, change later)
-    logic alu_src;
-    assign alu_src = instr_opcode >= 4 ? 1 : 0;
+    assign instr_opcode = instr_readdata[31:26];
 
-    //reg_dst = 1 if instruction is r type (current implementation for simplified instruction set only, change later)
     logic reg_dst;
-    assign reg_dst = instr_opcode == 32 || instr_opcode == 33 ? 1 : 0; 
-
-    //mem_to_reg = 1 if instruction is load (current implementation for simplified instruction set only, change later)
-    logic mem_to_reg;
-    assign mem_to_reg = instr_opcode == 34 ? 1 : 0;
-    
-    //reg_write = 1 if instruction changes register file (i.e. not a j type?) (current implementation for simplified instruction set only, change later)
-    logic reg_write;
-    assign reg_write = instr_opcode != 8 ? 1 : 0;
-
-    //mem_write = 1 to write to data memory, just sw for now
-    logic mem_write;
-    assign mem_write = instr_opcode == 43;
-
-    //mem_read = 1 to read from data memory, just lw for now
-    logic mem_read;
-    assign mem_read = instr_opcode == 34 ? 1 : 0;
-
-    //branch = 1 if jump/branch instruction, just jr for now
     logic branch;
-    assign branch = instr_opcode == 8;
-
-    //function code for r type instructions only
-    logic[5:0] f_code;
-    assign f_code = instr_w_reset[5:0];
+    logic mem_read;
+    logic mem_to_reg;
+    logic[1:0] alu_op;
+    logic mem_write;
+    logic alu_src;
+    logic reg_write;
+    
+    control cpu_control(
+        .instr_opcode(instr_opcode),
+        .reg_dst(reg_dst),
+        .branch(branch),
+        .mem_read(mem_read),
+        .mem_to_reg(mem_to_reg),
+        .alu_op(alu_op),
+        .mem_write(mem_write),
+        .alu_src(alu_src),
+        .reg_write(reg_write)
+    );
+    
     
     //Regfile inputs
     logic[4:0] reg_a_read_index;
@@ -68,9 +53,9 @@ module mips_cpu_harvard(
     logic[31:0] reg_write_data;
     logic reg_write_enable;
 
-    assign reg_a_read_index = instr_w_reset[25:21];
-    assign reg_b_read_index = instr_w_reset[20:16];
-    assign reg_write_index = reg_dst ? instr_w_reset[15:11] : instr_w_reset[20:16];
+    assign reg_a_read_index = instr_readdata[25:21];
+    assign reg_b_read_index = instr_readdata[20:16];
+    assign reg_write_index = reg_dst ? instr_readdata[15:11] : instr_readdata[20:16];
     assign reg_write_data = mem_to_reg ? data_readdata : alu_out;
     assign reg_write_enable = reg_write;
     
@@ -93,7 +78,9 @@ module mips_cpu_harvard(
     );
 
     //ALU inputs
-    logic[2:0] alu_control_out;
+    logic[3:0] alu_control_out;
+    logic[5:0] alu_fcode;
+    assign alu_fcode = instr_readdata[5:0];
     logic[31:0] alu_op1;
     logic[31:0] alu_op2;
     //ALU outputs
@@ -102,15 +89,15 @@ module mips_cpu_harvard(
     
     //Assigning ALU inputs
     alu_control cpu_alu_control(
-        .alu_opcode(instr_opcode),
-        .alu_fcode(f_code),
+        .alu_opcode(alu_op),
+        .alu_fcode(alu_fcode),
         .alu_control_out(alu_control_out)
     );
 
     assign alu_op1 = reg_a_read_data;
 
     logic[31:0] offset;
-    assign offset = {16'h0, instr_w_reset[15:0]};
+    assign offset = {16'h0, instr_readdata[15:0]};
     assign alu_op2 = alu_src ? offset : reg_b_read_data;
 
     //Assigning ALU outputs
@@ -124,9 +111,30 @@ module mips_cpu_harvard(
         .z_flag(alu_z_flag)
     );
 
+    
+    //PC
     logic[31:0] next_instr_addr;
     logic[31:0] curr_addr;
-    assign next_instr_addr = branch ? curr_addr + 4 + offset << 2 : curr_addr + 4;
+    logic[31:0] curr_addr_p4;
+    assign curr_addr_p4 = curr_addr + 4;
+    
+    logic j_type; //j or jal
+    assign j_type = (instr_opcode[31:26] == 2 || instr_opcode[5:0] == 3);
+    logic jr_type; //jr or jrl
+    assign jr_type = (instr_opcode[31:26] == 0 && (alu_fcode == 001001 || alu_fcode == 001000));
+
+    always @(*) begin
+        if (branch && alu_z_flag) begin
+            next_instr_addr = curr_addr_p4 + offset << 2;
+        end
+        else if (j_type) begin 
+            next_instr_addr = {curr_addr_p4[31:28], instr_readdata[25:0], 2'b00};
+        end
+        else if (jr_type) begin
+            next_instr_addr = reg_a_read_data;
+        end
+    end
+
     assign instr_address = curr_addr;
     pc cpu_pc(
         .clk(clk),
