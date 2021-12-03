@@ -134,6 +134,9 @@ module mips_cpu_harvard(
         else if (jr_type) begin
             next_instr_addr = reg_a_read_data;
         end
+        else begin
+            next_instr_addr = curr_addr_p4;
+        end
     end
 
     assign instr_address = curr_addr;

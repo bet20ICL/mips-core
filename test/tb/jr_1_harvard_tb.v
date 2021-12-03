@@ -55,6 +55,12 @@ module JR_tb();
 
         #1;
         $display(instr_address);
+        #1;
+        $display(instr_address);
+        #1;
+        $display(instr_address);
+        #1;
+        $display(instr_address);
         $display(register_v0);
 
         $display("succ");
