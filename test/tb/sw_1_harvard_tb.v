@@ -35,17 +35,33 @@ module sw_tb();
 
     initial begin
         
+        reset=1;
+        clk_enable=1;
+
+        @(posedge clk);
+        #1;
+        reset=0;
+
+        @(posedge clk);
         #1;
         /* $7=14 */
         instr_readdata = 32'b10001100000001110000000000000000;
         data_readdata = 32'd14;
-        #2;
+        
+        @(posedge clk);
+        #1;
         /* $2=10 */
         instr_readdata = 32'b10001100000000100000000000000000;
         data_readdata = 32'd10;
-        #2;
+        
+        @(posedge clk);
+        #1;
         /* mem[$2+100]=$7 */
-        instr_readdata = 32'b10101100010001110000000001101000;
+        instr_readdata = 32'b10101100010001110000000001100100;
+
+        @(posedge clk);
+        #1;
+        $display(register_v0);
 
         assert(data_write) else $fatal(1,"write signal not active, when it should be");
         assert(!data_read) else $fatal(1, "read signal active when it should'nt be");
