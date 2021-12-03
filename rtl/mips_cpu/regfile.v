@@ -12,7 +12,8 @@ module regfile(
     input logic[31:0] write_data,
     /* data read from registers*/
     output logic[31:0] read_data1,
-    output logic[31:0] read_data2
+    output logic[31:0] read_data2,
+    output logic[31:0] register_v0
 );
 
     reg[31:0] registers[31:0];
@@ -96,6 +97,6 @@ module regfile(
 
     assign read_data1 = registers[read_reg1];
     assign read_data2 = registers[read_reg2];
-
+    assign register_v0 = registers[2];
 
 endmodule

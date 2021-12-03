@@ -4,7 +4,7 @@ module pc (
     input logic reset,
     output logic[31:0] curr_addr
 );
-    
+
     always @(posedge clk) begin
         if(reset) begin
             curr_addr <= 32'hBFC00000;

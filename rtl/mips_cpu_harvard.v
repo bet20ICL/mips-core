@@ -74,7 +74,8 @@ module mips_cpu_harvard(
         .write_reg(reg_write_index),
         .write_data(reg_write_data),
         .read_data1(reg_a_read_data),
-        .read_data2(reg_b_read_data)
+        .read_data2(reg_b_read_data),
+        .register_v0(register_v0)
     );
 
     //ALU inputs
@@ -133,6 +134,9 @@ module mips_cpu_harvard(
         end
         else if (jr_type) begin
             next_instr_addr = reg_a_read_data;
+        end
+        else begin
+            next_instr_addr = curr_addr_p4;
         end
     end
 
