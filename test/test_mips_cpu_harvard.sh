@@ -16,5 +16,5 @@ else
 fi
 
 for i in ${INSTRUCTION} ; do
-    test/run_one_instr.sh ${FILES} "${i,,}"
+    test/run_one_instr.sh ${FILES} ${i}
 done
