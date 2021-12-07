@@ -1,4 +1,4 @@
-module addiu_tb();
+module JR_tb();
 
     logic     clk;
     logic     reset;
@@ -10,7 +10,7 @@ module addiu_tb();
 
     /* Combinatorial read access to instructions */
     logic[31:0]  instr_address;
-    logic[31:0]  instr_readdata;
+    logic[31:0]   instr_readdata;
 
     /* Combinatorial read and single-cycle write access to instructions */
     logic[31:0]  data_address, data_address_wanted;
@@ -30,7 +30,7 @@ module addiu_tb();
         repeat (1000) begin
             clk = ~clk;
             #4;
-        end
+        end;
     end
 
     initial begin
@@ -51,22 +51,28 @@ module addiu_tb();
         @(posedge clk);
         #2;
 
-        //addiu r2, r3, 2
+        //lw r2, offset r3
         //v0 -> 9 
-        opcode = 6'd9;
-        rs = 6'd3;
-        rt = 6'd2;
-        imm = 16'd2;
+        opcode = 6'b100011;
+        rs = 6'd0;
+        rt = 6'd12;
+        imm = 0;
         imm_instr = {opcode, rs, rt, imm};
-        instr_readdata = imm_instr;     
+
+        instr_readdata = imm_instr;
+        data_readdata = 32'hB000FFFF;
+        #2;
 
         @(posedge clk);
         #2;
-        assert(!data_write) else $fatal(1, "data_write should not be active but is");
-        assert(!data_read) else $fatal(1, "data_read isn't active but should be");
-        assert(register_v0 == 2) else $fatal(1, "expected v0=2, got output=%d", register_v0);
-    end
+        instr_readdata = 32'b00000001100000000000000000001000;
+        @(posedge clk)
+        #2;
+        assert(instr_address==32'hB000FFFF) else $fatal(1, "instruction address is wrong");
 
+        $display("succ");
+        $finish(0);
+    end
 
     mips_cpu_harvard dut(
         .clk(clk),

@@ -16,14 +16,15 @@ module control(
     logic beq;
 
     assign r_format = (instr_opcode == 0);
+    assign i_format = (instr_opcode == 9); //just addiu for now
     assign lw = (instr_opcode == 6'b100011);
     assign sw = (instr_opcode == 6'b101011);
     assign beq = (instr_opcode == 6'b000100);
 
     assign reg_dst = (r_format);
-    assign alu_src = (lw || sw);  
+    assign alu_src = (lw || sw || i_format);  
     assign mem_to_reg = (lw);
-    assign reg_write = (r_format || lw);
+    assign reg_write = (r_format || lw || i_format);
     assign mem_read = (lw);
     assign mem_write = (sw);
     assign branch = (beq);

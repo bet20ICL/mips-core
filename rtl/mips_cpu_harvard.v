@@ -129,8 +129,6 @@ module mips_cpu_harvard(
     logic jr_type; //jr or jrl
     assign jr_type = ((instr_opcode==0)&&(instr_readdata[5:0]));
 
-
-
     always @(*) begin
         if (branch && alu_z_flag) begin
             next_instr_addr = curr_addr_p4 + offset << 2;

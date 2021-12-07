@@ -1,23 +1,128 @@
 module alu(
-    input logic[3:0] control,
-    input logic[31:0] op1,
-    input logic[31:0] op2,
-    output logic[31:0] result,
-    output logic z_flag
+    input logic[31:0] op1, // data from rs,
+    input logic[31:0] op2, // data from rt,
+    input logic[31:0] instructionword,
+    output logic[31:0] result,hi,lo,
+    output logic b_flag
+    // // zero, carry, overflow, yesbranch
 );
+    logic [5:0] opcode;
+    assign opcode = instructionword[31:26];
 
-    assign z_flag = (result == 0);
+    logic [5:0] funct;
+    assign funct = instructionword[5:0];
+    logic [15:0] immediatedata;
+    assign immediatedata = instructionword[15:0];
+    logic [5:0] shamt;
+    assign shamt = instructionword[10:6];
     
-    always @(control, op1, op2) begin
-        case (control)
-            0: result <= op1 & op2;
-            1: result <= op1 | op2;
-            2: result <= op1 + op2;
-            6: result <= op1 - op2;
-            7: result <= op1 < op2 ? 1:0;
-            12: result <= ~(op1 | op2);
-            default: result <= 0;
-        endcase
-    end
+    logic signed [31:0] signed_result;
+    logic unsigned [31:0] unsigned_result;
 
+    logic signed [31:0]  sign_op1;
+    assign sign_op1 = $signed(op1);
+
+    logic signed [31:0] sign_op2;
+    assign sign_op2 = $signed(op2);
+
+    logic unsigned [31:0] unsign_op1;
+    assign unsign_op1  = $unsigned(op1);
+
+    logic unsigned [31:0] unsign_op2;
+    assign unsign_op2 = $unsigned(op2);
+
+    logic[63:0] multresult;
+
+    logic r_format, i_format, j_format;
+    
+
+    always @(opcode,funct, op1,op2) begin
+        unsigned_result = 0;
+        signed_result = 0;
+        case(opcode)
+            0:  begin
+                    r_format = 1; 
+                    case(funct)
+                        0: unsigned_result = unsign_op2 << shamt;
+                        2: unsigned_result = unsign_op2 >> shamt;
+                        3: unsigned_result = unsign_op2 >>> shamt;
+                        4: unsigned_result = unsign_op2 << unsign_op1;
+                        6: unsigned_result = unsign_op2 >> unsign_op1;
+                        7: unsigned_result = unsign_op2 >>> unsign_op1;
+                        24: begin
+                                multresult = sign_op1 * sign_op2; // multiplication
+                                hi = multresult[63:32];
+                                lo = multresult[31:0];
+                            end 
+                        25: begin
+                                multresult = unsign_op1 * unsign_op2;  // mult unsinged
+                                hi = multresult[63:32];
+                                lo = multresult[31:0];
+                            end 
+                        26: begin // divide
+                                //signed_result = sign_op1 / sign_op2;
+                                hi = sign_op1%sign_op2;
+                                lo = sign_op1/sign_op2;
+                            end  
+                        27: begin // divide unsigned
+                                //unsigned_result = unsign_op1 / unsign_op2; 
+                                hi = unsign_op1%unsign_op2;
+                                lo = unsign_op1/unsign_op2;
+                            end 
+                        16: unsigned_result = hi;//MFHI
+                        17: hi = op1; //MTHI
+                        18: unsigned_result = lo;//MFLO
+                        19: lo = op1;//MTLO
+                        32: signed_result = sign_op1 + sign_op2;
+                        33: unsigned_result = unsign_op1 + unsign_op2; // addu
+                        34: signed_result = sign_op1 - sign_op2; 
+                        35: unsigned_result = unsign_op1 - unsign_op2;//subu
+                        36: unsigned_result = unsign_op1 & unsign_op2;
+                        37: unsigned_result = unsign_op1 | unsign_op2;
+                        38: unsigned_result = unsign_op1 ^ unsign_op2; // xor
+                        39: unsigned_result = ~(unsign_op1 | unsign_op2); //nor
+                        42: signed_result = sign_op1 < sign_op2 ? 1:0; //set lt
+                        43: unsigned_result = unsign_op1 < unsign_op2 ? 1:0;  //set ltu
+                    endcase
+                end
+            1:  if(op1<0) begin//bltz
+                    b_flag = 1;
+                end
+                else begin
+                    b_flag = 0;
+                end
+            4:  if(op1==op2) begin//beq
+                    b_flag = 1;
+                end
+                else begin
+                    b_flag = 0;
+                end
+            5:  if(op1 != op2) begin//bne
+                    b_flag = 1;
+                end
+                else begin
+                    b_flag = 0;
+                end
+            6:  if(op1<=0) begin// blez branch less than or equal to 0-
+                    b_flag = 1;
+                end
+                else begin
+                    b_flag = 0;
+                end
+            7:  if(op1>0) begin// bgtz
+                    b_flag = 1;
+                end
+                else begin
+                    b_flag = 0;
+                end
+            8: signed_result = sign_op1 + immediatedata ;//addi;
+            9: unsigned_result = unsign_op1 + immediatedata;//addiu
+        endcase
+        if(unsigned_result != 0) begin
+            result = unsigned_result;
+        end
+        else if(signed_result != 0) begin
+            result = signed_result;
+        end
+    end
 endmodule
