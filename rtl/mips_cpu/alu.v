@@ -1,13 +1,13 @@
 module alu(
-    input logic[3:0] control,
-    input logic[31:0] op1 // data from rs,
-    input logic[31:0] op2 // data from rt,
-    input logic[5:0] shamt;
-    input logic[31:0] instructionword;
+    input logic[31:0] op1, // data from rs,
+    input logic[31:0] op2, // data from rt,
+    input logic[31:0] instructionword,
     output logic[31:0] result,hi,lo,
-    output logic z_flag, c_flag, o_flag,b_flag // zero, carry, overflow, yesbranch
+    output logic b_flag
+    // // zero, carry, overflow, yesbranch
 );
     logic [15:0] immediatedata = instructionword[15:0];
+    logic [5:0] shamt = instructionword[10:6];
     logic signed [31:0] signed_result = 0;
     logic[31:0] signed sign_op1 = $signed(op1);
     logic[31:0] signed sign_op2 = $signed(op2);
