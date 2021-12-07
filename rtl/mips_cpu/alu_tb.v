@@ -24,12 +24,13 @@ module alu_tb();
 
 
         word = 0;
-        funct = 6'b100001;
-        rs = 32'd5;
-        rt = 32'd10;
+        funct = 6'b011000;
+        rs = -32'd500000000;
+        rt = 32'd1000;
         #1;
         $display("unsigned result = %d", result);
         $display("signed result = %d", $signed(result));
+        $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
 
     end
 
