@@ -103,7 +103,7 @@ module mips_cpu_harvard(
     assign alu_op1 = reg_a_read_data;
 
     logic[31:0] offset;
-    assign offset = {16'h0, instr_readdata[15:0]};
+    assign offset = {instr_readdata[15] ? 16'hFFFF : 16'h0, instr_readdata[15:0]};
     assign alu_op2 = alu_src ? offset : reg_b_read_data;
 
     //Assigning ALU outputs
