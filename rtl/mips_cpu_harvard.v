@@ -45,7 +45,23 @@ module mips_cpu_harvard(
         .reg_write(reg_write)
     );
 
-    assign data_write = mem_write;
+    logic link; // jump or branch with link
+    assign = (instr_opcode == 1 && (instr_readdata[20] == 1 || instr_opcode == 3)) || (instr_opcode == 0 && instr_readdata[5:0] == 6b'001001);
+    logic j_type; // j or jal
+    assign j_type = (instr_opcode == 2 || instr_opcode[5:0] == 3);
+    logic jr_type; // jr or jrl
+    assign jr_type = ((instr_opcode==0)&&(instr_readdata[5:0]));
+
+    // multiplication control
+    logic muldiv;   //high if hi/lo need to be changed
+    assign muldiv = (instr_opcode == 17) || (instr_opcode == 19) || (instr_opcode == 24) || (instr_opcode == 25) || (instr_opcode == 26) || (instr_opcode == 27);
+    logic mfhi;
+    assign mfhi = instr_opcode == 16;
+    assign mflo;
+    assign mflo = instr_opcode == 18;
+
+    // Data RAM read/write enable control
+    assign data_write = active ? mem_write : 0;
     assign data_read = mem_read;
     
     //Regfile inputs
@@ -59,8 +75,9 @@ module mips_cpu_harvard(
     assign reg_a_read_index = instr_readdata[25:21];
     assign reg_b_read_index = instr_readdata[20:16];
     assign reg_write_index = reg_dst ? instr_readdata[15:11] : instr_readdata[20:16];
-    assign reg_write_data = mem_to_reg ? data_readdata : alu_out;
-    assign reg_write_enable = reg_write;
+    assign reg_write_enable = active ? reg_write : 0;
+
+    assign reg_write_data = link ? curr_addr_p4 + 4 : (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? data_readdata : result_lo)));
     
     //Regfile outputs
     logic[31:0] reg_a_read_data;
@@ -116,18 +133,39 @@ module mips_cpu_harvard(
         .result(alu_out),
         .z_flag(alu_z_flag)
     );
+
+    logic[31:0] result_lo;
+    logic[31:0] result_hi;
+
+    // HI/LO Register inputs
+    logic hl_reg_enable;
+    assign hl_reg_enable = clk_enable && muldiv;
+
+    // HI/LO Register outputs
+    logic[31:0] lo_out;
+    logic[31:0] hi_out;
+
+    hl_reg lo(
+        .clk(clk),
+        .reset(reset),
+        .enable(hl_reg_enable),
+        .data_in(result_lo),
+        .data_out(lo_out),
+    );
+
+    hl_reg lo(
+        .clk(clk),
+        .reset(reset),
+        .enable(hl_reg_enable),
+        .data_in(result_lo),
+        .data_out(hi_out),
+    );
     
     //PC
     logic[31:0] next_instr_addr;
     logic[31:0] curr_addr;
     logic[31:0] curr_addr_p4;
     assign curr_addr_p4 = curr_addr + 4;
-    
-    logic j_type; //j or jal
-
-    assign j_type = (instr_opcode == 2 || instr_opcode[5:0] == 3);
-    logic jr_type; //jr or jrl
-    assign jr_type = ((instr_opcode==0)&&(instr_readdata[5:0]));
 
     always @(*) begin
         if (branch && alu_z_flag) begin
@@ -145,11 +183,17 @@ module mips_cpu_harvard(
     end
 
     assign instr_address = curr_addr;
+
+    logic cpu_active;
+    assign cpu_active = !(instr_address == 32h'0);
+    assign active = cpu_active;
+
     pc cpu_pc(
         .clk(clk),
         .reset(reset),
         .next_addr(next_instr_addr),
-        .curr_addr(curr_addr)
+        .curr_addr(curr_addr),
+        .active(cpu_active)
     );
 
 endmodule
