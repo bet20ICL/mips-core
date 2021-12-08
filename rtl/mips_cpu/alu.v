@@ -11,8 +11,9 @@ module alu(
 
     logic [5:0] funct;
     assign funct = instructionword[5:0];
-    logic [15:0] immediatedata;
-    assign immediatedata = instructionword[15:0];
+    logic [15:0] simmediatedata, uimmediatedata;
+    assign simmediatedata = instructionword[15:0] <<< 16;
+    assign uimmediatedata = instructionword[15:0] << 16;
     logic [5:0] shamt;
     assign shamt = instructionword[10:6];
     
@@ -50,12 +51,12 @@ module alu(
                         6: unsigned_result = unsign_op2 >> unsign_op1;
                         7: unsigned_result = unsign_op2 >>> unsign_op1;
                         24: begin
-                                multresult = sign_op1 * sign_op2; // multiplication
+                                multresult = sign_op1 * sign_op2; // multiplication WORKS
                                 hi = multresult[63:32];
                                 lo = multresult[31:0];
                             end 
                         25: begin
-                                multresult = unsign_op1 * unsign_op2;  // mult unsinged
+                                multresult = unsign_op1 * unsign_op2;  // mult unsinged WORKS
                                 hi = multresult[63:32];
                                 lo = multresult[31:0];
                             end 
@@ -73,12 +74,12 @@ module alu(
                         17: hi = op1; //MTHI
                         18: unsigned_result = lo;//MFLO
                         19: lo = op1;//MTLO
-                        32: signed_result = sign_op1 + sign_op2;
+                        32: signed_result = sign_op1 + sign_op2;//sub
                         33: unsigned_result = unsign_op1 + unsign_op2; // addu
-                        34: signed_result = sign_op1 - sign_op2; 
+                        34: signed_result = sign_op1 - sign_op2; //sub
                         35: unsigned_result = unsign_op1 - unsign_op2;//subu
-                        36: unsigned_result = unsign_op1 & unsign_op2;
-                        37: unsigned_result = unsign_op1 | unsign_op2;
+                        36: unsigned_result = unsign_op1 & unsign_op2;//and
+                        37: unsigned_result = unsign_op1 | unsign_op2;//or
                         38: unsigned_result = unsign_op1 ^ unsign_op2; // xor
                         39: unsigned_result = ~(unsign_op1 | unsign_op2); //nor
                         42: signed_result = sign_op1 < sign_op2 ? 1:0; //set lt
@@ -115,8 +116,22 @@ module alu(
                 else begin
                     b_flag = 0;
                 end
-            8: signed_result = sign_op1 + immediatedata ;//addi;
-            9: unsigned_result = unsign_op1 + immediatedata;//addiu
+            8: signed_result = sign_op1 + simmediatedata ;//addi;
+            9: unsigned_result = unsign_op1 + simmediatedata;//addiu
+            10: signed_result = (sign_op1<simmediatedata) ? 1:0;//slti
+            11: unsigned_result = (unsign_op1<simmediatedata) ? 1:0; //sltiu
+            12: unsigned_result = unsign_op1 & uimmediatedata;//andi
+            13: unsigned_result = unsign_op1 | uimmediatedata;//ori
+            14: unsigned_result = unsign_op1 ^ uimmediatedata; //XORI
+            15: unsigned_result = uimmediatedata<<16;//lui
+            32: unsigned_result = unsign_op1 + simmediatedata;//lb
+            33: unsigned_result = unsign_op1 + simmediatedata;//lh
+            34: unsigned_result = unsign_op1 + simmediatedata;//lw
+            36: unsigned_result = unsign_op1 + simmediatedata;//lbu
+            37: unsigned_result = unsign_op1 + simmediatedata;//lhu
+            40: unsigned_result = unsign_op1 + simmediatedata;//sb
+            41: unsigned_result = unsign_op1 + simmediatedata;//sh
+            43: unsigned_result = unsign_op1 + simmediatedata;//sw
         endcase
         if(unsigned_result != 0) begin
             result = unsigned_result;
