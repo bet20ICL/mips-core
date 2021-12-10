@@ -18,13 +18,12 @@ module alu_tb();
     logic [31:0] hi, lo;
     logic bflag;
 
-    assign instword = {word,funct};
-
     initial begin
 
 
         word = 0;
         funct = 6'b011000;
+        instword = {word,funct};
         rs = -32'd500000000;
         rt = 32'd1000;
         #1;
@@ -35,14 +34,9 @@ module alu_tb();
 
         word = 0;
         funct = 6'b100000;
+        instword = {word,funct};
         rs = -32'd500000000;
         rt = 32'd1000;
-        #1;
-        $display("-------------------------------------");
-        $display("unsigned of result = %d", result);
-        $display("signed of result = %d", $signed(result));
-        $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
-
         
         #1;
         $display("-------------------------------------");
@@ -50,9 +44,24 @@ module alu_tb();
         $display("signed of result = %d", $signed(result));
         $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
 
+        
+        
+
+        word = 0;
+        funct = 6'b100100;
+        instword = {word,funct};
+        rs = 32'h33333333;
+        // 0001
+        // 0010
+        rt = 32'h22222222;
+        #1;
+        $display("unsigned of result = %h", result);
+        $display("signed of result = %h", $signed(result));
+        $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
+
     end
 
-    alu dut(
+    /*alu dut(
         .op1(rs),
         .op2(rt),
         .instructionword(instword),
@@ -61,5 +70,5 @@ module alu_tb();
         .lo(lo),
         .b_flag(bflag)
     );
-
+    */
 endmodule
