@@ -17,7 +17,7 @@ module alu(
     assign shamt = instructionword[10:6];
     
 
-    logic [31:0] result;
+    logic [31:0] unsigned_result;
 
     logic signed [31:0]  sign_op1;
     assign sign_op1 = $signed(op1);
