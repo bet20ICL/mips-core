@@ -39,6 +39,7 @@ module alu(
     
 
     always @(instructionword) begin
+        b_flag = 0;
         case(opcode)
             0:  begin
                     case(funct)
