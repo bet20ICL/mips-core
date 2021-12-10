@@ -20,11 +20,17 @@ module control(
     assign lw = (instr_opcode == 6'b100011);
     assign sw = (instr_opcode == 6'b101011);
     assign beq = (instr_opcode == 6'b000100);
+    
+    logic link; // jump or branch with link
+    assign = (instr_opcode == 1 && (instr_readdata[20] == 1 || instr_opcode == 3)) || (instr_opcode == 0 && instr_readdata[5:0] == 6b'001001);
+
+    logic movefrom; // mfhi or mflo
+    assign = instr_opcode == 1 || instr_opcode == 3);
 
     assign reg_dst = (r_format);
     assign alu_src = (lw || sw || i_format);  
     assign mem_to_reg = (lw);
-    assign reg_write = (r_format || lw || i_format);
+    assign reg_write = (r_format || lw || link || i_format);
     assign mem_read = (lw);
     assign mem_write = (sw);
     assign branch = (beq);

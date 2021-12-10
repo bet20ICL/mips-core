@@ -74,7 +74,7 @@ module mips_cpu_harvard(
 
     assign reg_a_read_index = instr_readdata[25:21];
     assign reg_b_read_index = instr_readdata[20:16];
-    assign reg_write_index = reg_dst ? instr_readdata[15:11] : instr_readdata[20:16];
+    assign reg_write_index =  link ? 5'd31 : (reg_dst ? instr_readdata[15:11] : instr_readdata[20:16]);
     assign reg_write_enable = active ? reg_write : 0;
 
     assign reg_write_data = link ? curr_addr_p4 + 4 : (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? data_readdata : result_lo)));

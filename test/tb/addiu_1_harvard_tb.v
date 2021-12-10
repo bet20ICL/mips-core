@@ -40,7 +40,9 @@ module addiu_tb();
         logic [4:0] rs;
         logic [15:0] imm;
         logic [31:0] imm_instr;
-        
+
+        //r type
+        logic [4:0] rd;        
         reset = 1;
         clk_enable = 1;
 
@@ -50,6 +52,41 @@ module addiu_tb();
 
         @(posedge clk);
         #2;
+
+        //addiu r2, r3, 2
+        //v0 -> 2
+        opcode = 6'd9;
+        rs = 6'd3;
+        rt = 6'd2;
+        imm = 16'd2;
+        imm_instr = {opcode, rs, rt, imm};
+        instr_readdata = imm_instr;     
+        
+        @(posedge clk);
+        #2;
+        assert(!data_write) else $fatal(1, "data_write should not be active but is");
+        assert(!data_read) else $fatal(1, "data_read isn't active but should be");
+        assert(register_v0 == 2) else $fatal(1, "expected v0=2, got output=%d", register_v0);
+
+        //lw r2, offset r3
+        //v0 -> 9 
+        opcode = 6'b100011;
+        rs = 6'd3;
+        rt = 6'd2;
+        imm = 0;
+        imm_instr = {opcode, rs, rt, imm};
+
+        instr_readdata = imm_instr;
+        data_readdata = 32'd9;
+        #2;
+
+        @(posedge clk);
+        #2;
+        assert(!data_write) else $fatal(1, "data_write should not be active but is");
+        assert(data_read) else $fatal(1, "data_read isn't active but should be");
+        assert(data_address == 0) else $fatal(1, "address from memory being loaded, incorrect");
+        assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
+
 
         //addiu r2, r3, 2
         //v0 -> 9 

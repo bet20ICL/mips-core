@@ -22,11 +22,11 @@ reg_dst     x
 mem_read    x
 mem_to_reg  x
 mem_write   x
-reg_write    
+reg_write   - 
 muldiv      x
-mfhi        x
-mflo        x
-j_imm
+mfhi        -
+mflo        -
+j_imm       
 j_reg
 j_type
 
@@ -37,7 +37,20 @@ reset,
 active,
 curr_addr
 
-HI/LO Registers
-Inputs
-Outputs
+HI/LO Registers:
+Inputs      x
+Outputs     x
+
+Register File:
+r_clk       x
+reset       x
+r_clk_enable    x
+write_control   x
+read_reg1   x
+read_reg2   x
+write_reg   x
+write_data  x
+read_data1  x
+read_data2  x
+register_v0 x
 
