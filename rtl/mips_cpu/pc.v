@@ -2,7 +2,7 @@ module pc (
     input logic clk,
     input logic[31:0] next_addr,
     input logic reset,
-    input logic active,
+    input logic enable,
     output logic[31:0] curr_addr
 );
 
@@ -11,7 +11,7 @@ module pc (
             curr_addr <= 32'hBFC00000;
         end
         else begin
-            if (active) begin
+            if (enable) begin
                 curr_addr <= next_addr;
             end
         end

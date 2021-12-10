@@ -24,40 +24,57 @@ module mips_cpu_harvard(
     logic[5:0] instr_opcode;
     assign instr_opcode = instr_readdata[31:26];
 
-    logic reg_dst;
-    logic branch;
-    logic mem_read;
-    logic mem_to_reg;
-    logic[1:0] alu_op;
-    logic mem_write;
-    logic alu_src;
-    logic reg_write;
-    
-    control cpu_control(
-        .instr_opcode(instr_opcode),
-        .reg_dst(reg_dst),
-        .branch(branch),
-        .mem_read(mem_read),
-        .mem_to_reg(mem_to_reg),
-        .alu_op(alu_op),
-        .mem_write(mem_write),
-        .alu_src(alu_src),
-        .reg_write(reg_write)
-    );
+    logic r_format;
+    logic lw;
+    logic sw;
 
-    logic link; // jump or branch with link
-    assign = (instr_opcode == 1 && (instr_readdata[20] == 1 || instr_opcode == 3)) || (instr_opcode == 0 && instr_readdata[5:0] == 6b'001001);
-    logic j_type; // j or jal
-    assign j_type = (instr_opcode == 2 || instr_opcode[5:0] == 3);
-    logic jr_type; // jr or jrl
-    assign jr_type = ((instr_opcode==0)&&(instr_readdata[5:0]));
+    assign r_format = (instr_opcode == 0);
+    assign lw = (instr_opcode == 6'b100011);
+    assign sw = (instr_opcode == 6'b101011);
+    
+    logic movefrom; // mfhi or mflo
+    assign movefrom = (instr_opcode == 1 || instr_opcode == 3);
+
+    logic reg_dst;
+    assign reg_dst = (r_format);
+
+    logic mem_read;
+    assign mem_read = (lw);
+
+    logic mem_to_reg;
+    assign mem_to_reg = (lw);
+
+    logic alu_instr;
+    assign alu_instr = instr_opcode[5:4] == 0;
+    logic l_type;
+    assign l_type = instr_opcode[5:3] == 3'b100;
+    
+    logic reg_write;
+    assign reg_write = (alu_instr || l_type || link_reg || link_const);
+
+    logic mem_write;
+    assign mem_write = (sw);
+
+    logic link_const; // jump or branch with link to r31
+    assign link_const = (instr_opcode == 3) || (instr_opcode == 1 && instr_readdata[20] == 1);
+
+    logic link_reg; //jalr
+    assign link_reg = (instr_opcode == 0 && instr_readdata[5:0] == 6'b001001);
+
+    logic j_imm; // j or jal
+    assign j_imm = (instr_opcode == 2 || instr_opcode == 3);
+
+    logic j_reg; // jr or jalr
+    assign j_reg = (instr_opcode==0) && (instr_readdata[5:0] == 6'b001001 || instr_readdata[5:0] == 6'b001000);
 
     // multiplication control
     logic muldiv;   //high if hi/lo need to be changed
     assign muldiv = (instr_opcode == 17) || (instr_opcode == 19) || (instr_opcode == 24) || (instr_opcode == 25) || (instr_opcode == 26) || (instr_opcode == 27);
+
     logic mfhi;
     assign mfhi = instr_opcode == 16;
-    assign mflo;
+
+    logic mflo;
     assign mflo = instr_opcode == 18;
 
     // Data RAM read/write enable control
@@ -74,14 +91,20 @@ module mips_cpu_harvard(
 
     assign reg_a_read_index = instr_readdata[25:21];
     assign reg_b_read_index = instr_readdata[20:16];
-    assign reg_write_index =  link ? 5'd31 : (reg_dst ? instr_readdata[15:11] : instr_readdata[20:16]);
-    assign reg_write_enable = active ? reg_write : 0;
+    assign reg_write_index =  link_const ? 5'd31 : (reg_dst ? instr_readdata[15:11] : instr_readdata[20:16]);
+    assign reg_write_enable = active && reg_write;
 
-    assign reg_write_data = link ? curr_addr_p4 + 4 : (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? data_readdata : result_lo)));
+    assign reg_write_data = (link_const || link_reg) ? curr_addr_p4 + 4 : (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? data_readdata : result)));
     
     //Regfile outputs
     logic[31:0] reg_a_read_data;
     logic[31:0] reg_b_read_data;
+
+    always @(posedge clk) begin
+        $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
+        $display("reg_write_data=%d, result=%d", reg_write_data, result);
+        $display("pc=%h", curr_addr);
+    end
 
     regfile register(
         .r_clk(clk),
@@ -101,45 +124,36 @@ module mips_cpu_harvard(
     assign data_writedata = reg_b_read_data;
 
     //ALU inputs
-    logic[3:0] alu_control_out;
-    logic[5:0] alu_fcode;
-    assign alu_fcode = instr_readdata[5:0];
     logic[31:0] alu_op1;
     logic[31:0] alu_op2;
     //ALU outputs
-    logic[31:0] alu_out;
-    logic alu_z_flag;
-    
-    //Assigning ALU inputs
-    alu_control cpu_alu_control(
-        .alu_opcode(alu_op),
-        .alu_fcode(alu_fcode),
-        .alu_control_out(alu_control_out)
-    );
-
-    assign alu_op1 = reg_a_read_data;
-
-    logic[31:0] offset;
-    assign offset = {instr_readdata[15] ? 16'hFFFF : 16'h0, instr_readdata[15:0]};
-    assign alu_op2 = alu_src ? offset : reg_b_read_data;
-
-    //Assigning ALU outputs
-    assign data_address = alu_out; 
-
-    alu cpu_alu(
-        .control(alu_control_out),
-        .op1(alu_op1),
-        .op2(alu_op2),
-        .result(alu_out),
-        .z_flag(alu_z_flag)
-    );
-
+    logic[31:0] result;
     logic[31:0] result_lo;
     logic[31:0] result_hi;
+    logic[31:0] memaddroffset;
+    logic b_flag;
+    
+    //Assigning ALU inputs
+    assign alu_op1 = reg_a_read_data;
+    assign alu_op2 = reg_b_read_data;
+
+    //Assigning ALU outputs
+    assign data_address = memaddroffset; 
+
+    alu cpu_alu(
+        .op1(alu_op1),
+        .op2(alu_op2),
+        .instructionword(instr_readdata),
+        .result(result),
+        .lo(result_lo),
+        .hi(result_hi),
+        .memaddroffset(memaddroffset),
+        .b_flag(b_flag)
+    );
 
     // HI/LO Register inputs
     logic hl_reg_enable;
-    assign hl_reg_enable = clk_enable && muldiv;
+    assign hl_reg_enable = (clk_enable && muldiv && cpu_active);
 
     // HI/LO Register outputs
     logic[31:0] lo_out;
@@ -150,15 +164,15 @@ module mips_cpu_harvard(
         .reset(reset),
         .enable(hl_reg_enable),
         .data_in(result_lo),
-        .data_out(lo_out),
+        .data_out(lo_out)
     );
 
-    hl_reg lo(
+    hl_reg hi(
         .clk(clk),
         .reset(reset),
         .enable(hl_reg_enable),
-        .data_in(result_lo),
-        .data_out(hi_out),
+        .data_in(result_hi),
+        .data_out(hi_out)
     );
     
     //PC
@@ -166,15 +180,17 @@ module mips_cpu_harvard(
     logic[31:0] curr_addr;
     logic[31:0] curr_addr_p4;
     assign curr_addr_p4 = curr_addr + 4;
+    logic[31:0] offset;
+    assign offset = {instr_readdata[15] ? 16'hFFFF : 16'h0, instr_readdata[15:0]};
 
     always @(*) begin
-        if (branch && alu_z_flag) begin
+        if (b_flag) begin
             next_instr_addr = curr_addr_p4 + offset << 2;
         end
-        else if (j_type) begin 
+        else if (j_imm) begin 
             next_instr_addr = {curr_addr_p4[31:28], instr_readdata[25:0], 2'b00};
         end
-        else if (jr_type) begin
+        else if (j_reg) begin
             next_instr_addr = reg_a_read_data;
         end
         else begin
@@ -185,15 +201,25 @@ module mips_cpu_harvard(
     assign instr_address = curr_addr;
 
     logic cpu_active;
-    assign cpu_active = !(instr_address == 32h'0);
+    always @(posedge clk) begin
+       if (reset) begin
+           cpu_active = 1;
+       end
+       else begin
+           cpu_active = (curr_addr != 32'h0);
+       end
+    end
     assign active = cpu_active;
+
+    logic pc_enable;
+    assign pc_enable = clk_enable && cpu_active;
 
     pc cpu_pc(
         .clk(clk),
         .reset(reset),
         .next_addr(next_instr_addr),
         .curr_addr(curr_addr),
-        .active(cpu_active)
+        .enable(pc_enable)
     );
 
 endmodule
