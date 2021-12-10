@@ -3,7 +3,7 @@ module alu(
     input logic[31:0] op2, // data from rt,
     input logic[31:0] instructionword,
     output logic[31:0] result,hi,lo,memaddroffset,
-    output logic b_flag,link,alu_write_reg
+    output logic b_flag,link,write_reg
     // // zero, carry, overflow, yesbranch
 ); 
     logic [5:0] opcode;
@@ -158,6 +158,15 @@ module alu(
             40: memaddroffset = unsign_op1 + simmediatedata;//sb
             41: memaddroffset = unsign_op1 + simmediatedata;//sh
             43: memaddroffset = unsign_op1 + simmediatedata;//sw
+        endcase
+        case(opcode)
+            0: case(funct)
+                0,2,3,4,6,7,9,16,18,32,33,34,35,36,37,38,39,42,43 : writereg = 1;
+            endcase
+            1: case(addr_rt)
+                16,17 : writereg = 1;
+            endcase
+            3,8,9,10,11,12,13,14,15,32,33,34,36,37 : write_reg = 1;
         endcase
         result = unsigned_result;
     end
