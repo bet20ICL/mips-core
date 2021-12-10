@@ -80,9 +80,9 @@ module and_tb();
 
         i = 2;
         repeat (15) begin
-            //and r2, r(i-1), r(i)
+            //sub r2, r(i-1), r(i)
             opcode = 6'b0;
-            funct = 6'b100100;
+            funct = 6'b100011;
             shamt = 6'b0;
             rs = i - 1;
             rt = i;
@@ -110,10 +110,10 @@ module and_tb();
 
             @(posedge clk);
             #2;
-            expected = (32'h11111111 * (i - 2)) & (32'h11111111 * (i - 1)); 
+            expected = (32'h11111111 * (i - 2)) - (32'h11111111 * (i - 1)); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
             i = i + 1;
-        end        
+        end     
     end
 
     mips_cpu_harvard dut(

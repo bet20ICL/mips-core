@@ -23,6 +23,8 @@ module mips_cpu_harvard(
     //Control Signals
     logic[5:0] instr_opcode;
     assign instr_opcode = instr_readdata[31:26];
+    logic[5:0] funct_code;
+    assign funct_code = instr_readdata[5:0];
 
     logic r_format;
     logic lw;
@@ -44,13 +46,22 @@ module mips_cpu_harvard(
     logic mem_to_reg;
     assign mem_to_reg = (lw);
 
-    logic alu_instr;
-    assign alu_instr = instr_opcode[5:4] == 0;
+    logic alui_instr;
+    assign alui_instr = instr_opcode[5:3] == 3'b001;
     logic l_type;
     assign l_type = instr_opcode[5:3] == 3'b100;
     
     logic reg_write;
-    assign reg_write = (alu_instr || l_type || link_reg || link_const);
+    assign reg_write = ((r_format && !muldiv) || alui_instr || l_type || link_reg || link_const);
+    // case(opcode)
+    //         0: case(funct)
+    //             0,2,3,4,6,7,9,16,18,32,33,34,35,36,37,38,39,42,43 : writereg = 1;
+    //         endcase
+    //         1: case(addr_rt)
+    //             16,17 : writereg = 1;
+    //         endcase
+    //         3,8,9,10,11,12,13,14,15,32,33,34,36,37 : write_reg = 1;
+    // endcase
 
     logic mem_write;
     assign mem_write = (sw);
@@ -69,7 +80,7 @@ module mips_cpu_harvard(
 
     // multiplication control
     logic muldiv;   //high if hi/lo need to be changed
-    assign muldiv = (instr_opcode == 17) || (instr_opcode == 19) || (instr_opcode == 24) || (instr_opcode == 25) || (instr_opcode == 26) || (instr_opcode == 27);
+    assign muldiv = r_format && (funct_code[4:3] == 2'b11 || funct_code == 6'b010001 || funct_code == 6'b010011);
 
     logic mfhi;
     assign mfhi = instr_opcode == 16;
@@ -103,7 +114,7 @@ module mips_cpu_harvard(
     always @(posedge clk) begin
         $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
         $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
-        $display("reg_write_data=%h, result=%d, reg_write_index=%h", reg_write_data, result, reg_write_index);
+        $display("reg_write_data=%h, result=%d, reg_write_index=%d", reg_write_data, result, reg_write_index);
         $display("pc=%h", curr_addr);
     end
 
