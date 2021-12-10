@@ -28,6 +28,7 @@ module alu_tb();
         rs = -32'd500000000;
         rt = 32'd1000;
         #1;
+        $display("-------------------------------------");
         $display("unsigned of result = %d", result);
         $display("signed of result = %d", $signed(result));
         $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
@@ -37,6 +38,14 @@ module alu_tb();
         rs = -32'd500000000;
         rt = 32'd1000;
         #1;
+        $display("-------------------------------------");
+        $display("unsigned of result = %d", result);
+        $display("signed of result = %d", $signed(result));
+        $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
+
+        
+        #1;
+        $display("-------------------------------------");
         $display("unsigned of result = %d", result);
         $display("signed of result = %d", $signed(result));
         $display("hi=%h, lo = %h", $signed(hi),$signed(lo));

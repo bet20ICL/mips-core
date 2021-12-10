@@ -3,9 +3,14 @@ module alu(
     input logic[31:0] op2, // data from rt,
     input logic[31:0] instructionword,
     output logic[31:0] result,hi,lo,memaddroffset,
-    output logic b_flag
+    output logic b_flag,link,alu_write_reg
     // // zero, carry, overflow, yesbranch
-);
+); 
+
+/*
+how do i implement reg write enable
+all instructions changing register are here except links right?
+*/
     logic [5:0] opcode;
     assign opcode = instructionword[31:26];
 
@@ -40,7 +45,7 @@ module alu(
     logic r_format, i_format, j_format;
     
 
-    always @(opcode,funct, op1,op2) begin
+    always @(instructionword) begin
         unsigned_result = 0;
         signed_result = 0;
         case(opcode)
@@ -51,7 +56,7 @@ module alu(
                         2: unsigned_result = unsign_op2 >> shamt;// out to rd |SRL
                         3: unsigned_result = unsign_op2 >>> shamt;// out to rd |SRA
                         4: unsigned_result = unsign_op2 << unsign_op1;// out to rd |SLLV
-                        6: unsigned_result = unsign_op2 >> unsign_op1;// out to rd |SLRV
+                        6: unsigned_result = unsign_op2 >> unsign_op1;// out to rd |SRLV
                         7: unsigned_result = unsign_op2 >>> unsign_op1;// out to rd |SRAV
                         24: begin
                                 multresult = sign_op1 * sign_op2; // out to hi,lo |mult
@@ -73,9 +78,9 @@ module alu(
                                 hi = unsign_op1%unsign_op2;
                                 lo = unsign_op1/unsign_op2;
                             end 
-                        16: unsigned_result = hi;//out to rd |MFHI
+                        //16: //unsigned_result = hi;//out to rd |MFHI
                         17: hi = op1; //MTHI
-                        18: unsigned_result = lo;//out to rd |MFLO
+                        //18: //unsigned_result = lo;//out to rd |MFLO
                         19: lo = op1;//MTLO
                         32: signed_result = sign_op1 + sign_op2;//out to rd |add
                         33: unsigned_result = unsign_op1 + unsign_op2; // out to rd |addu
@@ -91,6 +96,7 @@ module alu(
                 end
                 // for branches, bflag is sent out, bflag = 1 when branching is valid | 'result' output should do nothing
                 //bgez, bgezal, bltz, blez 
+                //branch and link 
             1: case(addr_rt)
                     1:if(op1>=0) begin// //bgez
                         b_flag = 1;
@@ -99,6 +105,7 @@ module alu(
                         b_flag = 0;
                     end
                     17:if(op1>=0) begin//bgezal
+                        link = 1;
                         b_flag = 1;
                     end
                     else begin
@@ -111,6 +118,7 @@ module alu(
                         b_flag = 0;
                     end
                     16:if(op1<0) begin//bltzal
+                        link = 1;
                         b_flag = 1;
                     end
                     else begin
@@ -130,7 +138,7 @@ module alu(
                 else begin
                     b_flag = 0;
                 end
-            6:  if(op1<=0) begin// blez branch less than or equal to 0-
+            6:  if(op1<=0) begin// blez 
                     b_flag = 1;
                 end
                 else begin
@@ -150,7 +158,7 @@ module alu(
             13: unsigned_result = unsign_op1 | uimmediatedata;//out to rt |ori
             14: unsigned_result = unsign_op1 ^ uimmediatedata; //out to rt |XORI
             15: unsigned_result = uimmediatedata<<16;//out to rt |lui
-            //memory access instructions
+            //memory access instructions - output is a wire called memaddroffset 
             32: memaddroffset = unsign_op1 + simmediatedata;//lb
             33: memaddroffset = unsign_op1 + simmediatedata;//lh
             34: memaddroffset = unsign_op1 + simmediatedata;//lw
@@ -162,8 +170,10 @@ module alu(
         endcase
         if(unsigned_result != 0) begin
             result = unsigned_result;
+            alu_write_reg = 1;
         end
         else if(signed_result != 0) begin
+            alu_write_reg = 1;
             result = signed_result;
         end
     end
