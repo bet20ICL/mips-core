@@ -102,7 +102,8 @@ module mips_cpu_harvard(
 
     always @(posedge clk) begin
         $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
-        $display("reg_write_data=%d, result=%d", reg_write_data, result);
+        $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
+        $display("reg_write_data=%h, result=%d, reg_write_index=%h", reg_write_data, result, reg_write_index);
         $display("pc=%h", curr_addr);
     end
 

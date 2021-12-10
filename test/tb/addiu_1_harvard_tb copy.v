@@ -56,8 +56,8 @@ module addiu_tb();
         //addiu r2, r3, 2
         //v0 -> 2
         opcode = 6'd9;
-        rs = 5'd3;
-        rt = 5'd2;
+        rs = 6'd3;
+        rt = 6'd2;
         imm = 16'd2;
         imm_instr = {opcode, rs, rt, imm};
         instr_readdata = imm_instr;     
