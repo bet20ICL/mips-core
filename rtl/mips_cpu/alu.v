@@ -6,23 +6,18 @@ module alu(
     output logic b_flag,link,alu_write_reg
     // // zero, carry, overflow, yesbranch
 ); 
-
-/*
-how do i implement reg write enable
-all instructions changing register are here except links right?
-*/
     logic [5:0] opcode;
     assign opcode = instructionword[31:26];
 
     logic [5:0] funct;
     assign funct = instructionword[5:0];
     logic [15:0] simmediatedata, uimmediatedata;
-    assign simmediatedata = instructionword[15:0] <<< 16;
-    assign uimmediatedata = instructionword[15:0] << 16;
+    assign simmediatedata = {{16{instructionword[15]}}, instructionword[15:0]};
+    assign uimmediatedata = {{16{1'b0}}, instructionword[15:0]};
     logic [5:0] shamt;
     assign shamt = instructionword[10:6];
     
-    logic signed [31:0] signed_result;
+
     logic unsigned [31:0] unsigned_result;
 
     logic signed [31:0]  sign_op1;
@@ -42,15 +37,11 @@ all instructions changing register are here except links right?
 
     logic[63:0] multresult;
 
-    logic r_format, i_format, j_format;
     
 
     always @(instructionword) begin
-        unsigned_result = 0;
-        signed_result = 0;
         case(opcode)
             0:  begin
-                    r_format = 1; 
                     case(funct)
                         0: unsigned_result = unsign_op2 << shamt; // out to rd |SLL
                         2: unsigned_result = unsign_op2 >> shamt;// out to rd |SRL
@@ -69,7 +60,7 @@ all instructions changing register are here except links right?
                                 lo = multresult[31:0];
                             end 
                         26: begin // out to hi,lo |div
-                                //signed_result = sign_op1 / sign_op2;
+                                //unsigned_result = sign_op1 / sign_op2;
                                 hi = sign_op1%sign_op2;
                                 lo = sign_op1/sign_op2;
                             end  
@@ -82,15 +73,15 @@ all instructions changing register are here except links right?
                         17: hi = op1; //MTHI
                         //18: //unsigned_result = lo;//out to rd |MFLO
                         19: lo = op1;//MTLO
-                        32: signed_result = sign_op1 + sign_op2;//out to rd |add
+                        32: unsigned_result = sign_op1 + sign_op2;//out to rd |add
                         33: unsigned_result = unsign_op1 + unsign_op2; // out to rd |addu
-                        34: signed_result = sign_op1 - sign_op2; //out to rd |sub
+                        34: unsigned_result = sign_op1 - sign_op2; //out to rd |sub
                         35: unsigned_result = unsign_op1 - unsign_op2;//out to rd |subu
                         36: unsigned_result = unsign_op1 & unsign_op2;//out to rd |and
                         37: unsigned_result = unsign_op1 | unsign_op2;//out to rd |or
                         38: unsigned_result = unsign_op1 ^ unsign_op2; // out to rd |xor
                         39: unsigned_result = ~(unsign_op1 | unsign_op2); //out to rd |nor
-                        42: signed_result = sign_op1 < sign_op2 ? 1:0; //out to rd |set lt
+                        42: unsigned_result = sign_op1 < sign_op2 ? 1:0; //out to rd |set lt
                         43: unsigned_result = unsign_op1 < unsign_op2 ? 1:0;//out to rd |set ltu
                     endcase
                 end
@@ -150,9 +141,9 @@ all instructions changing register are here except links right?
                 else begin
                     b_flag = 0;
                 end
-            8: signed_result = sign_op1 + simmediatedata ;//out to rt |addi;
+            8: unsigned_result = sign_op1 + simmediatedata ;//out to rt |addi
             9: unsigned_result = unsign_op1 + simmediatedata;//out to rt |addiu
-            10: signed_result = (sign_op1<simmediatedata) ? 1:0;//out to rt |slti
+            10: unsigned_result = (sign_op1<simmediatedata) ? 1:0;//out to rt |slti
             11: unsigned_result = (unsign_op1<simmediatedata) ? 1:0; //out to rt |sltiu
             12: unsigned_result = unsign_op1 & uimmediatedata;//out to rt |andi
             13: unsigned_result = unsign_op1 | uimmediatedata;//out to rt |ori
@@ -168,13 +159,6 @@ all instructions changing register are here except links right?
             41: memaddroffset = unsign_op1 + simmediatedata;//sh
             43: memaddroffset = unsign_op1 + simmediatedata;//sw
         endcase
-        if(unsigned_result != 0) begin
-            result = unsigned_result;
-            alu_write_reg = 1;
-        end
-        else if(signed_result != 0) begin
-            alu_write_reg = 1;
-            result = signed_result;
-        end
+        result = unsigned_result;
     end
 endmodule
