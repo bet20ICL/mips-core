@@ -95,7 +95,6 @@ module alu(
                         b_flag = 0;
                     end
                     17:if(op1>=0) begin//bgezal
-                        link = 1;
                         b_flag = 1;
                     end
                     else begin
@@ -108,7 +107,6 @@ module alu(
                         b_flag = 0;
                     end
                     16:if(op1<0) begin//bltzal
-                        link = 1;
                         b_flag = 1;
                     end
                     else begin
