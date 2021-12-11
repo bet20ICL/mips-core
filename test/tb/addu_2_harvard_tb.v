@@ -85,7 +85,7 @@ module subu();
         repeat (15) begin
             //sub r2, r(i-1), r(i)
             opcode = 6'b0;
-            funct = 6'b100011;
+            funct = 6'b100001;
             shamt = 6'b0;
             rs = i - 1;
             rt = i;
@@ -114,7 +114,7 @@ module subu();
 
             @(posedge clk);
             #2;
-            expected = ((i == 2) ? 32'h0 : test) - (test + 32'hdcba1234 * (i - 2));
+            expected = ((i == 2) ? 32'h0 : test) + (test + 32'hdcba1234 * (i - 2));
             test = test + 32'hdcba1234 * (i - 2);
             // $display("%h, %h", test, (test + 32'hdcba1234 * (i - 2))); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);

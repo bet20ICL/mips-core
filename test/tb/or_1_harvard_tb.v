@@ -47,8 +47,8 @@ module subu();
         logic [4:0] shamt;
         logic[4:0] i;
         logic [31:0] expected;
-
-        logic [] ;
+        logic [31:0] test;
+        logic [31:0] next_test;
   
         reset = 1;
         clk_enable = 1;
@@ -72,8 +72,8 @@ module subu();
             imm_instr = {opcode, rs, rt, imm};
 
             instr_readdata = imm_instr;
-            data_readdata = data_readdata + 32'dcba1234 * (i - 2);
-
+            data_readdata = data_readdata + 32'hdcba1234 * (i - 2);
+            // $display("%h", data_readdata);
             @(posedge clk);
             #2;
             assert(!data_write) else $fatal(1, "data_write should not be active but is");
@@ -101,7 +101,7 @@ module subu();
         end 
 
         i = 2;
-        expected = 32'h12345678;
+        test = 32'h12345678;
         repeat (15) begin
             //addiu r2, ri, 0
             //v0 -> ri
@@ -114,7 +114,9 @@ module subu();
 
             @(posedge clk);
             #2;
-            expected = (32'h11111111 * (i - 2)) | (32'h11111111 * (i - 1)); 
+            expected = ((i == 2) ? 32'h0 : test) | (test + 32'hdcba1234 * (i - 2));
+            test = test + 32'hdcba1234 * (i - 2);
+            // $display("%h, %h", test, (test + 32'hdcba1234 * (i - 2))); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
             i = i + 1;
         end     
