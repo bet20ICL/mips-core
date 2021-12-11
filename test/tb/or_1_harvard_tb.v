@@ -47,6 +47,8 @@ module subu();
         logic [4:0] shamt;
         logic[4:0] i;
         logic [31:0] expected;
+
+        logic [] ;
   
         reset = 1;
         clk_enable = 1;
@@ -59,6 +61,7 @@ module subu();
         #2;
 
         i = 2;
+        data_readdata = 32'h12345678;
         repeat (15) begin
             //lw ri, offset 
             //ri = 
@@ -69,7 +72,7 @@ module subu();
             imm_instr = {opcode, rs, rt, imm};
 
             instr_readdata = imm_instr;
-            data_readdata = 32'h11111111 * (i - 1);
+            data_readdata = data_readdata + 32'dcba1234 * (i - 2);
 
             @(posedge clk);
             #2;
@@ -82,7 +85,7 @@ module subu();
         repeat (15) begin
             //sub r2, r(i-1), r(i)
             opcode = 6'b0;
-            funct = 6'b100011;
+            funct = 6'b100101;
             shamt = 6'b0;
             rs = i - 1;
             rt = i;
@@ -98,6 +101,7 @@ module subu();
         end 
 
         i = 2;
+        expected = 32'h12345678;
         repeat (15) begin
             //addiu r2, ri, 0
             //v0 -> ri
@@ -110,7 +114,7 @@ module subu();
 
             @(posedge clk);
             #2;
-            expected = (32'h11111111 * (i - 2)) - (32'h11111111 * (i - 1)); 
+            expected = (32'h11111111 * (i - 2)) | (32'h11111111 * (i - 1)); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
             i = i + 1;
         end     
