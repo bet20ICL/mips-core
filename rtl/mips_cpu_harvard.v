@@ -83,10 +83,10 @@ module mips_cpu_harvard(
     assign muldiv = r_format && (funct_code[4:3] == 2'b11 || funct_code == 6'b010001 || funct_code == 6'b010011);
 
     logic mfhi;
-    assign mfhi = instr_opcode == 16;
+    assign mfhi = r_format && (funct_code == 6'b010000);
 
     logic mflo;
-    assign mflo = instr_opcode == 18;
+    assign mflo = r_format && (funct_code == 6'b010010);
 
     // Data RAM read/write enable control
     assign data_write = active ? mem_write : 0;
@@ -111,12 +111,14 @@ module mips_cpu_harvard(
     logic[31:0] reg_a_read_data;
     logic[31:0] reg_b_read_data;
 
-    // always @(posedge clk) begin
-    //     $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
-    //     $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
-    //     $display("reg_write_data=%h, result=%d, reg_write_index=%d", reg_write_data, result, reg_write_index);
-    //     $display("pc=%h", curr_addr);
-    // end
+    always @(posedge clk) begin
+        $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
+        $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
+        $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
+        $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
+        $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
+        $display("pc=%h", curr_addr);
+    end
 
     regfile register(
         .r_clk(clk),

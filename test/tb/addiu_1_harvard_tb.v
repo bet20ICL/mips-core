@@ -94,6 +94,7 @@ module addiu_tb();
         rs = 6'd3;
         rt = 6'd2;
         imm = -16'd2;
+        $display("%b", imm);
         imm_instr = {opcode, rs, rt, imm};
         instr_readdata = imm_instr;     
 

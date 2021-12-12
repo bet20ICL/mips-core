@@ -1,4 +1,4 @@
-module subu();
+module or_tb();
 
     logic     clk;
     logic     reset;

@@ -10,10 +10,10 @@ module alu(
 
     logic [5:0] funct;
     assign funct = instructionword[5:0];
-    logic [15:0] simmediatedata, uimmediatedata;
-    assign simmediatedata = {{16{instructionword[15]}}, instructionword[15:0]};
-    assign uimmediatedata = {{16{1'b0}}, instructionword[15:0]};
-    logic [5:0] shamt;
+    logic [31:0] simmediatedata, uimmediatedata;
+    assign simmediatedata = {(instructionword[15] ? 16'hFFFF : 16'h0), instructionword[15:0]};
+    assign uimmediatedata = {16'b0, instructionword[15:0]};
+    logic [4:0] shamt;
     assign shamt = instructionword[10:6];
 
     logic signed [31:0]  sign_op1;
@@ -137,7 +137,7 @@ module alu(
             8: result = sign_op1 + simmediatedata ;//out to rt |addi
             9: result = unsign_op1 + simmediatedata;//out to rt |addiu
             10: result = (sign_op1<simmediatedata) ? 1:0;//out to rt |slti
-            11: result = (unsign_op1<simmediatedata) ? 1:0; //out to rt |sltiu
+            11: result = (unsign_op1<uimmediatedata) ? 1:0; //out to rt |sltiu
             12: result = unsign_op1 & uimmediatedata;//out to rt |andi
             13: result = unsign_op1 | uimmediatedata;//out to rt |ori
             14: result = unsign_op1 ^ uimmediatedata; //out to rt |XORI
@@ -145,7 +145,7 @@ module alu(
             //memory access instructions - output is a wire called memaddroffset 
             32: memaddroffset = unsign_op1 + simmediatedata;//lb
             33: memaddroffset = unsign_op1 + simmediatedata;//lh
-            34: memaddroffset = unsign_op1 + simmediatedata;//lw
+            35: memaddroffset = unsign_op1 + simmediatedata;//lw
             36: memaddroffset = unsign_op1 + simmediatedata;//lbu
             37: memaddroffset = unsign_op1 + simmediatedata;//lhu
             40: memaddroffset = unsign_op1 + simmediatedata;//sb
