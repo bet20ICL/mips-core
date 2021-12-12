@@ -79,10 +79,10 @@ BLTZAL	Branch on less than zero and link r -
 BNE	Branch on not equal -
 DIV	Divide -    t
 DIVU	Divide unsigned -   t
-J	Jump -
-JALR	Jump and link register r -
-JAL	Jump and link r -
-JR	Jump register -
+J	Jump -  t
+JALR	Jump and link register r -  
+JAL	Jump and link r -   t
+JR	Jump register - t
 LB	Load byte r 
 LBU	Load byte unsigned r
 LH	Load half-word r

@@ -112,6 +112,7 @@ module mips_cpu_harvard(
     logic[31:0] reg_b_read_data;
 
     always @(posedge clk) begin
+        $display("reset=%h", reset);
         $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
         $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
         $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
@@ -194,12 +195,14 @@ module mips_cpu_harvard(
     logic[31:0] curr_addr;
     logic[31:0] curr_addr_p4;
     assign curr_addr_p4 = curr_addr + 4;
-    logic[31:0] offset;
-    assign offset = {instr_readdata[15] ? 16'hFFFF : 16'h0, instr_readdata[15:0]};
+    logic[17:0] b_imm;
+    assign b_imm = instr_readdata[15:0] << 2;
+    logic[31:0] b_offset;
+    assign b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
 
     always @(*) begin
         if (b_flag) begin
-            next_instr_addr = curr_addr_p4 + offset << 2;
+            next_instr_addr = curr_addr_p4 + b_offset;
         end
         else if (j_imm) begin 
             next_instr_addr = {curr_addr_p4[31:28], instr_readdata[25:0], 2'b00};
