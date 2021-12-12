@@ -40,7 +40,7 @@ module alu(
 
     
 
-    always @(instructionword) begin
+    always @(*) begin
         b_flag = 0;
         case(opcode)
             0:  begin
@@ -144,7 +144,7 @@ module alu(
             8: unsigned_result = sign_op1 + simmediatedata ;//out to rt |addi
             9: unsigned_result = unsign_op1 + simmediatedata;//out to rt |addiu
             10: unsigned_result = (sign_op1 < simmediatedata) ? 1:0;//out to rt |slti
-            11: unsigned_result = (unsign_op1<simmediatedata) ? 1:0; //out to rt |sltiu
+            11: unsigned_result = (unsign_op1<simmediatedatas) ? 1:0; //out to rt |sltiu
             12: unsigned_result = unsign_op1 & uimmediatedata;//out to rt |andi
             13: unsigned_result = unsign_op1 | uimmediatedata;//out to rt |ori
             14: unsigned_result = unsign_op1 ^ uimmediatedata; //out to rt |XORI
