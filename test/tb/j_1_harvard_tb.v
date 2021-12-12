@@ -1,4 +1,4 @@
-module sltiu_tb();
+module j_tb();
 
     logic     clk;
     logic     reset;
@@ -51,7 +51,9 @@ module sltiu_tb();
         logic [15:0] test_imm;
         logic [31:0] next_test;
         logic [31:0] ex_imm;
-  
+        logic [25:0] j_addr;
+        logic [31:0] curr_addr;
+        logic [31:0] tmp;
         reset = 1;
         clk_enable = 1;
 
@@ -63,74 +65,43 @@ module sltiu_tb();
         // $display("%b", ex_imm);
 
         @(posedge clk);
-        #2;
-        reset = 0;
 
         @(posedge clk);
         #2;
+        reset = 0;
+        curr_addr = 32'hBFC00000;
+        assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+        $display("passed");
+        @(posedge clk);
+        #2;
+        curr_addr = curr_addr + 4;
+        assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
 
-        i = 2;
-        data_readdata = 32'h12345678;
-        repeat (15) begin
-            //lw ri, offset 
-            //ri = 
-            opcode = 6'b100011;
-            rs = 5'b0;
-            rt = i;
-            imm = 16'b0;
-            imm_instr = {opcode, rs, rt, imm};
+        opcode = 6'b000010;
+        j_addr = 26'h2;
+        instr_readdata = {opcode, j_addr};
+        tmp = curr_addr + 4;
+        curr_addr = {tmp[31:28], j_addr, 2'b0};
 
-            instr_readdata = imm_instr;
-            data_readdata = data_readdata + 32'hdcba1234 * (i - 2);
-            // $display("%h", data_readdata);
-            @(posedge clk);
-            #2;
-            assert(!data_write) else $fatal(1, "data_write should not be active but is");
-            assert(data_read) else $fatal(1, "data_read isn't active but should be");
-            i = i + 1;
-        end
+        // $display("%h", data_readdata);
+        @(posedge clk);
+        #2;
+        assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
 
-        i = 2;
-        repeat (15) begin
-            //sub r2, r(i-1), r(i)
-            opcode = 6'b001011;
-            rs = i;
-            rt = i + 15;
-            imm = 16'h1111 * (i - 1);
-            imm_instr = {opcode, rs, rt, imm};
+        //lw ri, offset 
+        //ri = 
+        opcode = 6'b100011;
+        rs = 5'b0;
+        rt = 5'b10;
+        imm = 16'b0;
+        imm_instr = {opcode, rs, rt, imm};
+        instr_readdata = imm_instr;
 
-            instr_readdata = imm_instr;
-            // expected = (32'h11111111 * (i - 1)) & (32'h11111111 * i);
-            // $display("%h", expected);
+        curr_addr += 4;
+        @(posedge clk);
+        #2;
+        assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
 
-            @(posedge clk);
-            #2;
-            i = i + 1;
-        end 
-
-        i = 2;
-        test = 32'h12345678;
-        repeat (15) begin
-            //addiu r2, ri, 0
-            //v0 -> ri
-            opcode = 6'd9;
-            rs = i + 15;
-            rt = 5'd2;
-            imm = 0;
-            imm_instr = {opcode, rs, rt, imm};
-            instr_readdata = imm_instr; 
-
-            @(posedge clk);
-            #2;
-            test_imm = 16'h1111 * (i - 1);
-            ex_imm = {(test_imm[15] ? 16'hFFFF : 16'h0), test_imm};
-            $display("%b", ex_imm);
-            test = test + 32'hdcba1234 * (i - 2);
-            expected = $unsigned(test) < ex_imm;
-            // $display("%h, %h", test, (test + 32'hdcba1234 * (i - 2))); 
-            assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
-            i = i + 1;
-        end     
     end
 
     mips_cpu_harvard dut(
