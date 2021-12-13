@@ -195,10 +195,11 @@ module mips_cpu_harvard(
     logic[31:0] curr_addr;
     logic[31:0] curr_addr_p4;
     assign curr_addr_p4 = curr_addr + 4;
-    logic[17:0] b_imm;
-    assign b_imm = instr_readdata[15:0] << 2;
+    //logic[17:0] b_imm;
+   // assign b_imm = instr_readdata[15:0] << 2;
     logic[31:0] b_offset;
-    assign b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
+    assign b_offset = {14{instr_readdata[15]}, instr_readdata[15:0],2'b0} 
+    //assign b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
 
     always @(*) begin
         if (b_flag) begin
