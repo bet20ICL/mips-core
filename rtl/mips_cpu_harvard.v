@@ -198,6 +198,7 @@ module mips_cpu_harvard(
     logic[17:0] b_imm;
     assign b_imm = instr_readdata[15:0] << 2;
     logic[31:0] b_offset;
+    // assign b_offset = {14{instr_readdata[15]}, instr_readdata[15:0],2'b0}; 
     assign b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
 
     always @(*) begin
@@ -205,7 +206,7 @@ module mips_cpu_harvard(
             next_instr_addr = curr_addr_p4 + b_offset;
         end
         else if (j_imm) begin 
-            next_instr_addr = {curr_addr_p4[31:28], instr_readdata[25:0], 2'b00};
+            next_instr_addr = {curr_addr_p4[31:28], instr_readdata[25:0], 2'b0};
         end
         else if (j_reg) begin
             next_instr_addr = reg_a_read_data;
