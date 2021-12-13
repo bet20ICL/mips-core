@@ -17,5 +17,5 @@ else
 fi
 
 for i in ${INSTRUCTION} ; do
-    test/run_one_instr_bus.sh ${FILES} ${i}
+    ./test/run_one_instr_bus.sh ${FILES} ${i}
 done
