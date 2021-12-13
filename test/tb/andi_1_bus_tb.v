@@ -70,10 +70,10 @@ module addu_tb();
         assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
 
         @(posedge clk);
-        opcode = 6'b001001;
+        opcode = 6'b001100;
         rs = 2;
         rt = 2;
-        imm = 5;
+        imm = 8;
         readdata = {opcode, rs, rt, imm};
 
         i=0;
@@ -83,7 +83,7 @@ module addu_tb();
             i = i+1;
         end
 
-        assert(register_v0==14) else $fatal(1, "wrong addr");
+        assert(register_v0==8) else $fatal(1, "wrong value");
         $finish(0);
 
     end
