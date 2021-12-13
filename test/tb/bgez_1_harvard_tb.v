@@ -114,9 +114,12 @@ module jal_tb();
         end
 
 
-        // initialise r2 - r31 all with 32'h12345678 using lw
+        // initialise r2 - r31 all with 32'h12345678 + i 32'hdcba1234 using lw
+        // (arithmetic series)
+        // keep the top bit 0 to ensure it is positive
+        // all instructions should branch
         i = 2;
-        data_readdata = 32'h12345678;
+        test = 32'h12345678;
         repeat (30) begin
             //lw ri
             opcode = 6'b100011;
@@ -125,6 +128,7 @@ module jal_tb();
             imm = 16'b0;
             imm_instr = {opcode, rs, rt, imm};
             instr_readdata = imm_instr;
+            data_readdata = {1'b0, test[30:0]};
 
             @(posedge clk);
             #2;
