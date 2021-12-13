@@ -22,11 +22,14 @@ module jr_1_tb();
         end;
     end
 
-    initial begin
-        //instantiate variables for easier instruction building
+    initial begin  
+    //instantiate variables for easier instruction building
         logic [5:0] opcode;
+        logic [5:0] fn;
         logic [4:0] rt;
         logic [4:0] rs;
+        logic [4:0] rd;
+        logic [4:0] z;
         logic [15:0] imm;
         logic [31:0] imm_instr;
         
@@ -48,21 +51,43 @@ module jr_1_tb();
         imm = 0;
         imm_instr = {opcode, rs, rt, imm};
 
-        //one is instruction the other is data from data ram
-        //need to figure out after how many cycles we have to input data data
         readdata = imm_instr;
+        logic[6:0] i;
+        i = 0
+        while (address==0) begin
+            #1;
+            assert(i!=31) else $fatal(1, "not loading");
+            i = i+1;
+        end
         readdata = 32'd9;
         #2;
 
         @(posedge clk);
         #2;
-        readdata = 32'b00000000010000000000000000001000;
-        @(posedge clk)
-        #2;
-        assert(address==9) else $fatal(1, "instruction address is wrong");
+        assert(!write) else $fatal(1, "data_write should not be active but is");
+        assert(read) else $fatal(1, "data_read isn't active but should be");
+        assert(address == 0) else $fatal(1, "address from memory being loaded, incorrect");
+        assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
 
-        $display("succ");
+        @(posedge clk);
+        opcode = 6'b000000;
+        rs = 2;
+        rt = 0;
+        rd = 0;
+        z = 0;
+        fn = 6'b001000;
+        readdata = {opcode, rs, rt, rd, z, fn};
+
+        i=0;
+        while (active) begin
+            @(posedge clk);
+            assert(i!=37) else $fatal(1, "taking too long");
+            i = i+1;
+        end
+
+        assert(address==9) else $fatal(1, "wrong addr value");
         $finish(0);
+
     end
 
     mips_cpu_bus dut(
