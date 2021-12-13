@@ -15,13 +15,9 @@ module state_machine(
     initial begin
         state=0;
         state_next=0;
-        PC_inc = 1;
-        IR_write = 1;
-        alu_op = 0;
-        mem_read = 0;
-        mem_write = 0;
-        reg_write = 0;
     end
+
+    // check that the states are chaning correctly witht the clock
     
     always @(negedge clk) begin
         state_next=state_next+1;
@@ -36,62 +32,6 @@ module state_machine(
         state <= state_next;
     end
         
-
-    always_comb begin
-        
-        
-        
-    
-
- 
-        if(state==0) begin
-            PC_inc = 1;
-            IR_write = 1;
-            alu_op = 0;
-            mem_read = 0;
-            mem_write = 0;
-            reg_write = 0;
-        end
-        
-    
-
-        if (state==1) begin 
-            PC_inc = 0;
-            IR_write = 0;
-            alu_op = 0;
-            mem_read = 0;
-            mem_write = 0;
-            reg_write =0;
-        end
-
-        if (state==2) begin 
-            PC_inc = 0;
-            IR_write = 0;
-            alu_op = 1;
-            mem_read = 0;
-            mem_write = 0;
-            reg_write =0;
-        end
-
-        if (state==3) begin 
-            PC_inc = 0;
-            IR_write = 0;
-            alu_op = 0;
-            //combine these signals with control signals.
-            mem_read = 1;
-            mem_write = 1;
-            reg_write =0;
-        end
-
-        if (state==4) begin 
-            PC_inc = 0;
-            IR_write = 0;
-            alu_op = 0;
-            mem_read = 0;
-            mem_write = 0;
-            reg_write = 1;
-        end
-    end
 
 
 endmodule
