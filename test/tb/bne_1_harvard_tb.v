@@ -116,7 +116,7 @@ module jal_tb();
         // all comparisons should branch
         i = 3;
         repeat (29) begin
-            opcode = 6'b100;
+            opcode = 6'b101;
             rs = i - 1;
             rt = i;
             imm = 16'b1111 * i; 
@@ -125,10 +125,7 @@ module jal_tb();
 
             @(posedge clk);
             #2;
-            // calculate expected offset
-            b_imm = imm << 2;
-            b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
-            curr_addr = curr_addr + 4 + b_offset;
+            curr_addr = curr_addr + 4;
             assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
 
             i = i + 1;
@@ -162,7 +159,7 @@ module jal_tb();
         // no comparisons should branch
         i = 3;
         repeat (29) begin
-            opcode = 6'b100;
+            opcode = 6'b101;
             rs = i - 1;
             rt = i;
             imm = 16'b1111 * i; 
@@ -171,7 +168,9 @@ module jal_tb();
 
             @(posedge clk);
             #2;
-            curr_addr = curr_addr + 4;
+            b_imm = imm << 2;
+            b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
+            curr_addr = curr_addr + 4 + b_offset;
             assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
             i = i + 1;
         end
