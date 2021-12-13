@@ -1,4 +1,4 @@
-module jal_tb();
+module bltzal_tb();
 
     logic     clk;
     logic     reset;
@@ -27,7 +27,7 @@ module jal_tb();
     initial begin
         clk = 0;
         #4;
-        repeat (100) begin
+        repeat (2000) begin
             clk = ~clk;
             #4;
         end
@@ -79,6 +79,7 @@ module jal_tb();
         imm = 16'b0;
         imm_instr = {opcode, rs, rt, imm};
         instr_readdata = imm_instr;
+        data_readdata = 0;
         
         // check reset address is correct
         curr_addr = 32'hBFC00000;
@@ -90,10 +91,48 @@ module jal_tb();
         assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
 
         // start testing
-        // initialise r2 - r31 all with 32'h12345678 using lw
+
+        // bltzl r2 - r31
+        // all registers are 0 so none should branch
+        // imm 2222, 3333, etc.
         i = 2;
-        data_readdata = 32'h12345678;
-        repeat (30) begin
+        repeat (29) begin
+            opcode = 6'b1;
+            rs = i;
+            rt = 5'b10000;
+            imm = 16'h1111 * i; 
+            imm_instr = {opcode, rs, rt, imm};
+            instr_readdata = imm_instr;
+
+            @(posedge clk);
+            #2;
+            link_addr = curr_addr + 8;
+            curr_addr = curr_addr + 4;
+            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+            // addiu r2 r31 0
+            // move r31 to r2, check if instruction linked correctly
+            opcode = 6'd9;
+            rs = 5'd31;
+            rt = 5'd2;
+            imm = 5'b0; 
+            imm_instr = {opcode, rs, rt, imm};
+            instr_readdata = imm_instr;
+
+            @(posedge clk);
+            #2;
+            assert(register_v0 == link_addr) else $fatal(1, "expected v0=%h, actual v0=%h", link_addr, register_v0);
+            curr_addr = curr_addr + 4;
+            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+            i = i + 1;
+        end
+
+        // initialise r2 - r30 all with 32'h12345678 + i 32'hdcba1234 using lw
+        // (arithmetic series)
+        // keep the top bit 0 to ensure it is positive
+        // no instructions should branch
+        i = 2;
+        test = 32'h12345678;
+        repeat (29) begin
             //lw ri
             opcode = 6'b100011;
             rs = 5'b0;
@@ -101,6 +140,7 @@ module jal_tb();
             imm = 16'b0;
             imm_instr = {opcode, rs, rt, imm};
             instr_readdata = imm_instr;
+            data_readdata = {1'b0, test[30:0]};
 
             @(posedge clk);
             #2;
@@ -108,70 +148,102 @@ module jal_tb();
             assert(data_read) else $fatal(1, "data_read isn't active but should be");
             curr_addr = curr_addr + 4;
             assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+            test = test + 32'hdcba1234;
             i = i + 1;
         end
 
-        // beq r3, r2; beq r4, r3; beq r5, r4, etc.
-        // immediate = h3333, h4444 etc.
-        // all comparisons should branch
-        i = 3;
+        // bgezl r2 - r31
+        // all registers are positive none should branch
+        // imm 2222, 3333, etc.
+        i = 2;
         repeat (29) begin
-            opcode = 6'b100;
-            rs = i - 1;
-            rt = i;
+            opcode = 6'b1;
+            rs = i;
+            rt = 5'b10000;
             imm = 16'h1111 * i; 
             imm_instr = {opcode, rs, rt, imm};
             instr_readdata = imm_instr;
 
             @(posedge clk);
             #2;
-            // calculate expected offset
+            link_addr = curr_addr + 8;
+            curr_addr = curr_addr + 4;
+            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+            // addiu r2 r31 0
+            // move r31 to r2, check if instruction linked correctly
+            opcode = 6'd9;
+            rs = 5'd31;
+            rt = 5'd2;
+            imm = 5'b0; 
+            imm_instr = {opcode, rs, rt, imm};
+            instr_readdata = imm_instr;
+
+            @(posedge clk);
+            #2;
+            assert(register_v0 == link_addr) else $fatal(1, "expected v0=%h, actual v0=%h", link_addr, register_v0);
+            curr_addr = curr_addr + 4;
+            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+            i = i + 1;
+        end
+
+        // initialise r2 - r31 all with 32'h12345678 + i 32'hdcba1234 using lw
+        // (arithmetic series)
+        // keep the top bit 1 to ensure it is negative
+        // all instructions should branch
+        i = 2;
+        test = 32'h12345678;
+        repeat (29) begin
+            //lw ri
+            opcode = 6'b100011;
+            rs = 5'b0;
+            rt = i;
+            imm = 16'b0;
+            imm_instr = {opcode, rs, rt, imm};
+            instr_readdata = imm_instr;
+            data_readdata = {1'b1, test[30:0]};
+
+            @(posedge clk);
+            #2;
+            assert(!data_write) else $fatal(1, "data_write should not be active but is");
+            assert(data_read) else $fatal(1, "data_read isn't active but should be");
+            curr_addr = curr_addr + 4;
+            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+            test = test + 32'hdcba1234;
+            i = i + 1;
+        end
+
+        // bltzal r2 - r31
+        // all registers are negative so all should branch
+        // imm 2222, 3333, etc.
+        i = 2;
+        repeat (29) begin
+            opcode = 6'b1;
+            rs = i;
+            rt = 5'b10001;
+            imm = 16'h1111 * i; 
+            imm_instr = {opcode, rs, rt, imm};
+            instr_readdata = imm_instr;
+
+            @(posedge clk);
+            #2;
+            link_addr = curr_addr + 8;
+            curr_addr = curr_addr + 4;
+            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
+            // addiu r2 r31 0
+            // move r31 to r2, check if instruction linked correctly
+            opcode = 6'd9;
+            rs = 5'd31;
+            rt = 5'd2;
+            imm = 5'b0; 
+            imm_instr = {opcode, rs, rt, imm};
+            instr_readdata = imm_instr;
+
+            @(posedge clk);
+            #2;
+            assert(register_v0 == link_addr) else $fatal(1, "expected v0=%h, actual v0=%h", link_addr, register_v0);
             b_imm = imm << 2;
             b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
             curr_addr = curr_addr + 4 + b_offset;
-            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
-
-            i = i + 1;
-        end
-
-        // initialise r2 - r31 all with 32'h12345678 + n 32'hdcba1234
-        // to form an arithmetic series
-        i = 2;
-        data_readdata = 32'h12345678;
-        repeat (30) begin
-            //lw ri
-            opcode = 6'b100011;
-            rs = 5'b0;
-            rt = i;
-            imm = 16'b0;
-            imm_instr = {opcode, rs, rt, imm};
-            instr_readdata = imm_instr;
-
-            @(posedge clk);
-            #2;
-            assert(!data_write) else $fatal(1, "data_write should not be active but is");
-            assert(data_read) else $fatal(1, "data_read isn't active but should be");
-            curr_addr = curr_addr + 4;
-            assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
-            i = i + 1;
-            data_readdata = data_readdata + 32'hdcba1234;
-        end
-
-        // beq r3, r2; beq r4, r3; beq r5, r4, etc.
-        // immediate = h3333, h4444 etc.
-        // no comparisons should branch
-        i = 3;
-        repeat (29) begin
-            opcode = 6'b100;
-            rs = i - 1;
-            rt = i;
-            imm = 16'h1111 * i; 
-            imm_instr = {opcode, rs, rt, imm};
-            instr_readdata = imm_instr;
-
-            @(posedge clk);
-            #2;
-            curr_addr = curr_addr + 4;
             assert(instr_address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, instr_address);
             i = i + 1;
         end

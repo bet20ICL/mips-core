@@ -25,31 +25,43 @@ module alu_tb();
 
     initial begin
 
-        opcode = 6'd9;
-        rs = 5'd3;
-        rt = 5'd2;
-        imm = -16'd2;
+        opcode = 6'b1;
+        rs = 5'b0;
+        rt = 5'b1;
+        imm = 16'b0; 
         imm_instr = {opcode, rs, rt, imm};
-        $display("%b", imm_instr);
-        instword = imm_instr;   
-        opA = 32'd2;
-        opB = 32'd1000;
+        instword = imm_instr;
+
+        opA = 32'h12345678;
+        opB = 32'h0; 
         #1;
-        $display("-------------------------------------");
-        $display("%h",result);
+        $display("bflag is %h", bflag);
+
+        // opcode = 6'd9;
+        // rs = 5'd3;
+        // rt = 5'd2;
+        // imm = -16'd2;
+        // imm_instr = {opcode, rs, rt, imm};
+        // $display("%b", imm_instr);
+        // instword = imm_instr;   
+        // opA = 32'd2;
+        // opB = 32'd1000;
+        // #1;
+        // $display("-------------------------------------");
+        // $display("%h",result);
 
 
-        word = 0;
-        funct = 6'b100000;
-        instword = {word,funct};
-        rs = -32'd500000000;
-        rt = 32'd1000;
-        #1;
-        $display("-------------------------------------");
-        $display("unsigned of result = %d", result);
-        $display("signed of result = %d", $signed(result));
-        $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
-        $display("b flag is %b",bflag);
+        // word = 0;
+        // funct = 6'b100000;
+        // instword = {word,funct};
+        // rs = -32'd500000000;
+        // rt = 32'd1000;
+        // #1;
+        // $display("-------------------------------------");
+        // $display("unsigned of result = %d", result);
+        // $display("signed of result = %d", $signed(result));
+        // $display("hi=%h, lo = %h", $signed(hi),$signed(lo));
+        // $display("b flag is %b",bflag);
 
         /*      
 

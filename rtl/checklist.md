@@ -69,14 +69,14 @@ ADDIU	Add immediate unsigned (no overflow) r  t
 ADDU	Add unsigned (no overflow) r    t
 AND	Bitwise and r   t
 ANDI	Bitwise and immediate r     t
-BEQ	Branch on equal -
-BGEZ	Branch on greater than or equal to zero -
-BGEZAL	Branch on non-negative (>=0) and link r -
-BGTZ	Branch on greater than zero -
-BLEZ	Branch on less than or equal to zero -
-BLTZ	Branch on less than zero -
-BLTZAL	Branch on less than zero and link r -
-BNE	Branch on not equal -
+BEQ	Branch on equal -   t
+BGEZ	Branch on greater than or equal to zero -   t
+BGEZAL	Branch on non-negative (>=0) and link r -   t
+BGTZ	Branch on greater than zero -   t
+BLEZ	Branch on less than or equal to zero -  t
+BLTZ	Branch on less than zero -  t
+BLTZAL	Branch on less than zero and link r -   t
+BNE	Branch on not equal -   t
 DIV	Divide -    t
 DIVU	Divide unsigned -   t
 J	Jump -  t
@@ -86,7 +86,7 @@ JR	Jump register - t
 LB	Load byte r 
 LBU	Load byte unsigned r
 LH	Load half-word r
-LHU	Load half-word unsigned r
+LHU	Load half-word unsigned r 
 LUI	Load upper immediate r
 LW	Load word r
 LWL	Load word left r
