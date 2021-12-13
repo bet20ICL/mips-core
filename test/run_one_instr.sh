@@ -7,7 +7,7 @@ INSTRUCTION="$2"
 
 INTERNAL_FILES_1="${FILENAME}/mips_cpu/*.v"
 INTERNAL_FILES_2="${FILENAME}/mips_cpu_*.v"
-TESTBENCHES="test/tb/${INSTRUCTION}*_harvard_tb.v"
+TESTBENCHES="test/tb/${INSTRUCTION}_?_harvard_tb.v"
 
 
 for i in ${TESTBENCHES}
