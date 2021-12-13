@@ -77,7 +77,7 @@ module alu(
                         19: lo = op1;//MTLO
                         32: unsigned_result = sign_op1 + sign_op2;//out to rd |add
                         33: unsigned_result = unsign_op1 + unsign_op2; // out to rd |addu
-                       // 34: unsigned_result = sign_op1 - sign_op2; //out to rd |sub NO NORMAL SUB IN INSTRUCTION LIST
+                        // 34: unsigned_result = sign_op1 - sign_op2; //out to rd |sub NO NORMAL SUB IN INSTRUCTION LIST
                         35: unsigned_result = unsign_op1 - unsign_op2;//out to rd |subu
                         36: unsigned_result = unsign_op1 & unsign_op2;//out to rd 
                         37: unsigned_result = unsign_op1 | unsign_op2;//out to rd |or

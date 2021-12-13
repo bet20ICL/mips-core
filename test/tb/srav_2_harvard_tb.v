@@ -24,6 +24,8 @@ module srav_tb();
     logic[31:0] init_mem_addr;
     logic[31:0] init_instr;
 
+    logic[4:0] testlower5;
+
     initial begin
         clk = 0;
         #4;
@@ -114,7 +116,8 @@ module srav_tb();
 
             @(posedge clk);
             #2;
-            expected = (test + 32'h3) >>> ((i == 2) ? 32'h0 : test);
+            testlower5 = test[4:0];
+            expected = ($signed(test + 32'h3)) >>> ((i == 2) ? 32'h0 : testlower5);
             $display("%h, %h", ((i == 2) ? 32'h0 : test), (test + 32'h3)); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
             i = i + 1;
