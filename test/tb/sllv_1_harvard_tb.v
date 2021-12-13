@@ -72,7 +72,7 @@ module sllv_tb();
             imm_instr = {opcode, rs, rt, imm};
 
             instr_readdata = imm_instr;
-            data_readdata = data_readdata + 32'hdcba1234 * (i - 2);
+            data_readdata = data_readdata + 32'hdcba1234 ;
             $display("%h", data_readdata);
             @(posedge clk);
             #2;
@@ -114,11 +114,11 @@ module sllv_tb();
 
             @(posedge clk);
             #2;
-            expected = (test + 32'hdcba1234 * (i - 2)) << ((i == 2) ? 32'h0 : test);
-            $display("%h, %h", ((i == 2) ? 32'h0 : test), (test + 32'hdcba1234 * (i - 2))); 
+            expected =  (test + 32'hdcba1234 ) << ((i == 2) ? 32'h0 : test[4:0]);
+            $display("%h, %h", ((i == 2) ? 32'h0 : test), (test + 32'hdcba1234 )); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
             i = i + 1;
-            test = test + 32'hdcba1234 * (i - 2);
+            test = test + 32'hdcba1234 ;
         end     
     end
 

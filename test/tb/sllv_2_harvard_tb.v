@@ -114,7 +114,8 @@ module sllv_tb();
 
             @(posedge clk);
             #2;
-            expected = (test + 32'hdcba1234) << ((i == 2) ? 32'h0 : test);
+            $display("test = %h",test);
+            expected = (test + 32'hdcba1234) << ((i == 2) ? 32'h0 : test[4:0]);
             $display("%h, %h", ((i == 2) ? 32'h0 : test), (test + 32'hdcba1234)); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
             i = i + 1;

@@ -115,7 +115,7 @@ module sra_tb();
             @(posedge clk);
             #2;
             test = test + 32'hdcba1234 * (i - 2);
-            expected = test >>> (33 - i);
+            expected = $signed(test) >>> (33 - i);
             // $display("%h, %h", test, (test + 32'hdcba1234 * (i - 2))); 
             assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
             i = i + 1;
