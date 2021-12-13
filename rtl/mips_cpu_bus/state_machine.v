@@ -38,7 +38,7 @@ module state_machine(
             mem_write = 0;
             reg_write = 0;        
     
-
+        end
         if (state==1) begin 
             PC_inc = 0;
             IR_write = 0;
