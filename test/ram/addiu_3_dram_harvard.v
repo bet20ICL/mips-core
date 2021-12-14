@@ -19,7 +19,7 @@ module addiu_dram(
         i = 0;
         w_addr = 32'h00;
         repeat (30) begin
-            ram[w_addr] = 32'h12345678 + i * 32'hdcba1234;
+            data_ram[w_addr] = 32'h12345678 + i * 32'hdcba1234;
             w_addr += 4;
             i += 1;
         end
