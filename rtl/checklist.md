@@ -124,3 +124,22 @@ Type	31:26	25:21	20:16	15:11	10:06	05:00
 R-Type	opcode	$rs	    $rt	    $rd	    shamt	funct
 I-Type	opcode	$rs	    $rt	    imm
 J-Type	opcode	address
+
+Harvard:
+RAM-tb for each instruction
+
+Partial Load store instructions - may require extra cycles
+
+Branch Delay Slot
+
+LB	Load byte               x   -
+LBU	Load byte unsigned      x   -
+LH	Load half-word          x   -
+LHU	Load half-word unsigned x   -
+LUI	Load upper immediate    x   -
+LW	Load word               x   -
+LWL	Load word left          o   
+LWR	Load word right         o   
+SB	Store byte              o   
+SH	Store half-word         o   
+SW  Store word              x   -
