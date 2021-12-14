@@ -15,6 +15,15 @@ module mips_cpu_bus(
     input logic[31:0] readdata
 );
 
+    //state machine
+    logic[2:0] state;
+
+    state_machine sm(
+        .clk(clk),
+        .reset(reset),
+        .state(state)
+    );
+
     // Control Signals
     logic pc_write;
     logic pc_or_aluout;
@@ -32,6 +41,35 @@ module mips_cpu_bus(
     logic[1:0] alu_srcb;
     logic[1:0] alu_op;
     logic pc_source;
+
+    logic store;
+    logic load;
+    logic r_format;
+    logic alui_instr;
+    logic l_type;
+    logic link_reg; //jalr
+    // multiplication control
+    logic muldiv;   //high if hi/lo need to be changed
+    logic link_const; // jump or branch with link to r31
+    assign store = ((instr_opcode==6'b101000) || (instr_opcode==6'b101001) || (instr_opcode==6'b101011));
+    assign load = ((instr_opcode==6'b100011) || (instr_opcode==6'b100101) || (instr_opcode==6'b100000) || (instr_opcode==6'b100100) || (instr_opcode==6'b100001) || (instr_opcode==6'b100010) || (instr_opcode==6'b100110));
+    assign r_fromat = (instr_opcode==0);
+    assign muldiv = r_format && (funct_code[4:3] == 2'b11 || funct_code == 6'b010001 || funct_code == 6'b010011);
+    assign alui_instr = instr_opcode[5:3] == 3'b001;
+    assign l_type = instr_opcode[5:3] == 3'b100;
+    assign link_reg = (instr_opcode == 0 && instr_readdata[5:0] == 6'b001001);
+
+    //active for load instructions
+    assign mem_read = load;
+    //active for store instructions and in state 3
+    assign mem_write = store && (state==3);
+    assign ir_write = (state==0);
+    assign mdr_write = (state==3);
+    // active if instruction is R-type
+    assign reg_dst = r_format;
+    //writing to register either from memory or from ALU, depending on instruction type
+    assign mem_to_reg = load;
+    assign reg_write = 
 
     //Regfile I/O & IR outputs
     logic[4:0] reg_a_read_index;
@@ -57,6 +95,9 @@ module mips_cpu_bus(
         .reg_write_index_beforemux(reg_write_index_beforemux),
         .offset_b4extend(offset_b4extend)
     );
+
+    logic[5:0] funct_code;
+    assign funct_code = offset_b4extend[5:0];
 
     //MDR register
     memory_data_reg MDR(

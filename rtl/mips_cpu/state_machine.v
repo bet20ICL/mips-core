@@ -1,12 +1,8 @@
 module state_machine(
 
-    input logic       clk,
-    output logic      PC_inc,
-    output logic      IR_write,
-    output logic      alu_op,
-    output logic      mem_read,
-    output logic      mem_write,
-    output logic      reg_write,
+    input logic clk,
+    //implement reset
+    input logic reset,
     output logic[2:0] state
 
 );
@@ -17,19 +13,16 @@ module state_machine(
         state_next=0;
     end
 
-    // check that the states are chaning correctly witht the clock
-    
     always @(negedge clk) begin
         state_next=state_next+1;
-        if (state_next==4) begin 
+        if (state_next==4 || (state!=0 && state!=1 && state!=2 && state!=3 && state!=4)) begin 
             state_next = 0;
-        
         end
-        
     end
 
     always_ff @(posedge clk) begin
         state <= state_next;
+        //maybe put negedge stuff after over here instead
     end
         
 
