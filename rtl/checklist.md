@@ -110,7 +110,7 @@ SRAV	Shift right arithmetic r    t
 SRL	Shift right logical r   t
 SRLV	Shift right logical variable r  t
 SUBU	Subtract unsigned r x t
-SW	Store word
+SW	Store word  t
 XOR	Bitwise exclusive or r x    t
 XORI	Bitwise exclusive or immediate r    t
 

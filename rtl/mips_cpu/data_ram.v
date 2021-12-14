@@ -8,10 +8,8 @@ module data_ram (
     input logic[31:0]  data_writedata,
     output logic[31:0]  data_readdata
 );
-
     // reg [31:0] ram [65535:0];
-    // integer i;
-    
+    // integer i;    
     // initial begin
     //     for(i=0;i<5;i=i+1)
     //         ram[i] <= 32'd0;
