@@ -176,19 +176,23 @@ module mips_cpu_bus(
     //ALU stuff
     logic[31:0] alu_op1;
     logic[31:0] alu_op2;
-    logic[3:0] alu_control_out;
     logic[31:0] alu_out;
     logic[31:0] alu_out_b4reg;
+    logic[31:0] result_hi;
+    logic[31:0] result_lo;
+    logic b_flag;
 
     assign alu_op1 = alu_srca ? aout : curr_addr;
     assign alu_op2 = (alu_srcb=0) ? bout : (alu_srcb=1 ? 4 : (alu_srcb=2 ? offset : offset_shifted))
     
     alu alu(
-        .control(alu_control_out),
         .op1(alu_op1),
         .op2(alu_op2),
+        .instructionword(readdata),
         .result(alu_out_b4reg),
-        // some missing ?? in harvard too
+        .hi(result_hi),
+        .lo(result_lo),
+        .b_flag(b_flag)
     );
     alu_out_reg aluoutreg(
         .alu_out_write(alu_out_write),
