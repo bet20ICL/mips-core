@@ -19,7 +19,8 @@ module mips_cpu_bus(
         - implement ALU and ALU control (which is within ALU in harvard??) into bus
         - finish control signals
         - implement waitrequest
-        - implement
+        - implement reset everywhere
+        - implement half loads and half stores and byte enable stuff
     */
 
 
