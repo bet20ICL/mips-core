@@ -21,6 +21,8 @@ module mips_cpu_bus(
         - implement reset everywhere
         - implement half loads and half stores and byte enable stuff
         - make a detailed bulletpoint list of what happens on what state (expand on the one we've been using)
+          the above would make implementing the state machine and all the control signals muchhh easier,
+          and would allow us to understand how the bus works much more
     */
 
 
@@ -48,7 +50,6 @@ module mips_cpu_bus(
     logic alu_out_write;
     logic alu_srca;
     logic[1:0] alu_srcb;
-    logic[1:0] alu_op;
     logic pc_source;
 
     logic store;
@@ -85,11 +86,15 @@ module mips_cpu_bus(
     //writing to register either from memory or from ALU, depending on instruction type
     assign mem_to_reg = load;
     assign reg_write = ((r_format && !muldiv) || alui_instr || l_type || link_reg || link_const);
+    assign a_write = (state==1);
+    assign b_write = (state==1);
     // not too sure, gotta figure out alu_srca and alu_srcb, make sure they have PC=PC+4 as standard?
     assign alu_srca = (state!=0 && )
     assign alu_srcb = 
     assign alu_out_write = (state==2) || (state==1 && !alu_srca);
+    // not sure is complete
     assign pc_source = !((state==2) && branch);
+    // not sure is complete
     assign pc_write = (state==0 && pc_source) || (state==2 && !pc_source);
     assign pc_or_aluout = (state==3 && store) || 
 
