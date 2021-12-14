@@ -14,6 +14,14 @@ module mips_cpu_bus(
     output logic[3:0] byteenable,
     input logic[31:0] readdata
 );
+    /*
+        - still have to implement jump compatability (26 bits from j instruction need to get to alu mux somehow)
+        - implement ALU and ALU control (which is within ALU in harvard??) into bus
+        - finish control signals
+        - implement waitrequest
+        - implement
+    */
+
 
     //state machine
     logic[2:0] state;
@@ -51,13 +59,16 @@ module mips_cpu_bus(
     // multiplication control
     logic muldiv;   //high if hi/lo need to be changed
     logic link_const; // jump or branch with link to r31
+    logic link_const; // jump or branch with link to r31
+
     assign store = ((instr_opcode==6'b101000) || (instr_opcode==6'b101001) || (instr_opcode==6'b101011));
     assign load = ((instr_opcode==6'b100011) || (instr_opcode==6'b100101) || (instr_opcode==6'b100000) || (instr_opcode==6'b100100) || (instr_opcode==6'b100001) || (instr_opcode==6'b100010) || (instr_opcode==6'b100110));
     assign r_fromat = (instr_opcode==0);
     assign muldiv = r_format && (funct_code[4:3] == 2'b11 || funct_code == 6'b010001 || funct_code == 6'b010011);
     assign alui_instr = instr_opcode[5:3] == 3'b001;
     assign l_type = instr_opcode[5:3] == 3'b100;
-    assign link_reg = (instr_opcode == 0 && instr_readdata[5:0] == 6'b001001);
+    assign link_reg = (instr_opcode == 0 && readdata[5:0] == 6'b001001);
+    assign link_const = (instr_opcode == 3) || (instr_opcode == 1 && readdata[20] == 1);
 
     //active for load instructions
     assign mem_read = load;
@@ -69,7 +80,11 @@ module mips_cpu_bus(
     assign reg_dst = r_format;
     //writing to register either from memory or from ALU, depending on instruction type
     assign mem_to_reg = load;
-    assign reg_write = 
+    assign reg_write = ((r_format && !muldiv) || alui_instr || l_type || link_reg || link_const);
+    // not too sure, gotta figure out alu_srca and alu_srcb
+    assign alu_srca = (state!=0 && )
+    assign alu_out_write = (state==2) || (state==1 && !alu_srca);
+    assign pc_write
 
     //Regfile I/O & IR outputs
     logic[4:0] reg_a_read_index;
