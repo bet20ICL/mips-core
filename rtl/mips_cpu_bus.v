@@ -23,6 +23,7 @@ module mips_cpu_bus(
         - make a detailed bulletpoint list of what happens on what state (expand on the one we've been using)
           the above would make implementing the state machine and all the control signals muchhh easier,
           and would allow us to understand how the bus works much more
+        - halt in sm
     */
 
 
@@ -65,14 +66,14 @@ module mips_cpu_bus(
     logic branch; // if there's a branch
 
     assign store = ((instr_opcode==6'b101000) || (instr_opcode==6'b101001) || (instr_opcode==6'b101011));
-    assign load = ((instr_opcode==6'b100011) || (instr_opcode==6'b100101) || (instr_opcode==6'b100000) || (instr_opcode==6'b100100) || (instr_opcode==6'b100001) || (instr_opcode==6'b100010) || (instr_opcode==6'b100110));
+    assign load = ((instr_opcode==6'b100011) || (instr_opcode==6'b001111) || (instr_opcode==6'b100101) || (instr_opcode==6'b100000) || (instr_opcode==6'b100100) || (instr_opcode==6'b100001) || (instr_opcode==6'b100010) || (instr_opcode==6'b100110));
     assign r_fromat = (instr_opcode==0);
     assign muldiv = r_format && (funct_code[4:3] == 2'b11 || funct_code == 6'b010001 || funct_code == 6'b010011);
     assign alui_instr = instr_opcode[5:3] == 3'b001;
     assign l_type = instr_opcode[5:3] == 3'b100;
     assign link_reg = (instr_opcode == 0 && readdata[5:0] == 6'b001001);
     assign link_const = (instr_opcode == 3) || (instr_opcode == 1 && readdata[20] == 1);
-    //assign value to branch variable
+    //assign value to branch variable, use branch flag from alu
     assign branch = 
 
     //active for load instructions
