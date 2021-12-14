@@ -16,11 +16,11 @@ module mips_cpu_bus(
 );
     /*
         - still have to implement jump compatability (26 bits from j instruction need to get to alu mux somehow)
-        - implement ALU and ALU control (which is within ALU in harvard??) into bus
         - finish control signals
         - implement waitrequest
         - implement reset everywhere
         - implement half loads and half stores and byte enable stuff
+        - make a detailed bulletpoint list of what happens on what state (expand on the one we've been using)
     */
 
 
@@ -61,6 +61,7 @@ module mips_cpu_bus(
     logic muldiv;   //high if hi/lo need to be changed
     logic link_const; // jump or branch with link to r31
     logic link_const; // jump or branch with link to r31
+    logic branch; // if there's a branch
 
     assign store = ((instr_opcode==6'b101000) || (instr_opcode==6'b101001) || (instr_opcode==6'b101011));
     assign load = ((instr_opcode==6'b100011) || (instr_opcode==6'b100101) || (instr_opcode==6'b100000) || (instr_opcode==6'b100100) || (instr_opcode==6'b100001) || (instr_opcode==6'b100010) || (instr_opcode==6'b100110));
@@ -70,6 +71,8 @@ module mips_cpu_bus(
     assign l_type = instr_opcode[5:3] == 3'b100;
     assign link_reg = (instr_opcode == 0 && readdata[5:0] == 6'b001001);
     assign link_const = (instr_opcode == 3) || (instr_opcode == 1 && readdata[20] == 1);
+    //assign value to branch variable
+    assign branch = 
 
     //active for load instructions
     assign mem_read = load;
@@ -82,10 +85,14 @@ module mips_cpu_bus(
     //writing to register either from memory or from ALU, depending on instruction type
     assign mem_to_reg = load;
     assign reg_write = ((r_format && !muldiv) || alui_instr || l_type || link_reg || link_const);
-    // not too sure, gotta figure out alu_srca and alu_srcb
+    // not too sure, gotta figure out alu_srca and alu_srcb, make sure they have PC=PC+4 as standard?
     assign alu_srca = (state!=0 && )
+    assign alu_srcb = 
     assign alu_out_write = (state==2) || (state==1 && !alu_srca);
-    assign pc_write
+    assign pc_source = !((state==2) && branch);
+    assign pc_write = (state==0 && pc_source) || (state==2 && !pc_source);
+    assign pc_or_aluout = (state==3 && store) || 
+
 
     //Regfile I/O & IR outputs
     logic[4:0] reg_a_read_index;
@@ -193,10 +200,7 @@ module mips_cpu_bus(
         .result(alu_out_b4reg),
         .hi(result_hi),
         .lo(result_lo),
-        .b_flag(b_flag),
-        .state(state),
-        .alu_srca(alu_srca),
-        .alu_srcb(alu_srcb)
+        .b_flag(b_flag)
     );
     alu_out_reg aluoutreg(
         .alu_out_write(alu_out_write),
