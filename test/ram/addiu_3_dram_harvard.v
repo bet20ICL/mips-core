@@ -9,10 +9,20 @@ module addiu_dram(
 );
 
     reg [31:0] data_ram [0:4095];
-    assign word_address = data_address >> 2;
+    assign w_addr = data_address >> 2;
 
+    logic [5:0] i;
     initial begin
-        
+        // initialise data memory
+        // set addresses 0x0 - 0x078 (30 locations) to a arithmetic series
+        // inital value 32'h12345678 and difference 32'hdcba1234
+        i = 0;
+        w_addr = 32'h00;
+        repeat (30) begin
+            ram[w_addr] = 32'h12345678 + i * 32'hdcba1234;
+            w_addr += 4;
+            i += 1;
+        end
     end
 
     always @(*) begin
