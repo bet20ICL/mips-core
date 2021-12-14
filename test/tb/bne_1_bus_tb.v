@@ -149,7 +149,6 @@ module bne_tb();
                 i = i+1;
             end
             readdata = data_readdata;
-            
 
             @(posedge clk);
             #2;
@@ -158,7 +157,7 @@ module bne_tb();
             curr_addr = curr_addr + 4;
             assert(address == curr_addr) else $fatal(1, "expected pc=%h, actual pc=%h", curr_addr, address);
             i = i + 1;
-            data_readdata = data_readdata + 32'hdcba1234;
+            data_readdata = readdata + 32'hdcba1234;
         end
 
         // beq r3, r2; beq r4, r3; beq r5, r4, etc.
