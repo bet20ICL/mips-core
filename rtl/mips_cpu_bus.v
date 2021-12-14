@@ -193,7 +193,10 @@ module mips_cpu_bus(
         .result(alu_out_b4reg),
         .hi(result_hi),
         .lo(result_lo),
-        .b_flag(b_flag)
+        .b_flag(b_flag),
+        .state(state),
+        .alu_srca(alu_srca),
+        .alu_srcb(alu_srcb)
     );
     alu_out_reg aluoutreg(
         .alu_out_write(alu_out_write),

@@ -3,7 +3,10 @@ module alu(
     input logic[31:0] op2, // data from rt,
     input logic[31:0] instructionword,
     output logic[31:0] result,hi,lo,memaddroffset,
-    output logic b_flag
+    output logic b_flag,
+    input logic[2:0] state,
+    input logic alu_srca, 
+    input logic[1:0] alu_srcb
 ); 
     logic [5:0] opcode;
     assign opcode = instructionword[31:26];
@@ -38,9 +41,14 @@ module alu(
 
     logic[63:0] multresult;
 
+    logic do_smth;
+
+    assign do_smth = (!alu_srca & state==1) ? 1 : ((alu_srcb==2 & state==2)? 1:0);
+
     
 
     always @(*) begin
+        if (do_smth) begin 
         b_flag = 0;
         case(opcode)
             0:  begin
@@ -161,5 +169,6 @@ module alu(
     
         endcase
         result = unsigned_result;
+    end
     end
 endmodule
