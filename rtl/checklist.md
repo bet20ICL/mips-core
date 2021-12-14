@@ -126,11 +126,17 @@ I-Type	opcode	$rs	    $rt	    imm
 J-Type	opcode	address
 
 Harvard:
-RAM-tb for each instruction
+1) RAM-tb for each instruction
 
-Partial Load store instructions - may require extra cycles
+2) Partial Load store instructions - may require extra cycles
 
-Branch Delay Slot
+3) Branch Delay Slot
+
+4) Data sheet
+
+
+
+
 
 LB	Load byte               x   -
 LBU	Load byte unsigned      x   -
