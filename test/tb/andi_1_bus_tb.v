@@ -25,16 +25,31 @@ module addu_tb();
     initial begin
         //instantiate variables for easier instruction building
         logic [5:0] opcode;
-        logic [5:0] fn;
         logic [4:0] rt;
         logic [4:0] rs;
-        logic [4:0] rd;
-        logic [4:0] z;
         logic [15:0] imm;
         logic [31:0] imm_instr;
-        
+        //r type
+        logic [4:0] rd; 
+        logic [5:0] funct;
+        logic [31:0] r_instr;
+        logic [4:0] shamt;
+        logic[4:0] i;
+        logic [31:0] expected;
+        logic [31:0] test;
+        logic [15:0] test_imm;
+        logic [31:0] next_test;
+        logic [31:0] ex_imm;
+  
         reset = 1;
         clk_enable = 1;
+
+        // ex_imm = $signed(16'h8888);
+        // $display("%b", ex_imm);
+
+        // i = 9;
+        // ex_imm = $signed(16'h1111 * (i - 1));
+        // $display("%b", ex_imm);
 
         @(posedge clk);
         #2;
@@ -43,49 +58,76 @@ module addu_tb();
         @(posedge clk);
         #2;
 
-        //lw r2, offset r3
-        //v0 -> 9 
-        opcode = 6'b100011;
-        rs = 6'd3;
-        rt = 6'd2;
-        imm = 0;
-        imm_instr = {opcode, rs, rt, imm};
+        i = 2;
+        data_readdata = 32'h12345678;
+        repeat (15) begin
+            //lw ri, offset 
+            //ri = 
+            opcode = 6'b100011;
+            rs = 5'b0;
+            rt = i;
+            imm = 16'b0;
+            readdata = {opcode, rs, rt, imm};
+            logic[6:0] c;
+            c = 0;
+            while (address==0) begin
+                #1;
+                assert(c!=31) else $fatal(1, "not loading");
+                c = c+1;
+            end
 
-        readdata = imm_instr;
-        logic[6:0] i;
-        i = 0
-        while (address==0) begin
-            #1;
-            assert(i!=31) else $fatal(1, "not loading");
-            i = i+1;
-        end
-        readdata = 32'd9;
-        #2;
 
-        @(posedge clk);
-        #2;
-        assert(!write) else $fatal(1, "data_write should not be active but is");
-        assert(read) else $fatal(1, "data_read isn't active but should be");
-        assert(address == 0) else $fatal(1, "address from memory being loaded, incorrect");
-        assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
-
-        @(posedge clk);
-        opcode = 6'b001100;
-        rs = 2;
-        rt = 2;
-        imm = 8;
-        readdata = {opcode, rs, rt, imm};
-
-        i=0;
-        while (active) begin
+            readdata = data_readdata + 32'hdcba1234 * (i - 2);
+            // $display("%h", data_readdata);
             @(posedge clk);
-            assert(i!=37) else $fatal(1, "taking too long");
-            i = i+1;
+            #2;
+            assert(!data_write) else $fatal(1, "data_write should not be active but is");
+            assert(data_read) else $fatal(1, "data_read isn't active but should be");
+            i = i + 1;
+            data_readdata = readdata;
         end
 
-        assert(register_v0==8) else $fatal(1, "wrong value");
-        $finish(0);
+        i = 2;
+        repeat (15) begin
+            //andi r2, r(i-1), r(i)
+            opcode = 6'b001100;
+            rs = i;
+            rt = i + 15;
+            imm = 16'h1111 * (i - 1);
+            imm_instr = {opcode, rs, rt, imm};
 
+            readdata = imm_instr;
+            // expected = (32'h11111111 * (i - 1)) & (32'h11111111 * i);
+            // $display("%h", expected);
+
+            @(posedge clk);
+            #2;
+            i = i + 1;
+        end 
+
+        i = 2;
+        test = 32'h12345678;
+        repeat (15) begin
+            //addiu r2, ri, 0
+            //v0 -> ri
+            opcode = 6'd9;
+            rs = i + 15;
+            rt = 5'd2;
+            imm = 0;
+            imm_instr = {opcode, rs, rt, imm};
+            readdata = imm_instr; 
+
+            @(posedge clk);
+            #2;
+            test_imm = 16'h1111 * (i - 1);
+            ex_imm = {16'h0, test_imm};
+            $display("%b", ex_imm);
+            test = test + 32'hdcba1234 * (i - 2);
+            expected = test & ex_imm;
+            // $display("%h, %h", test, (test + 32'hdcba1234 * (i - 2))); 
+            assert(register_v0 == expected) else $fatal(1, "expected=%h, v0=%h", expected, register_v0);
+            i = i + 1;
+        end     
     end
 
     mips_cpu_bus dut(
