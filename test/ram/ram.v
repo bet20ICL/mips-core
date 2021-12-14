@@ -1,66 +1,72 @@
 //Combinatorial read, single cycle write
 
-module data_ram (
+module ram (
     input logic clk,
     input logic[31:0]   data_address,
     input logic         data_write,
     input logic         data_read,
     input logic[31:0]   data_writedata,
-    input logic         word_adress, 
-    output logic[31:0]  data_readdata
+    input logic         word_address, 
+    output logic[31:0]  data_readdata,
+    output logic wait_request
 );
 
+    // making sure that after reset the address will be going from 0
 
 
-    reg [7:0] ram [65535:0];
-    integer i;
-    
+    reg [7:0] ram [0:65535];
+    logic[31:0] new_addr;
+
     initial begin
-        for(i=0;i<65535;i=i+1)
-            ram[i] <= 8'd0;
+        ram[0] = 0;
     end
+
+    assign wait_request=0;
+
+    assign new_addr = data_address % (32'hBFC00000);
+    
     always @(posedge clk) begin
 
-        if (data_write) bgein
+        if (data_write) begin
 
-            if(word_adress) begin
-                ram[data_adress] <= data_writedata[7:0];
-                ram[data_adress] <= data_writedata[15:8];
-                ram[data_adress] <= data_writedata[23:16];
-                ram[data_adress] <= data_writedata[31:23];
+            if(word_address) begin
+                ram[new_addr] <= data_writedata[7:0];
+                ram[new_addr+1] <= data_writedata[15:8];
+                ram[new_addr+2] <= data_writedata[23:16];
+                ram[new_addr+3] <= data_writedata[31:24];
             end 
             else begin
 
-                if (data_adress % 4 ==0) 
-                    ram[data_adress] <= data_writedata[7:0]
-                if ((data_adress-1) % 4 ==0) 
-                    ram[data_adress] <= data_writedata[15:8]
-                if ((data_adress-2) % 4 ==0) 
-                    ram[data_adress] <= data_writedata[23:16]
-                if ((data_adress-3) % 4 ==0)
-                    ram[data_adress] <= data_writedata[31:23]
+                if (new_addr % 4 ==0) begin
+                    ram[new_addr] <= data_writedata[7:0];
+                end
+                if ((new_addr+1) % 4 ==0) begin
+                    ram[new_addr] <= data_writedata[15:8];
+                end
+                if ((new_addr+2) % 4 ==0) begin         
+                    ram[new_addr] <= data_writedata[23:16];
+                end 
+                if ((new_addr+3) % 4 ==0) begin
+                    ram[new_addr] <= data_writedata[31:24];
+                end
             end
 
         end 
-    end
-    if (word_adress) begin
+        if (word_address) begin
+            data_readdata <= {ram[new_addr+3], ram[new_addr+2], ram[new_addr+1], ram[new_addr]};
+        end 
 
-        assign data_readdata[7:0] = ram[data_address];
-        assign data_readdata[15:8] = ram[data_address+1];
-        assign data_readdata[23:16] = ram[data_address+2];
-        assign data_readdata[31:24] = ram[data_address+3];
-    end 
-
-    else begin
-
-        if (data_adress % 4 == 0)
-            assign data_readdata[7:0] = ram[data_adress];
-        else if ((data_adress-1) % 4 == 0)
-            assign data_readdata[15:8] = ram[data_address];
-        else if ((data_adress-2) % 4 == 0)
-            assign data_readdata[23:16] = ram[data_address];
-        else 
-            assign data_readdata[31:24] = ram[data_address];
+        else begin
+            data_readdata = 0;
+            if (new_addr % 4 == 0)
+                data_readdata[7:0] = ram[new_addr];
+            else if ((new_addr-1) % 4 == 0)
+                data_readdata[15:8] = ram[new_addr];
+            else if ((new_addr-2) % 4 == 0)
+                data_readdata[23:16] = ram[new_addr];
+            else 
+                data_readdata[31:24] = ram[new_addr];
+        end
     end
 endmodule
     
