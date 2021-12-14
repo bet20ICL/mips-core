@@ -54,7 +54,7 @@ module addiu_tb();
         readdata = imm_instr;
         logic[6:0] i;
         i = 0
-        while (address==0) begin
+        while (read==0) begin
             #1;
             assert(i!=31) else $fatal(1, "not loading");
             i = i+1;

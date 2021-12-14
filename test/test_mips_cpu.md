@@ -8,3 +8,5 @@ checklist:
 - jr
 - and
 - andi
+- beq
+- bgez
