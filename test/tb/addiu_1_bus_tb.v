@@ -54,6 +54,7 @@ module addiu_tb();
         readdata = imm_instr;
         logic[6:0] i;
         i = 0
+ 
         while (read==0) begin
             #1;
             assert(i!=31) else $fatal(1, "not loading");
@@ -85,7 +86,6 @@ module addiu_tb();
 
         assert(register_v0==14) else $fatal(1, "wrong addr");
         $finish(0);
-
     end
 
     mips_cpu_bus dut(
