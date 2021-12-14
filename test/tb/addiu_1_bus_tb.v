@@ -60,7 +60,6 @@ module addiu_tb();
             i = i+1;
         end
         readdata = 32'd9;
-        #2;
 
         @(posedge clk);
         #2;
