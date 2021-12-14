@@ -3,7 +3,7 @@ module ram(
     input logic write,
     input logic read,
     input logic[31:0] addr,
-    input logic[31:] data_write,
+    input logic[31:0] data_write,
     output logic[31:0] data
 );
 
