@@ -7,7 +7,7 @@ module ram(
     output logic[31:0] data
 );
 
-    reg[31:0] ram [0:((1<<32)-1)];
+    reg[31:0] ram [0:6400];
 
     always_comb begin
         if (read) begin
