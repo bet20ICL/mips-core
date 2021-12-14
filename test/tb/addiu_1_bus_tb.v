@@ -61,10 +61,6 @@ module addiu_tb();
             i = i+1;
         end
         readdata = 32'd9;
-<<<<<<< HEAD
-        // #2;
-=======
->>>>>>> a2ce7991df0d229f1af48beaaf026480c9949ea1
 
         @(posedge clk);
         #2;
