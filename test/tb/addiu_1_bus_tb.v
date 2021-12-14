@@ -1,4 +1,4 @@
-module addu_tb();
+module addiu_tb();
 
     logic     clk;
     logic     reset;
@@ -60,7 +60,7 @@ module addu_tb();
             i = i+1;
         end
         readdata = 32'd9;
-        #2;
+        // #2;
 
         @(posedge clk);
         #2;

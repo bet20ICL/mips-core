@@ -29,7 +29,7 @@ module addu_tb();
         logic [4:0] rt;
         logic [4:0] rs;
         logic [4:0] rd;
-        logic [4:0] z;
+        logic [4:0] shamt;
         logic [15:0] imm;
         logic [31:0] imm_instr;
         
@@ -70,13 +70,15 @@ module addu_tb();
         assert(register_v0 == 9) else $fatal(1, "wrong value loaded");
 
         @(posedge clk);
+        #2;
+        
         opcode = 6'b000000;
         rs = 2;
         rt = 2;
         rd = 2;
-        z = 0;
+        shamt = 0;
         fn = 6'b100001;
-        readdata = {opcode, rs, rt, rd, z, fn};
+        readdata = {opcode, rs, rt, rd, shamt, fn};
 
         i=0;
         while (active) begin
