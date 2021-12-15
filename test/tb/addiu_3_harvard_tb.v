@@ -50,6 +50,7 @@ module addiu_tb ();
             #2;
             $display(instr_address, instr_readdata);
         end
+        
         i = 2;
         res_addr = 32'h00000480;
         force_read = 1;
