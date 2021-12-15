@@ -84,6 +84,7 @@ module addiu_tb();
             data_readdata = data_readdata + 32'hdcba1234 * (i - 2);
             // $display("%h", data_readdata);
             @(posedge clk);
+            @(posedge clk);
             #2;
             assert(!data_write) else $fatal(1, "data_write should not be active but is");
             assert(data_read) else $fatal(1, "data_read isn't active but should be");
@@ -103,6 +104,7 @@ module addiu_tb();
             // expected = (32'h11111111 * (i - 1)) & (32'h11111111 * i);
             // $display("%h", expected);
 
+            @(posedge clk);
             @(posedge clk);
             #2;
             i = i + 1;

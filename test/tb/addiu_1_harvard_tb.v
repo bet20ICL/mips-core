@@ -51,6 +51,7 @@ module addiu_tb();
         reset = 0;
 
         @(posedge clk);
+        @(posedge clk);
         #2;
 
         //addiu r2, r3, 2
@@ -62,6 +63,7 @@ module addiu_tb();
         imm_instr = {opcode, rs, rt, imm};
         instr_readdata = imm_instr;     
         
+        @(posedge clk);
         @(posedge clk);
         #2;
         assert(!data_write) else $fatal(1, "data_write should not be active but is");
@@ -81,6 +83,7 @@ module addiu_tb();
         #2;
 
         @(posedge clk);
+        @(posedge clk);
         #2;
         assert(!data_write) else $fatal(1, "data_write should not be active but is");
         assert(data_read) else $fatal(1, "data_read isn't active but should be");
@@ -98,6 +101,7 @@ module addiu_tb();
         imm_instr = {opcode, rs, rt, imm};
         instr_readdata = imm_instr;     
 
+        @(posedge clk);
         @(posedge clk);
         #2;
         assert(!data_write) else $fatal(1, "data_write should not be active but is");
