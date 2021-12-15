@@ -115,6 +115,10 @@ XOR	Bitwise exclusive or r x    t
 XORI	Bitwise exclusive or immediate r    t
 
 
+SB	Store byte 
+SH	Store half-word 
+SW	Store word  
+
 // 
 opcode = 0 and not mthi mtlo
 
