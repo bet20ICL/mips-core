@@ -79,6 +79,46 @@ module addiu_tb ();
             res_addr = res_addr+4;
         end
     end
+    // logic [31:0] test_addr;
+    // initial begin
+    //     force_read = 1;
+    //     data_address = 0;
+    //     repeat (30) begin
+    //         #1;
+    //         $display("d_ram[%h] = %h", data_address, data_readdata);
+    //         data_address += 1;
+    //     end
+    //     $finish(0);
+    // end
+
+    initial begin
+        force_read=0;
+        clk_enable = 1;
+        reset = 1;
+        @(posedge clk);
+        #2;
+
+        reset = 0;
+        @(posedge clk);
+        #2;
+
+        while(active) begin
+            @(posedge clk);
+            #2;
+        end
+
+        i = 2;
+        res_addr = 32'h00000480;
+        force_read = 1;
+        repeat(30) begin
+            #1;
+            exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
+            assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded: expected=%h, got=%h", exp_val, data_readdata);
+            i = i+1;
+            res_addr = res_addr + 4;
+        end
+        $finish(0);
+    end
 
     assign read = data_read | force_read;
     assign addr = force_read ? res_addr : data_address;
