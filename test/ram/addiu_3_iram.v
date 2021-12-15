@@ -1,14 +1,18 @@
-module addiu_iram(
+module addiu_3_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
-    output logic[31:0]   instr_readdata
+    output logic[31:0]   instr_readdata,
+    input logic clk
 );
 
     reg [31:0] instr_ram [0:4095];
+
+    logic[31:0] inst;
+
+    assign inst = instr_address % (3217031168) + 4;
     
     // variables to generate instruction word
     logic [31:0] w_addr;
-    assign w_addr = instr_address >> 2;
     logic [5:0] i;
 
     // instantiate variables for easier instruction building
@@ -22,6 +26,7 @@ module addiu_iram(
     // r-type
     logic [4:0] rd; 
     logic [4:0] shamt;
+    logic[14:0] ze;
     logic [5:0] funct;
     logic [31:0] r_instr;
     
@@ -29,7 +34,6 @@ module addiu_iram(
     logic [25:0] j_addr;
     logic [31:0] j_instr;
     
-    logic [5:0] i;
     initial begin
         // memorry location 0x0: last instruction before halt 
         // memory locations 0x4: instruction memory starts here
@@ -68,10 +72,23 @@ module addiu_iram(
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
         end
+        opcode = 6'b000000;
+        rd = 0;
+        ze = 0;
+        funct = 6'b001000;
+        r_instr = {opcode, rd, ze, funct};
+        instr_ram[w_addr] = r_instr;
+    end
+
+    initial begin
+        repeat (100) begin
+            @(posedge clk);
+            $display("inst = %h, instr_address = %h", inst, instr_address);
+        end
     end
 
     always @(*) begin
-        instr_readdata = instr_ram[instr_address];
+        instr_readdata = instr_ram[inst];
     end
 
 endmodule
