@@ -66,7 +66,7 @@ module addiu_4_iram(
         instr_ram[w_addr] = imm_instr; 
         w_addr += 4;
 
-        
+        // jump to 0
         opcode = 6'b000000;
         rd = 0;
         ze = 0;
