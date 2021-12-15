@@ -244,8 +244,8 @@ module mips_cpu_harvard(
         end
     end
 
-    logic state;
-    logic cpu_active;
+    logic state;    // fetch: state = 0     exec1: state = 1
+    logic cpu_active; 
     logic [31:0] delay_slot;
     
     assign active = cpu_active;
