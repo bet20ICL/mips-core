@@ -40,19 +40,18 @@ module mips_cpu_harvard(
     logic reg_dst;
     assign reg_dst = (r_format);
 
-    logic mem_read;
-    assign mem_read = (lw);
+    logic load_instr; // load instructions
+    assign load_instr = (instr_opcode[5:3] == 3'b100);
 
     logic mem_to_reg;
     assign mem_to_reg = (lw);
 
     logic alui_instr;
     assign alui_instr = instr_opcode[5:3] == 3'b001;
-    logic l_type;
-    assign l_type = instr_opcode[5:3] == 3'b100;
+
     
     logic reg_write;
-    assign reg_write = ((r_format && !muldiv) || alui_instr || l_type || link_reg || link_const);
+    assign reg_write = ((r_format && !muldiv) || alui_instr || load_instr || link_reg || link_const);
     // case(opcode)
     //         0: case(funct)
     //             0,2,3,4,6,7,9,16,18,32,33,34,35,36,37,38,39,42,43 : writereg = 1;
@@ -63,8 +62,8 @@ module mips_cpu_harvard(
     //         3,8,9,10,11,12,13,14,15,32,33,34,36,37 : write_reg = 1;
     // endcase
 
-    logic mem_write;
-    assign mem_write = (sw);
+    logic store_instr;
+    assign store_instr = instr_opcode[5:3] == 3'b101;
 
     logic link_const; // jump or branch with link to r31
     assign link_const = (instr_opcode == 3) || (instr_opcode == 1 && instr_readdata[20] == 1);
@@ -88,9 +87,7 @@ module mips_cpu_harvard(
     logic mflo;
     assign mflo = r_format && (funct_code == 6'b010010);
 
-    // Data RAM read/write enable control
-    assign data_write = active ? mem_write : 0;
-    assign data_read = mem_read;
+    
     
     //Regfile inputs
     logic[4:0] reg_a_read_index;
@@ -103,9 +100,18 @@ module mips_cpu_harvard(
     assign reg_a_read_index = instr_readdata[25:21];
     assign reg_b_read_index = instr_readdata[20:16];
     assign reg_write_index =  link_const ? 5'd31 : (reg_dst ? instr_readdata[15:11] : instr_readdata[20:16]);
-    assign reg_write_enable = active && reg_write;
+    assign reg_write_enable = cpu_active && state && reg_write;
 
-    assign reg_write_data = (link_const || link_reg) ? delay_slot + 4 : (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? data_readdata : result)));
+    logic[31:0] load_data;
+
+    load_block cpu_load_block(
+        .address(effective_addr),
+        .instr_word(instr_readdata),
+        .datafromMem(data_readdata),
+        .out_transformed(load_data) 
+    );
+
+    assign reg_write_data = (link_const || link_reg) ? (delay_slot + 4): (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? load_data : result)));
     
     //Regfile outputs
     logic[31:0] reg_a_read_data;
@@ -136,8 +142,6 @@ module mips_cpu_harvard(
         .register_v0(register_v0)
     );
 
-    assign data_writedata = reg_b_read_data;
-
     //ALU inputs
     logic[31:0] alu_op1;
     logic[31:0] alu_op2;
@@ -145,15 +149,12 @@ module mips_cpu_harvard(
     logic[31:0] result;
     logic[31:0] result_lo;
     logic[31:0] result_hi;
-    logic[31:0] memaddroffset;
+    logic[31:0] effective_addr;
     logic b_flag;
     
     //Assigning ALU inputs
     assign alu_op1 = reg_a_read_data;
     assign alu_op2 = reg_b_read_data;
-
-    //Assigning ALU outputs
-    assign data_address = memaddroffset; 
 
     alu cpu_alu(
         .op1(alu_op1),
@@ -162,13 +163,13 @@ module mips_cpu_harvard(
         .result(result),
         .lo(result_lo),
         .hi(result_hi),
-        .memaddroffset(memaddroffset),
+        .memaddroffset(effective_addr),
         .b_flag(b_flag)
     );
 
     // HI/LO Register inputs
     logic hl_reg_enable;
-    assign hl_reg_enable = (clk_enable && muldiv && cpu_active);
+    assign hl_reg_enable = (clk_enable && muldiv && cpu_active && state == 1);
 
     // HI/LO Register outputs
     logic[31:0] lo_out;
@@ -190,14 +191,47 @@ module mips_cpu_harvard(
         .data_out(hi_out)
     );
 
-    // store block
-
+    // Data RAM
     
+
+    // Data RAM read/write enable control
+    assign data_write = cpu_active && state && store_instr;
+
+    logic sb;
+    assign sb = instr_opcode == (6'b101000);
+    logic sh;
+    assign sh = instr_opcode == (6'b101001);
+    logic partial_store;
+    assign partial_store = sb || sh;
+
+    assign data_read = load_instr || (partial_store && !state);
+
+    // data address
+    // data address controller
+    logic lwl;
+    assign lwl = instr_opcode[5:0] == 6'b100110;
+    logic lwr;
+    assign lwr = instr_opcode[5:0] == 6'b100010;
+    always @(*) begin
+        if (lwl || lwr) begin
+            // to do
+        end
+        else if (instr_opcode[5] == 1) begin // all load / store instructions
+            data_address = {effective_addr[31:2], 2'b00};
+        end
+    end
+
+    // data_writedata
+    // store block
+    store_block dut(
+        .opcode(instr_opcode),
+        .regword(reg_b_read_data),
+        .dataword(data_readdata),
+        .eff_addr(effective_addr),
+        .storedata(data_writedata)
+    );
     
     //PC
-    initial begin
-        cpu_active = 0;
-    end
     logic[31:0] curr_addr;
     
     // for building branch address
@@ -245,11 +279,14 @@ module mips_cpu_harvard(
                         curr_addr <= delay_slot;
                         delay_slot <= next_delay_slot;
                     end
+                    if (delay_slot == 0) begin
+                        cpu_active <= 0;
+                    end
                 end
             end
         end
     end
-    assign cpu_active = curr_addr != 32'h0;
+    
     assign instr_address = curr_addr;
 
 endmodule
