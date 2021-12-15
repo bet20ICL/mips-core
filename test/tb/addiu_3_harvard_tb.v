@@ -77,8 +77,7 @@ module addiu_tb ();
 
     addiu_3_iram iram(
         .instr_address(instr_address),
-        .instr_readdata(instr_readdata),
-        .clk(clk)
+        .instr_readdata(instr_readdata)
     );
 
     mips_cpu_harvard dut(

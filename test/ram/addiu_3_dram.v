@@ -25,7 +25,7 @@ module addiu_3_dram(
         end
     end
 
-    always @(*) begin
+    always_comb begin
         if (data_read) begin
             data_readdata = data_ram[data_address];
         end
