@@ -277,14 +277,4 @@ module mips_cpu_harvard(
     
     assign instr_address = curr_addr;
 
-    always @(posedge clk) begin
-        $display("reset=%h", reset);
-        $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
-        $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
-        $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
-        $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
-        $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
-        $display("pc=%h", curr_addr);
-    end
-
 endmodule
