@@ -50,6 +50,7 @@ module addiu_tb ();
             #2;
             $display(instr_address, instr_readdata);
         end
+        
         i = 2;
         res_addr = 32'h00000480;
         force_read = 1;
@@ -76,8 +77,7 @@ module addiu_tb ();
 
     addiu_3_iram iram(
         .instr_address(instr_address),
-        .instr_readdata(instr_readdata),
-        .clk(clk)
+        .instr_readdata(instr_readdata)
     );
 
     mips_cpu_harvard dut(
