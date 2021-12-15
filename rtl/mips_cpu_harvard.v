@@ -105,7 +105,7 @@ module mips_cpu_harvard(
     assign reg_write_index =  link_const ? 5'd31 : (reg_dst ? instr_readdata[15:11] : instr_readdata[20:16]);
     assign reg_write_enable = active && reg_write;
 
-    assign reg_write_data = (link_const || link_reg) ? curr_addr_p4 + 4 : (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? data_readdata : result)));
+    assign reg_write_data = (link_const || link_reg) ? delay_slot + 4 : (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? data_readdata : result)));
     
     //Regfile outputs
     logic[31:0] reg_a_read_data;
@@ -191,53 +191,64 @@ module mips_cpu_harvard(
     );
     
     //PC
-    logic[31:0] next_instr_addr;
+    initial begin
+        cpu_active = 0;
+    end
     logic[31:0] curr_addr;
-    logic[31:0] curr_addr_p4;
-    assign curr_addr_p4 = curr_addr + 4;
+    
+
+    // for building branch address
     logic[17:0] b_imm;
     assign b_imm = instr_readdata[15:0] << 2;
     logic[31:0] b_offset;
-    // assign b_offset = {14{instr_readdata[15]}, instr_readdata[15:0],2'b0}; 
     assign b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
 
+    logic [31:0] next_delay_slot;
     always @(*) begin
         if (b_flag) begin
-            next_instr_addr = curr_addr_p4 + b_offset;
+            next_delay_slot = delay_slot + b_offset;
         end
         else if (j_imm) begin 
-            next_instr_addr = {curr_addr_p4[31:28], instr_readdata[25:0], 2'b0};
+            next_delay_slot = {delay_slot[31:28], instr_readdata[25:0], 2'b0};
         end
         else if (j_reg) begin
-            next_instr_addr = reg_a_read_data;
+            next_delay_slot = reg_a_read_data;
         end
         else begin
-            next_instr_addr = curr_addr_p4;
+            next_delay_slot = curr_addr + 4;
         end
     end
 
-    assign instr_address = curr_addr;
-
+    logic state;
     logic cpu_active;
-    always @(posedge clk) begin
-       if (reset) begin
-           cpu_active = 1;
-       end
-       else begin
-           cpu_active = (curr_addr != 32'h0);
-       end
-    end
+    logic [31:0] delay_slot;
+    
     assign active = cpu_active;
-
-    logic pc_enable;
-    assign pc_enable = clk_enable && cpu_active;
-
-    pc cpu_pc(
-        .clk(clk),
-        .reset(reset),
-        .next_addr(next_instr_addr),
-        .curr_addr(curr_addr),
-        .enable(pc_enable)
-    );
+    always @(posedge clk) begin
+        if (clk_enable) begin
+            if (reset) begin
+                curr_addr <= 32'hBFC00000;
+                delay_slot <= 32'hBFC00004;
+                cpu_active <= 1;
+                state <= 0;
+            end 
+            else begin
+                if (cpu_active) begin
+                    if (state == 0) begin
+                        state <= 1;
+                    end 
+                    else if (state == 1) begin
+                        state <= 0;
+                        curr_addr <= delay_slot;
+                        delay_slot <= next_delay_slot;
+                    end
+                    if (curr_addr == 32'h0) begin
+                        cpu_active <= 0;
+                    end
+                end
+            end
+        end
+    end
+    assign instr_address = curr_addr;
 
 endmodule
