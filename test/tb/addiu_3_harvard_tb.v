@@ -36,14 +36,13 @@ module addiu_tb ();
         $fatal(2, "too long");
     end
 
-    // logic [31:0] test_addr;
     // initial begin
     //     force_read = 1;
-    //     data_address = 0;
+    //     res_addr = 0;
     //     repeat (30) begin
     //         #1;
-    //         $display("d_ram[%h] = %h", data_address, data_readdata);
-    //         data_address += 1;
+    //         $display("d_ram[%h] = %h", res_addr, data_readdata);
+    //         res_addr += 1;
     //     end
     //     $finish(0);
     // end
