@@ -102,15 +102,6 @@ module mips_cpu_harvard(
     assign reg_write_index =  link_const ? 5'd31 : (reg_dst ? instr_readdata[15:11] : instr_readdata[20:16]);
     assign reg_write_enable = cpu_active && state && reg_write;
 
-    logic[31:0] load_data;
-
-    load_block cpu_load_block(
-        .address(effective_addr),
-        .instr_word(instr_readdata),
-        .datafromMem(data_readdata),
-        .out_transformed(load_data) 
-    );
-
     assign reg_write_data = (link_const || link_reg) ? (delay_slot + 4): (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? load_data : result)));
     
     //Regfile outputs
@@ -155,6 +146,15 @@ module mips_cpu_harvard(
         .hi(result_hi),
         .memaddroffset(effective_addr),
         .b_flag(b_flag)
+    );
+
+    logic[31:0] load_data;
+
+    load_block cpu_load_block(
+        .address(effective_addr),
+        .instr_word(instr_readdata),
+        .datafromMem(data_readdata),
+        .out_transformed(load_data) 
     );
 
     // HI/LO Register inputs
