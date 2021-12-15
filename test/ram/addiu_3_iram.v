@@ -1,8 +1,7 @@
 module addiu_3_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
-    output logic[31:0]   instr_readdata,
-    input logic clk
+    output logic[31:0]   instr_readdata
 );
 
     reg [31:0] instr_ram [0:4095];
@@ -78,13 +77,6 @@ module addiu_3_iram(
         funct = 6'b001000;
         r_instr = {opcode, rd, ze, funct};
         instr_ram[w_addr] = r_instr;
-    end
-
-    initial begin
-        repeat (100) begin
-            @(posedge clk);
-            $display("inst = %h, instr_address = %h", inst, instr_address);
-        end
     end
 
     always @(*) begin
