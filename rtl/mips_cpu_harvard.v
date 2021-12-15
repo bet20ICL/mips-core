@@ -192,11 +192,7 @@ module mips_cpu_harvard(
 
     // store block
 
-    always @(*) begin
-        if (instr_opcode == 6'b101011) begin   //sw
-            
-        end
-    end
+    
     
     //PC
     initial begin
