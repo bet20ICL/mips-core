@@ -286,6 +286,7 @@ module mips_cpu_harvard(
         $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
         $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
         $display("pc=%h, state=%h", curr_addr, state);
+        $display("data_writedata=%h",data_writedata);
     end
 
 endmodule
