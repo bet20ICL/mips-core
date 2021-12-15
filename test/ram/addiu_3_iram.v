@@ -22,6 +22,8 @@ module addiu_3_iram(
     logic [15:0] imm;
     logic [31:0] imm_instr;
 
+    assign imm_instr = {opcode, rs, rt, imm};
+
     // r-type
     logic [4:0] rd; 
     logic [4:0] shamt;
@@ -44,7 +46,6 @@ module addiu_3_iram(
             rs = 5'b0;
             rt = i;
             imm = 16'b0;
-            imm_instr = {opcode, rs, rt, imm};
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
             i += 1;
@@ -57,7 +58,6 @@ module addiu_3_iram(
             rs = i;
             rt = i;
             imm = 16'h1111 * (i - 2);
-            imm_instr = {opcode, rs, rt, imm};
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
             i += 1;
@@ -70,7 +70,6 @@ module addiu_3_iram(
             rs = 5'b0;
             rt = i;
             imm = 16'h0480;
-            imm_instr = {opcode, rs, rt, imm};
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
             imm += 4;
