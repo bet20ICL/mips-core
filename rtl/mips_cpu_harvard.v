@@ -277,6 +277,7 @@ module mips_cpu_harvard(
     
     assign instr_address = curr_addr;
 
+<<<<<<< HEAD
     always @(posedge clk) begin
         $display("reset=%h, clk_enable=%h", reset, clk_enable);
         $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
@@ -287,4 +288,6 @@ module mips_cpu_harvard(
         $display("pc=%h, state=%h", curr_addr, state);
     end
 
+=======
+>>>>>>> 3afb76335997c600ac754f5d009580a7a90caecd
 endmodule

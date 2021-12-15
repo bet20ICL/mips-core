@@ -24,11 +24,12 @@ module addiu_tb ();
 
     logic read, force_read;
     logic [31:0] addr, res_addr;
+    logic [31:0] test;
 
     initial begin
         clk = 0;
         #4;
-        repeat (1000) begin
+        repeat (10000) begin
             clk = ~clk;
             #4;
         end
@@ -50,7 +51,16 @@ module addiu_tb ();
         while(active) begin
             @(posedge clk);
             #2;
-            $display(instr_address, instr_readdata);
+        end
+        test = 0;
+        force_read = 1;
+        #2;
+        $display(read);
+        repeat (4096) begin
+            $display(data_readdata);
+            #1;
+            test += 1;
+            #1;
         end
 
         i = 2;
