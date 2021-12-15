@@ -189,6 +189,14 @@ module mips_cpu_harvard(
         .data_in(result_hi),
         .data_out(hi_out)
     );
+
+    // store block
+
+    always @(*) begin
+        if (instr_opcode == 6'b101011) begin   //sw
+            
+        end
+    end
     
     //PC
     initial begin
@@ -196,7 +204,6 @@ module mips_cpu_harvard(
     end
     logic[31:0] curr_addr;
     
-
     // for building branch address
     logic[17:0] b_imm;
     assign b_imm = instr_readdata[15:0] << 2;
@@ -242,13 +249,11 @@ module mips_cpu_harvard(
                         curr_addr <= delay_slot;
                         delay_slot <= next_delay_slot;
                     end
-                    if (curr_addr == 32'h0) begin
-                        cpu_active <= 0;
-                    end
                 end
             end
         end
     end
+    assign cpu_active = curr_addr != 32'h0;
     assign instr_address = curr_addr;
 
 endmodule
