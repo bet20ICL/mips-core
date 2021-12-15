@@ -38,6 +38,7 @@ module addiu_tb ();
     initial begin
         force_read=0;
         reset = 1;
+        clk_enable = 1;
         @(posedge clk);
         #2;
 
@@ -55,7 +56,7 @@ module addiu_tb ();
         res_addr = 32'h00000480;
         force_read = 1;
         repeat(30) begin
-            exp_val = (16'h1111)*(i-2) + 32'h12345678 + i * 32'hdcba1234;
+            exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
             $display("%h, %h", data_readdata, exp_val);
             assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
             i = i+1;

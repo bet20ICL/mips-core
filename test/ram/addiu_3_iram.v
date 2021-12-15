@@ -44,6 +44,7 @@ module addiu_3_iram(
             rs = 5'b0;
             rt = i;
             imm = 16'b0;
+            imm_instr = {opcode, rs, rt, imm};
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
             i += 1;
@@ -56,6 +57,7 @@ module addiu_3_iram(
             rs = i;
             rt = i;
             imm = 16'h1111 * (i - 2);
+            imm_instr = {opcode, rs, rt, imm};
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
             i += 1;
@@ -67,9 +69,11 @@ module addiu_3_iram(
             opcode = 6'b101011;
             rs = 5'b0;
             rt = i;
-            imm = 16'h1111 * (i - 2);
+            imm = 16'h0480;
+            imm_instr = {opcode, rs, rt, imm};
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
+            imm += 4;
         end
         opcode = 6'b000000;
         rd = 0;
