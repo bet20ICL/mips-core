@@ -197,9 +197,9 @@ module mips_cpu_harvard(
     // data address
     // data address controller
     logic lwl;
-    assign lwl = instr_opcode[5:0] == 6'b100110;
+    assign lwl = instr_opcode == 6'b100110;
     logic lwr;
-    assign lwr = instr_opcode[5:0] == 6'b100010;
+    assign lwr = instr_opcode == 6'b100010;
     always @(*) begin
         if (lwl || lwr) begin
             // to do
@@ -278,6 +278,7 @@ module mips_cpu_harvard(
     assign instr_address = curr_addr;
 
     always @(posedge clk) begin
+        $display("-------------------------------------------------------------------------------");
         $display("reset=%h, clk_enable=%h", reset, clk_enable);
         $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
         $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
