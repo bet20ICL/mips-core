@@ -79,7 +79,7 @@ module addiu_3_iram(
         instr_ram[w_addr] = r_instr;
     end
 
-    always @(*) begin
+    always_comb begin
         instr_readdata = instr_ram[inst];
     end
 
