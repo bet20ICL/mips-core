@@ -285,9 +285,10 @@ module mips_cpu_harvard(
         $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
         $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
         $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
+        $display("data_read=%h, data_write=%h", data_read, data_write);
         $display("data_address=%h, data_writedata=%h", data_address, data_readdata);
         $display("pc=%h, state=%h", curr_addr, state);
-        $display("data_writedata=%h",data_writedata);
+ 
     end
 
 endmodule
