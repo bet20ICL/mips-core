@@ -51,39 +51,39 @@ module timing_1_tb ();
     logic [31:0] test_addr;
 
     initial begin
-        tb_read=0;
-        clk_enable = 1;
-        reset = 1;
-        @(posedge clk);
-        @(posedge clk);
-        #2;
+        // tb_read=0;
+        // clk_enable = 1;
+        // reset = 1;
+        // @(posedge clk);
+        // @(posedge clk);
+        // #2;
 
-        reset = 0;
-        @(posedge clk);
-        @(posedge clk);
-        #2;
+        // reset = 0;
+        // @(posedge clk);
+        // @(posedge clk);
+        // #2;
 
-        while (active) begin
-            @(posedge clk);
-            #2;
-        end
+        // while (active) begin
+        //     @(posedge clk);
+        //     #2;
+        // end
         
-        test = 0;
-        tb_read = 1;
-        #2;
-        res_addr = 32'h00000000;
+        // test = 0;
+        // tb_read = 1;
+        // #2;
+        // res_addr = 32'h00000000;
 
 
-        i = 2;
-        tb_read = 1;
-        exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
-        #2;
-        $display("addr = %h, res_addr = %h, data_address=%h", addr, res_addr, data_address);
-        $display("%h, %h", data_readdata, exp_val);
-        assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
-        i = i+1;
-        res_addr = res_addr+4;
-        $finish(0);
+        // i = 2;
+        // tb_read = 1;
+        // exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
+        // #2;
+        // $display("addr = %h, res_addr = %h, data_address=%h", addr, res_addr, data_address);
+        // $display("%h, %h", data_readdata, exp_val);
+        // assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
+        // i = i+1;
+        // res_addr = res_addr+4;
+        // $finish(0);
     end
 
     assign read = data_read | tb_read;

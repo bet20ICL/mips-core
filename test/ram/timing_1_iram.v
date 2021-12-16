@@ -50,6 +50,7 @@ module timing_1_iram(
         rt = 5'd2;
         imm = 16'hABCD;
         instr_ram[w_addr_s] = imm_instr; 
+        $display("mem[&h] = %h", w_addr_s, instr_ram[w_addr_s]);
         w_addr += 4;
 
         // lb r3, 0x483(r0)    r3 -> 0x12
@@ -58,6 +59,7 @@ module timing_1_iram(
         rt = 5'd3;
         imm = 16'h0483;
         instr_ram[w_addr_s] = imm_instr; 
+        $display("mem[&h] = %h", w_addr_s, instr_ram[w_addr_s]);
         w_addr += 4;
 
         // subu r4, r2, r3      r4 -> 0xFFFFABBC
@@ -68,21 +70,47 @@ module timing_1_iram(
         shamt = 5'd0;
         funct = 6'b100011;
         instr_ram[w_addr_s] = r_instr;
+        $display("mem[&h] = %h", w_addr_s, instr_ram[w_addr_s]);
+        w_addr += 4;
         
         // bne r3, r4, 0x1   branch to  0x114
-        opcode = 6'b001001;     
+        opcode = 6'b000101;     
+        rs = 5'd3;
+        rt = 5'd4;
+        imm = 16'h1;
+        instr_ram[w_addr_s] = imm_instr;
+        $display("mem[&h] = %h", w_addr_s, instr_ram[w_addr_s]);
+        w_addr += 4;
+
+        // sh r4, 0x484(0)  mem[0x484] = 0xABBC0000
+        opcode = 6'b101001;     
         rs = 5'd0;
-        rt = 5'd2;
-        imm = 16'hABCD;
+        rt = 5'd4;
+        imm = 16'h484;
         instr_ram[w_addr_s] = imm_instr; 
+        $display("mem[&h] = %h", w_addr_s, instr_ram[w_addr_s]);
 
         w_addr = 32'h114;
-        // sh r4, 0x484(0)  mem[0x484] = 
-        opcode = 6'b001001;     
+        // jr r0    halt after running next instruction
+        opcode = 6'b0;
+        rs = 5'd0;
+        rt = 5'd0;
+        rd = 5'd0;
+        shamt = 5'd0;
+        funct = 6'b001000;
+        instr_ram[w_addr_s] = r_instr;
+        $display("mem[&h] = %h", w_addr_s, instr_ram[w_addr_s]);
+        w_addr += 4;
+
+        // sb r2, 0x480(0)    mem[0x480] = 0xCD345678
+        opcode = 6'b000101;     
         rs = 5'd0;
         rt = 5'd2;
-        imm = 16'hABCD;
-        instr_ram[w_addr_s] = imm_instr; 
+        imm = 16'h480;
+        instr_ram[w_addr_s] = imm_instr;
+        $display("mem[&h] = %h", w_addr_s, instr_ram[w_addr_s]);
+        w_addr += 4;
+
     end
 
     always_comb begin
