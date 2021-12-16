@@ -49,6 +49,7 @@ module timing_1_tb ();
     end
 
     logic [31:0] test_addr;
+    logic [31:0] undefined;
 
     initial begin
         tb_read=0;
@@ -67,19 +68,22 @@ module timing_1_tb ();
             @(posedge clk);
             #2;
         end
+
+        // $display("%h, %h", undefined, 32'hxxxxxxxx);
+        // assert(undefined == 32'hxxxxxxxx) else $fatal(1);
         
         tb_read = 1;
         tb_addr = 32'h480;
-        exp_val = 32'hcd345678;
+        exp_val = 32'h123456cd;
         #2;
         $display("tb_addr = %h, data_readdata=%h", tb_addr, data_readdata);
-        assert(data_readdata==exp_val) else $fatal(1, "expected=%h");
+        assert(data_readdata==exp_val) else $fatal(1, "expected=%h", exp_val);
 
         tb_addr = tb_addr + 4;
-        exp_val = 32'hab55xxxx;
+        exp_val = 32'hxxxxabbb;
         #2;
         $display("tb_addr = %h, data_readdata=%h", tb_addr, data_readdata);
-        assert(data_readdata==exp_val) else $fatal(1, "expected=%h");
+        assert(data_readdata[15:0]==exp_val[15:0]) else $fatal(1, "expected data_readdata=%h, %h", exp_val, data_readdata);
         $finish(0);
     end
 

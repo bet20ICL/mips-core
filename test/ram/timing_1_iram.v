@@ -53,7 +53,7 @@ module timing_1_iram(
         $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
-        // lb r3, 0x483(r0)    r3 -> 0x12
+        // lb r3, 0x483(r0)    r3 -> 0x78
         opcode = 6'b100000;
         rs = 5'd0;
         rt = 5'd3;
@@ -82,7 +82,7 @@ module timing_1_iram(
         $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
-        // sh r4, 0x484(0)  mem[0x484] = 0xAB55xxxx
+        // sh r4, 0x484(0)  mem[0x484] = 0xxxxabbb
         opcode = 6'b101001;     
         rs = 5'd0;
         rt = 5'd4;
@@ -102,7 +102,7 @@ module timing_1_iram(
         $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
-        // sb r2, 0x480(0)    mem[0x480] = 0xCD345678
+        // sb r2, 0x480(0)    mem[0x480] = 0x123456cd
         opcode = 6'b101000;     
         rs = 5'd0;
         rt = 5'd2;

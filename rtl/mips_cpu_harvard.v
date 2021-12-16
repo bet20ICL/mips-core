@@ -144,6 +144,15 @@ module mips_cpu_harvard(
 
     logic[31:0] load_data;
 
+    // load_block cpu_load_block(
+    //     .clk(clk),
+    //     .address(effective_addr),
+    //     .instr_word(instr_readdata),
+    //     .regword(),
+    //     .datafromMem(data_readdata),
+    //     .out_transformed(load_data) 
+    // );
+
     load_block cpu_load_block(
         .address(effective_addr),
         .instr_word(instr_readdata),
@@ -197,14 +206,20 @@ module mips_cpu_harvard(
     logic lwr;
     assign lwr = instr_opcode == 6'b100010;
     always @(*) begin
-        if (lwl || lwr) begin
-            // to do
+        if (state==0 && (lwl || lwr)) begin
+            data_address = {effective_addr[31:2], 2'b00};
+        end
+        else if (state==1 && lwl) begin 
+            data_address = {effective_addr[31:2], 2'b00} +4;
+        end
+        else if (state==1 && lwr) begin
+            data_address = {effective_addr[31:2], 2'b00} -4;
         end
         else if (instr_opcode[5] == 1) begin // all load / store instructions
             data_address = {effective_addr[31:2], 2'b00};
         end
     end
-
+    
     // data_writedata
     // store block
     store_block dut(
