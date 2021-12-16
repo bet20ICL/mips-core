@@ -68,7 +68,6 @@ module addiu_tb ();
             @(posedge clk);
             #2;
             data_out = {data_readdata[7:0], data_readdata[15:8], data_readdata[23:16], data_readdata[31:24]};
-            $display("%h, %h, %h", data_out, exp_val, addr);
             assert(data_out==exp_val) else $fatal(1, "wrong value loaded");
             i = i+1;
             res_addr = res_addr+4;
