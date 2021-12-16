@@ -16,10 +16,10 @@ module store_block(
     always @(*) begin
         if (opcode == 6'b101011) begin   // sw
             // switch to big endian to store back into RAM
-            storedata[7:0] = regword[31:24];
-            storedata[15:8] = regword[23:16];
-            storedata[23:16] = regword[15:8];
-            storedata[31:24] = regword[7:0];
+            storedata[7:0] = regword[7:0];
+            storedata[15:8] = regword[15:8];
+            storedata[23:16] = regword[23:16];
+            storedata[31:24] = regword[31:24];
         end 
         else if (opcode == 6'b101000) begin  // sb
             // big endian
