@@ -240,13 +240,14 @@ module mips_cpu_harvard(
             next_delay_slot = reg_a_read_data;
         end
         else begin
-            next_delay_slot = curr_addr + 4;
+            next_delay_slot = delay_slot + 4;
         end
     end
 
     logic state;    // fetch: state = 0     exec1: state = 1
     logic cpu_active; 
     logic [31:0] delay_slot;
+
     
     assign active = cpu_active;
     always @(posedge clk) begin
