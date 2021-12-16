@@ -1,4 +1,4 @@
-module timing_1_iram(
+module lwl_1_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
     output logic[31:0]   instr_readdata
@@ -44,16 +44,16 @@ module timing_1_iram(
 
         w_addr = 32'h0;
 
-        // addiu r2, ABCD(r0)   r2 -> 0xFFFFABCD   
+        // addiu r2, ABCD(r0)   r2 -> 0xFFFFFFFF  
         opcode = 6'b001001;     
         rs = 5'd0;
         rt = 5'd2;
-        imm = 16'hABCD;
+        imm = 16'hFFFF;
         instr_ram[w_addr >> 2] = imm_instr; 
         $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
-        // lb r3, 0x483(r0)    r3 -> 0x78
+        // lwl r3, 0x480(r0)    r3 -> 0x78
         opcode = 6'b100000;
         rs = 5'd0;
         rt = 5'd3;
@@ -72,26 +72,8 @@ module timing_1_iram(
         instr_ram[w_addr >> 2] = r_instr; 
         $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
-
-        // lwl r5, 0x482(r0)    r5 -> 0x3412xxxx
-        opcode = 6'b100010;
-        rs = 5'd0;
-        rt = 5'd5;
-        imm = 16'h0482;
-        instr_ram[w_addr >> 2] = imm_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
-
-        // sw r5, 0x488(r0)    mem[0x488] -> 0xxxxx1234
-        opcode = 6'b101011;
-        rs = 5'd0;
-        rt = 5'd5;
-        imm = 16'h0488;
-        instr_ram[w_addr >> 2] = imm_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
         
-        // bne r3, r4, 0x1   branch to  0x118
+        // bne r3, r4, 0x1   branch to  0x114
         opcode = 6'b000101;     
         rs = 5'd3;
         rt = 5'd4;
@@ -108,7 +90,7 @@ module timing_1_iram(
         instr_ram[w_addr >> 2] = imm_instr; 
         $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
 
-        w_addr = 32'h118;
+        w_addr = 32'h110;
         // jr r0    halt after running next instruction
         opcode = 6'b0;
         rs = 5'd0;

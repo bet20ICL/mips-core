@@ -144,19 +144,11 @@ module mips_cpu_harvard(
 
     logic[31:0] load_data;
 
-    // load_block cpu_load_block(
-    //     .clk(clk),
-    //     .address(effective_addr),
-    //     .instr_word(instr_readdata),
-    //     .regword(),
-    //     .datafromMem(data_readdata),
-    //     .out_transformed(load_data) 
-    // );
-
     load_block cpu_load_block(
         .address(effective_addr),
         .instr_word(instr_readdata),
         .datafromMem(data_readdata),
+        .regword(reg_b_read_data),
         .out_transformed(load_data) 
     );
 
@@ -201,25 +193,12 @@ module mips_cpu_harvard(
 
     // data address
     // data address controller
-    logic lwl;
-    assign lwl = instr_opcode == 6'b100110;
-    logic lwr;
-    assign lwr = instr_opcode == 6'b100010;
     always @(*) begin
-        if (state==0 && (lwl || lwr)) begin
-            data_address = {effective_addr[31:2], 2'b00};
-        end
-        else if (state==1 && lwl) begin 
-            data_address = {effective_addr[31:2], 2'b00} +4;
-        end
-        else if (state==1 && lwr) begin
-            data_address = {effective_addr[31:2], 2'b00} -4;
-        end
-        else if (instr_opcode[5] == 1) begin // all load / store instructions
+        if (instr_opcode[5] == 1) begin // all load / store instructions
             data_address = {effective_addr[31:2], 2'b00};
         end
     end
-    
+
     // data_writedata
     // store block
     store_block dut(
@@ -258,7 +237,6 @@ module mips_cpu_harvard(
     logic state;    // fetch: state = 0     exec1: state = 1
     logic cpu_active; 
     logic [31:0] delay_slot;
-
     
     assign active = cpu_active;
     always @(posedge clk) begin
@@ -295,11 +273,11 @@ module mips_cpu_harvard(
         $display("i_word=%b, active=%h, reg_write_enable=%h", instr_readdata, active, reg_write_enable);
         $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
         $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
-        $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
+        $display("reg_write_data=%h, result=%h, reg_write_index=%d, load_instr=%h", reg_write_data, result, reg_write_index, load_instr);
         $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
         $display("b_flag=%h, b_offset=%h", b_flag, b_offset);
         $display("pc=%h, state=%h, delay_slot=%h", curr_addr, state, delay_slot);
-        $display("data_writedata=%h, data_write=%b, data_address=%h",data_writedata, data_write, data_address);
+        $display("data_writedata=%h, data_write=%b, data_readdata=%h, data_address=%h",data_writedata, data_write, data_readdata, data_address);
     end
 
 endmodule

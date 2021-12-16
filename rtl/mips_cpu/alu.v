@@ -38,10 +38,13 @@ module alu(
 
     logic[63:0] multresult;
 
-    
-
     always @(*) begin
         b_flag = 0;
+        // memory access instructions - output is a wire called memaddroffset 
+        if (opcode[5:4] == 2'b10) begin
+            memaddroffset = sign_op1 + simmediatedata;//lb
+        end
+
         case(opcode)
             0:  begin
                     case(funct)
@@ -150,15 +153,14 @@ module alu(
             14: unsigned_result = unsign_op1 ^ uimmediatedata; //out to rt |XORI
             15: unsigned_result = uimmediatedata<<16;//out to rt |lui
             //memory access instructions - output is a wire called memaddroffset 
-            32: memaddroffset = sign_op1 + simmediatedata;//lb
-            33: memaddroffset = sign_op1 + simmediatedata;//lh
-            35: memaddroffset = sign_op1 + simmediatedata;//lw
-            36: memaddroffset = sign_op1 + simmediatedata;//lbu
-            37: memaddroffset = sign_op1 + simmediatedata;//lhu
-            40: memaddroffset = sign_op1 + simmediatedata;//sb
-            41: memaddroffset = sign_op1 + simmediatedata;//sh
-            43: memaddroffset = sign_op1 + simmediatedata;//s
-    
+            // 32: memaddroffset = sign_op1 + simmediatedata;//lb
+            // 33: memaddroffset = sign_op1 + simmediatedata;//lh
+            // 35: memaddroffset = sign_op1 + simmediatedata;//lw
+            // 36: memaddroffset = sign_op1 + simmediatedata;//lbu
+            // 37: memaddroffset = sign_op1 + simmediatedata;//lhu
+            // 40: memaddroffset = sign_op1 + simmediatedata;//sb
+            // 41: memaddroffset = sign_op1 + simmediatedata;//sh
+            // 43: memaddroffset = sign_op1 + simmediatedata;//s
         endcase
         result = unsigned_result;
     end

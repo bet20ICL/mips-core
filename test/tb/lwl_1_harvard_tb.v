@@ -84,12 +84,6 @@ module timing_1_tb ();
         #2;
         $display("tb_addr = %h, data_readdata=%h", tb_addr, data_readdata);
         assert(data_readdata[15:0]==exp_val[15:0]) else $fatal(1, "expected data_readdata=%h, %h", exp_val, data_readdata);
-
-        tb_addr = tb_addr + 4;
-        exp_val = 32'hxxxx1234;
-        #2;
-        $display("tb_addr = %h, data_readdata=%h", tb_addr, data_readdata);
-        assert(data_readdata[15:0]==exp_val[15:0]) else $fatal(1, "expected data_readdata=%h, %h", exp_val, data_readdata);
         $finish(0);
     end
 
