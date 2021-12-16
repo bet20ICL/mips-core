@@ -287,6 +287,7 @@ module mips_cpu_harvard(
         $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
         $display("data_read=%h, data_write=%h", data_read, data_write);
         $display("data_address=%h, data_writedata=%h", data_address, data_readdata);
-        $display("pc=%h, state=%h", curr_addr, state);
+        $display("pc=%h, state=%h", curr_addr, state);]
+    end
 
 endmodule
