@@ -49,16 +49,16 @@ module addiu_4_iram(
         w_addr += 4;
 
         i = 2;
-            // addiu ri ri imm    add 0x11111111 * i to ri
-            opcode = 6'b001001;
-            rs = i;
-            rt = i;
-            imm = 16'h0001;
-            instr_ram[w_addr] = imm_instr; 
-            w_addr += 4;
+        // addiu ri ri imm    add 0x11111111 * i to ri
+        opcode = 6'b001001;
+        rs = i;
+        rt = i;
+        imm = 16'h1111 * (i - 2);
+        instr_ram[w_addr] = imm_instr; 
+        w_addr += 4;
 
         i = 2;
-            // sw ri 0x480(r0)    store the results of the addiu instructiosn into location 0x480 and onwards
+        // sw ri 0x480(r0)    store the results of the addiu instructiosn into location 0x480 and onwards
         opcode = 6'b101011;
         rs = 5'b0;
         rt = i;

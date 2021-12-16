@@ -36,19 +36,40 @@ module addiu_tb ();
         $fatal(2, "too long");
     end
 
+<<<<<<< HEAD
+    // initial begin
+    //     force_read = 1;
+    //     res_addr = 0;
+    //     repeat (30) begin
+    //         #1;
+    //         $display("d_ram[%h] = %h", res_addr, data_readdata);
+    //         res_addr += 1;
+    //     end
+    //     $finish(0);
+    // end
+=======
     logic [31:0] test_addr;
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
 
     initial begin
         force_read=0;
         clk_enable = 1;
         reset = 1;
+<<<<<<< HEAD
+=======
         clk_enable = 1;
         @(posedge clk);
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
         @(posedge clk);
         #2;
 
         reset = 0;
         @(posedge clk);
+<<<<<<< HEAD
+        #2;
+
+        while(active) begin
+=======
         @(posedge clk);
         #2;
 
@@ -65,6 +86,7 @@ module addiu_tb ();
         force_read = 1;
         repeat(30) begin
             exp_val = 32'h12345678 + (i-2) * 32'hdcba1234 + 1;
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
             @(posedge clk);
             #2;
             data_out = {data_readdata[7:0], data_readdata[15:8], data_readdata[23:16], data_readdata[31:24]};

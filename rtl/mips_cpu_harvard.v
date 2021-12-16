@@ -197,9 +197,9 @@ module mips_cpu_harvard(
     // data address
     // data address controller
     logic lwl;
-    assign lwl = instr_opcode[5:0] == 6'b100110;
+    assign lwl = instr_opcode == 6'b100110;
     logic lwr;
-    assign lwr = instr_opcode[5:0] == 6'b100010;
+    assign lwr = instr_opcode == 6'b100010;
     always @(*) begin
         if (lwl || lwr) begin
             // to do

@@ -67,13 +67,21 @@ module addiu_tb ();
         force_read = 1;
         exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
         #2;
+<<<<<<< HEAD
+        $display("addr = %h, res_addr = %h, data_address=%h", addr, res_addr, data_address);
+=======
         $display("addr = %h, res_addr = %h, data_address=%h, force_read = %b", addr, res_addr, data_address, force_read);
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
         $display("%h, %h", data_readdata, exp_val);
         data_out = {data_readdata[7:0], data_readdata[15:8], data_readdata[23:16], data_readdata[31:24]};
         assert(data_out==exp_val) else $fatal(1, "wrong value loaded");
         i = i+1;
         res_addr = res_addr+4;
+<<<<<<< HEAD
+        $finish(0);
+=======
         $finish();
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
     end
 
     assign read = data_read | force_read;
