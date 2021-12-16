@@ -36,6 +36,7 @@ module addiu_tb ();
         $fatal(2, "too long");
     end
 
+<<<<<<< HEAD
     // initial begin
     //     force_read = 1;
     //     res_addr = 0;
@@ -46,15 +47,29 @@ module addiu_tb ();
     //     end
     //     $finish(0);
     // end
+=======
+    logic [31:0] test_addr;
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
 
     initial begin
         force_read=0;
         clk_enable = 1;
         reset = 1;
+<<<<<<< HEAD
+=======
+        clk_enable = 1;
+        @(posedge clk);
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
         @(posedge clk);
         #2;
 
         reset = 0;
+        @(posedge clk);
+<<<<<<< HEAD
+        #2;
+
+        while(active) begin
+=======
         @(posedge clk);
         #2;
 
@@ -62,23 +77,35 @@ module addiu_tb ();
             @(posedge clk);
             #2;
         end
+        test = 0;
+        force_read = 1;
+        #2;
+        res_addr = 32'h00000480;
 
         i = 2;
-        res_addr = 32'h00000480;
         force_read = 1;
         repeat(30) begin
-            #1;
-            exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
-            assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded: expected=%h, got=%h", exp_val, data_readdata);
+            exp_val = 32'h12345678 + (i-2) * 32'hdcba1234 + 1;
+>>>>>>> e4bc8ad1752923627d84bdb500dc52ec895b58f2
+            @(posedge clk);
+            #2;
+            $display("%h, %h, %h", data_readdata, exp_val, addr);
+            // assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
             i = i+1;
-            res_addr = res_addr + 4;
+            res_addr = res_addr+4;
         end
         $finish(0);
     end
 
     assign read = data_read | force_read;
-    assign addr = force_read ? res_addr : data_address;
-
+    always @(*) begin
+        if (force_read) begin
+            addr = res_addr;
+        end
+        else begin
+            addr = data_address;
+        end
+    end
     addiu_3_dram dram(
         .clk(clk),
         .data_address(addr),
