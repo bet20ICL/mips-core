@@ -18,7 +18,7 @@ module load_block(
 
     always @(*) begin
         case(opcode) 
-            35: out_transformed = {datafromMem[7:0],datafromMem[15:8],datafromMem[23:16],datafromMem[31:24]}; // LW
+            35: out_transformed = {datafromMem[31:24],datafromMem[23:16],datafromMem[15:8],datafromMem[7:0]}; // LW
             // LB 100000
             32: case(whichbyte) // 0x12345678
                                 //   3 2 1 0
