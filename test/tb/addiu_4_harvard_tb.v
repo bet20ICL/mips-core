@@ -23,7 +23,7 @@ module addiu_tb ();
     logic[31:0] exp_val;
 
     logic read, force_read;
-    logic [31:0] addr, res_addr;
+    logic [31:0] addr, res_addr, data_out;
     logic [31:0] test;
 
     initial begin
@@ -69,7 +69,8 @@ module addiu_tb ();
         #2;
         $display("addr = %h, res_addr = %h, data_address=%h, force_read = %b", addr, res_addr, data_address, force_read);
         $display("%h, %h", data_readdata, exp_val);
-        assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
+        data_out = {data_readdata[7:0], data_readdata[15:8], data_readdata[23:16], data_readdata[31:24]};
+        assert(data_out==exp_val) else $fatal(1, "wrong value loaded");
         i = i+1;
         res_addr = res_addr+4;
         $finish();
