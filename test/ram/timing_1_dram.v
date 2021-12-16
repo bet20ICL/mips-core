@@ -26,15 +26,15 @@ module timing_1_dram(
     assign data_addr_s = data_address >> 2;
 
     logic[31:0] w_addr;
-    logic[31:0] w_addr_s;
-    assign w_addr_s = w_addr >> 2;
+    // logic[31:0] w_addr_s;
+    // assign w_addr_s = w_addr >> 2;
 
     logic [5:0] i;
     initial begin
         // initialise data memory
         i = 0;
         w_addr = 32'h480;
-        data_ram[w_addr_s] = 32'h12345678;
+        data_ram[w_addr >> 2] = 32'h12345678;
         w_addr += 4;
     end
 

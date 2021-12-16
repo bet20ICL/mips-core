@@ -43,13 +43,9 @@ module mips_cpu_harvard(
     logic load_instr; // load instructions
     assign load_instr = (instr_opcode[5:3] == 3'b100);
 
-    logic mem_to_reg;
-    assign mem_to_reg = (lw);
-
     logic alui_instr;
     assign alui_instr = instr_opcode[5:3] == 3'b001;
 
-    
     logic reg_write;
     assign reg_write = (((r_format && !muldiv)) || alui_instr || load_instr || link_reg || link_const);
     // case(opcode)
@@ -100,7 +96,7 @@ module mips_cpu_harvard(
     assign reg_write_index =  link_const ? 5'd31 : (reg_dst ? instr_readdata[15:11] : instr_readdata[20:16]);
     assign reg_write_enable = cpu_active && state && reg_write;
 
-    assign reg_write_data = (link_const || link_reg) ? (delay_slot + 4): (mfhi ? hi_out : (mflo ? lo_out : (mem_to_reg ? load_data : result)));
+    assign reg_write_data = (link_const || link_reg) ? (delay_slot + 4): (mfhi ? hi_out : (mflo ? lo_out : (load_instr ? load_data : result)));
     
     //Regfile outputs
     logic[31:0] reg_a_read_data;
@@ -229,7 +225,7 @@ module mips_cpu_harvard(
     assign b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
 
     logic [31:0] next_delay_slot;
-    always_comb begin
+    always @(*) begin
         if (b_flag) begin
             next_delay_slot = delay_slot + b_offset;
         end
@@ -267,9 +263,9 @@ module mips_cpu_harvard(
                         state <= 0;
                         curr_addr <= delay_slot;
                         delay_slot <= next_delay_slot;
-                    end
-                    if (delay_slot == 0) begin
-                        cpu_active <= 0;
+                        if (curr_addr == 0) begin
+                            cpu_active <= 0;
+                        end
                     end
                 end
             end
@@ -278,16 +274,17 @@ module mips_cpu_harvard(
     
     assign instr_address = curr_addr;
 
-    // always @(posedge clk) begin
-    //     $display("-------------------------------------------------------------------------------");
-    //     $display("reset=%h, clk_enable=%h", reset, clk_enable);
-    //     $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
-    //     $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
-    //     $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
-    //     $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
-    //     $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
-    //     $display("pc=%h, state=%h, delay_slot=%h", curr_addr, state, delay_slot);
-    //     $display("data_writedata=%h, data_write=%b, data_address=%h",data_writedata, data_write, data_address);
-    // end
+    always @(posedge clk) begin
+        $display("-------------------------------------------------------------------------------");
+        $display("reset=%h, clk_enable=%h", reset, clk_enable);
+        $display("i_word=%b, active=%h, reg_write_enable=%h", instr_readdata, active, reg_write_enable);
+        $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
+        $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
+        $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
+        $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
+        $display("b_flag=%h, b_offset=%h", b_flag, b_offset);
+        $display("pc=%h, state=%h, delay_slot=%h", curr_addr, state, delay_slot);
+        $display("data_writedata=%h, data_write=%b, data_address=%h",data_writedata, data_write, data_address);
+    end
 
 endmodule

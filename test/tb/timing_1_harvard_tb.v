@@ -23,7 +23,7 @@ module timing_1_tb ();
     logic[31:0] exp_val;
 
     logic read, tb_read;
-    logic [31:0] addr, res_addr;
+    logic [31:0] addr, tb_addr;
     logic [31:0] test;
 
     function [31:0] reverse_endian;
@@ -51,52 +51,49 @@ module timing_1_tb ();
     logic [31:0] test_addr;
 
     initial begin
-        // tb_read=0;
-        // clk_enable = 1;
-        // reset = 1;
-        // @(posedge clk);
-        // @(posedge clk);
-        // #2;
+        tb_read=0;
+        clk_enable = 1;
+        reset = 1;
+        @(posedge clk);
+        @(posedge clk);
+        #2;
 
-        // reset = 0;
-        // @(posedge clk);
-        // @(posedge clk);
-        // #2;
+        reset = 0;
+        @(posedge clk);
+        @(posedge clk);
+        #2;
 
-        // while (active) begin
-        //     @(posedge clk);
-        //     #2;
-        // end
+        while (active) begin
+            @(posedge clk);
+            #2;
+        end
         
-        // test = 0;
-        // tb_read = 1;
-        // #2;
-        // res_addr = 32'h00000000;
+        tb_read = 1;
+        tb_addr = 32'h480;
+        exp_val = 32'hcd345678;
+        #2;
+        $display("tb_addr = %h, data_readdata=%h", tb_addr, data_readdata);
+        assert(data_readdata==exp_val) else $fatal(1, "expected=%h");
 
-
-        // i = 2;
-        // tb_read = 1;
-        // exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
-        // #2;
-        // $display("addr = %h, res_addr = %h, data_address=%h", addr, res_addr, data_address);
-        // $display("%h, %h", data_readdata, exp_val);
-        // assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
-        // i = i+1;
-        // res_addr = res_addr+4;
-        // $finish(0);
+        tb_addr = tb_addr + 4;
+        exp_val = 32'hab55xxxx;
+        #2;
+        $display("tb_addr = %h, data_readdata=%h", tb_addr, data_readdata);
+        assert(data_readdata==exp_val) else $fatal(1, "expected=%h");
+        $finish(0);
     end
 
     assign read = data_read | tb_read;
     always_comb begin
         if (tb_read) begin
-            addr = res_addr;
+            addr = tb_addr;
         end
         else begin
             addr = data_address;
         end
     end
 
-    addiu_4_dram dram(
+    timing_1_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -105,7 +102,7 @@ module timing_1_tb ();
         .data_readdata(data_readdata)
     );
 
-    addiu_4_iram iram(
+    timing_1_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );
