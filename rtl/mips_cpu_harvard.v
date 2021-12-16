@@ -280,7 +280,7 @@ module mips_cpu_harvard(
     always @(posedge clk) begin
         $display("-------------------------------------------------------------------------------");
         $display("reset=%h, clk_enable=%h", reset, clk_enable);
-        $display("i_word=%b, active=%h, reg_write=%h", instr_readdata, active, reg_write);
+        $display("i_word=%b, active=%h, reg_write_enable=%h", instr_readdata, active, reg_write_enable);
         $display("reg_a_read_index=%h, reg_b_read_index=%h", reg_a_read_index, reg_b_read_index);
         $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
         $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);

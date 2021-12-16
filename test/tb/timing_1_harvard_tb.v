@@ -1,6 +1,6 @@
-module timing_tb();
+module timing_1_tb ();
 
-    logic     clk;
+    logic clk;
     logic     reset;
     logic    active;
     logic[31:0] register_v0;
@@ -19,92 +19,96 @@ module timing_tb();
     logic[31:0]  data_writedata;
     logic[31:0]  data_readdata;
 
-    /* memory initialisation */
-    logic init_mem, instr_active;
-    logic[31:0] init_mem_addr;
-    logic[31:0] init_instr;
+    logic[5:0] i;
+    logic[31:0] exp_val;
+
+    logic read, tb_read;
+    logic [31:0] addr, res_addr;
+    logic [31:0] test;
+
+    function [31:0] reverse_endian;
+        input [31:0] a;
+        begin
+            logic [31:0] tmp;
+            tmp[7:0] = a[31:24];
+            tmp[15:8] = a[23:16];
+            tmp[23:16] = a[15:8];
+            tmp[31:24] = a[7:0];
+            reverse_endian = tmp; 
+        end
+    endfunction
 
     initial begin
         clk = 0;
         #4;
-        repeat (1000) begin
+        repeat (10000) begin
             clk = ~clk;
             #4;
         end
+        $fatal(2, "too long");
     end
+
+    logic [31:0] test_addr;
 
     initial begin
-        //instantiate variables for easier instruction building
-        logic [5:0] opcode;
-        logic [4:0] rt;
-        logic [4:0] rs;
-        logic [15:0] imm;
-        logic [31:0] imm_instr;
-
-        //r type
-        logic [4:0] rd;        
-        reset = 1;
+        tb_read=0;
         clk_enable = 1;
-
+        reset = 1;
+        @(posedge clk);
         @(posedge clk);
         #2;
+
         reset = 0;
-
+        @(posedge clk);
         @(posedge clk);
         #2;
 
-        //addiu r2, r3, 2
-        //v0 -> 2
-        opcode = 6'd9;
-        rs = 5'd3;
-        rt = 5'd2;
-        imm = 16'd2;
-        imm_instr = {opcode, rs, rt, imm};
-        instr_readdata = imm_instr;     
+        while (active) begin
+            @(posedge clk);
+            #2;
+        end
         
-        @(posedge clk);
+        test = 0;
+        tb_read = 1;
         #2;
-        assert(!data_write) else $fatal(1, "data_write should not be active but is");
-        assert(!data_read) else $fatal(1, "data_read isn't active but should be");
-        assert(register_v0 == 2) else $fatal(1, "expected v0=2, got output=%d", register_v0);
+        res_addr = 32'h00000000;
 
-        //lw r3, offset r2
-        //r3 -> 9 
-        opcode = 6'b100011;
-        rs = 6'd2;
-        rt = 6'd3;
-        imm = 0;
-        imm_instr = {opcode, rs, rt, imm};
 
-        instr_readdata = imm_instr;
-        data_readdata = 32'd9;
+        i = 2;
+        tb_read = 1;
+        exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
         #2;
-
-        @(posedge clk);
-        #2;
-        assert(!data_write) else $fatal(1, "data_write should not be active but is");
-        assert(data_read) else $fatal(1, "data_read isn't active but should be");
-        assert(data_address == 2) else $fatal(1, "expected data_addr=%h, got %h", 2, data_address);
-        assert(register_v0 == 2) else $fatal(1, "wrong value loaded");
-
-
-        //addiu r2, r3, -2
-        //v0 ->  
-        opcode = 6'd9;
-        rs = 6'd3;
-        rt = 6'd2;
-        imm = -16'd2;
-        $display("%b", imm);
-        imm_instr = {opcode, rs, rt, imm};
-        instr_readdata = imm_instr;     
-
-        @(posedge clk);
-        #2;
-        assert(!data_write) else $fatal(1, "data_write should not be active but is");
-        assert(!data_read) else $fatal(1, "data_read isn't active but should be");
-        assert(register_v0 == 7) else $fatal(1, "expected v0=7, got output=%d", register_v0);
+        $display("addr = %h, res_addr = %h, data_address=%h", addr, res_addr, data_address);
+        $display("%h, %h", data_readdata, exp_val);
+        assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
+        i = i+1;
+        res_addr = res_addr+4;
+        $finish(0);
     end
 
+    assign read = data_read | tb_read;
+    always_comb begin
+        if (tb_read) begin
+            addr = res_addr;
+        end
+        else begin
+            addr = data_address;
+        end
+    end
+
+    addiu_4_dram dram(
+        .clk(clk),
+        .data_address(addr),
+        .data_write(data_write),
+        .data_read(read),
+        .data_writedata(data_writedata),
+        .data_readdata(data_readdata)
+    );
+
+    addiu_4_iram iram(
+        .instr_address(instr_address),
+        .instr_readdata(instr_readdata)
+    );
 
     mips_cpu_harvard dut(
         .clk(clk),
@@ -119,6 +123,6 @@ module timing_tb();
         .data_read(data_read),
         .data_writedata(data_writedata),
         .data_readdata(data_readdata)
-    );
+    ); 
 
 endmodule
