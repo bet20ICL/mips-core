@@ -54,7 +54,7 @@ module addiu_3_iram(
         i = 2;
         repeat (30) begin
             // addiu ri ri imm    add 0x11111111 * i to ri
-            opcode = 6'b100011;
+            opcode = 6'b001001;
             rs = i;
             rt = i;
             imm = 16'h1111 * (i - 2);

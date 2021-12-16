@@ -9,7 +9,7 @@ module addiu_3_dram(
 );
 
     reg [31:0] data_ram [0:4095];
-    integer w_addr;
+    logic[31:0] w_addr;
 
     logic [5:0] i;
     initial begin

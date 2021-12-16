@@ -62,12 +62,6 @@ module addiu_tb ();
         force_read = 1;
         #2;
         res_addr = 32'h00000000;
-        repeat (4096) begin
-            $display("ram[%h] = %h, %h, write is %b", addr, data_readdata, data_address, data_write);
-            #1;
-            res_addr += 1;
-            #1;
-        end
 
         i = 2;
         force_read = 1;
@@ -121,8 +115,14 @@ module addiu_tb ();
     end
 
     assign read = data_read | force_read;
-    assign addr = force_read ? res_addr : data_address;
-
+    always @(*) begin
+        if (force_read) begin
+            addr = res_addr;
+        end
+        else begin
+            addr = data_address;
+        end
+    end
     addiu_3_dram dram(
         .clk(clk),
         .data_address(addr),

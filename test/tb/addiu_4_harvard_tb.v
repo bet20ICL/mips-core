@@ -54,7 +54,6 @@ module addiu_tb ();
 
         while(active) begin
             @(posedge clk);
-            @(posedge clk);
             $display("data_writedata = %h, data_address = %h, data_write = %b", data_writedata, data_address, data_write);
             #2;
         end
@@ -67,15 +66,17 @@ module addiu_tb ();
         i = 2;
         force_read = 1;
         exp_val = (16'h1111)*(i-2) + 32'h12345678 + (i-2) * 32'hdcba1234;
-        $display("addr = %h, res_addr = %h, data_address=%h", addr, res_addr, data_address);
+        #2;
+        $display("addr = %h, res_addr = %h, data_address=%h, force_read = %b", addr, res_addr, data_address, force_read);
         $display("%h, %h", data_readdata, exp_val);
         assert(data_readdata==exp_val) else $fatal(1, "wrong value loaded");
         i = i+1;
         res_addr = res_addr+4;
+        $finish();
     end
 
     assign read = data_read | force_read;
-    always_comb begin
+    always @(*) begin
         if (force_read) begin
             addr = res_addr;
         end
