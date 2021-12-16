@@ -229,7 +229,7 @@ module mips_cpu_harvard(
     assign b_offset = {b_imm[17] ? 14'h3FFF : 14'h0, b_imm};
 
     logic [31:0] next_delay_slot;
-    always @(*) begin
+    always_comb begin
         if (b_flag) begin
             next_delay_slot = delay_slot + b_offset;
         end
@@ -240,7 +240,7 @@ module mips_cpu_harvard(
             next_delay_slot = reg_a_read_data;
         end
         else begin
-            next_delay_slot = curr_addr + 4;
+            next_delay_slot = delay_slot + 4;
         end
     end
 
@@ -285,7 +285,7 @@ module mips_cpu_harvard(
         $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
         $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
         $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
-        $display("pc=%h, state=%h", curr_addr, state);
+        $display("pc=%h, state=%h, delay_slot=%h", curr_addr, state, delay_slot);
         $display("data_writedata=%h, data_write=%b, data_address=%h",data_writedata, data_write, data_address);
     end
 
