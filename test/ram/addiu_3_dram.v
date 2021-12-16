@@ -10,6 +10,7 @@ module addiu_3_dram(
 
     reg [31:0] data_ram [0:4095];
     logic[31:0] w_addr;
+    logic[31:0] data_in;
 
     logic [5:0] i;
     initial begin
@@ -19,7 +20,8 @@ module addiu_3_dram(
         i = 0;
         w_addr = 32'h00;
         repeat (30) begin
-            data_ram[w_addr] = 32'h12345678 + i * 32'hdcba1234;
+            data_in = 32'h12345678 + i * 32'hdcba1234;
+            data_ram[w_addr] = data_in;
             w_addr = w_addr + 4;
             i += 1;
         end

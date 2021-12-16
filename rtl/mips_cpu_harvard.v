@@ -51,7 +51,7 @@ module mips_cpu_harvard(
 
     
     logic reg_write;
-    assign reg_write = ((r_format && !muldiv) || alui_instr || load_instr || link_reg || link_const);
+    assign reg_write = ((r_format && !muldiv) || alui_instr || load_instr || link_reg || link_const));
     // case(opcode)
     //         0: case(funct)
     //             0,2,3,4,6,7,9,16,18,32,33,34,35,36,37,38,39,42,43 : writereg = 1;
@@ -286,7 +286,7 @@ module mips_cpu_harvard(
         $display("reg_write_data=%h, result=%h, reg_write_index=%d", reg_write_data, result, reg_write_index);
         $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
         $display("pc=%h, state=%h", curr_addr, state);
-        $display("data_writedata=%h",data_writedata);
+        $display("data_writedata=%h, data_write=%b, data_address=%h",data_writedata, data_write, data_address);
     end
 
 endmodule
