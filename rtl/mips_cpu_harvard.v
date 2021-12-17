@@ -256,6 +256,7 @@ module mips_cpu_harvard(
                         state <= 0;
                         curr_addr <= delay_slot;
                         delay_slot <= next_delay_slot;
+            
                         if (curr_addr == 0) begin
                             cpu_active <= 0;
                         end
