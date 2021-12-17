@@ -1,4 +1,4 @@
-module and_2_dram(
+module addiu_3_dram(
     /* Combinatorial read and single-cycle write access to data */
     input logic clk,
     input logic[31:0]  data_address,
@@ -31,19 +31,16 @@ module and_2_dram(
 
     logic [5:0] i;
     logic [31:0] test_val;
-    // logic [31:0] re_test_val;
     initial begin
         // initialise data memory
-        // arithmetic series, inital value 32'h12345678 and difference 32'hdcba1234
-        // #1;
-        // $display("Data RAM contents:");
+        // set addresses 0x0 - 0x078 (30 locations) to a arithmetic series
+        // inital value 32'h12345678 and difference 32'hdcba1234
         i = 0;
-        w_addr = 32'h0;
-        repeat (15) begin
+        w_addr = 32'h00;
+        repeat (30) begin
             test_val = 32'h12345678 + 32'hdcba1234 * i;
             data_ram[w_addr >> 2] = reverse_endian(test_val);
-            //$display("mem[%h] = %h", w_addr >> 2, reverse_endian(data_ram[w_addr >> 2]));
-            w_addr += 4;
+            w_addr = w_addr + 4;
             i += 1;
         end
     end

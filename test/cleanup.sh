@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eou pipefail
 
-srcs="tb_outputs/*"
+srcs="test/tb_outputs/*"
 
 set +e
 for i in ${srcs}; do
