@@ -93,7 +93,7 @@ module beq_4_iram(
             opcode = 6'b101011;     
             rs = 5'd0;
             rt = i;
-            imm = 16'h100 + (i - 2) * 4;
+            imm = 16'h200 + (i - 2) * 4;
             instr_ram[w_addr >> 2] = imm_instr; 
             //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
             w_addr += 4;

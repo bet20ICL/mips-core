@@ -71,6 +71,20 @@ module beq_2_tb ();
         tb_addr = 32'h100;
         i = 2;
         repeat (29) begin
+            exp_val = 32'hFFFFFFFF;
+            #1;
+            $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+            #1;
+            assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+            tb_addr += 4;
+            #1;
+            i += 1;
+        end
+
+        tb_read = 1;
+        tb_addr = 32'h200;
+        i = 2;
+        repeat (29) begin
             exp_val = 32'hFFFF0000;
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));

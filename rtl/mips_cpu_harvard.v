@@ -279,6 +279,7 @@ module mips_cpu_harvard(
     //     $display("b_flag=%h, b_offset=%h", b_flag, b_offset);
     //     $display("pc=%h, state=%h, delay_slot=%h, next_delay=%h, j_reg=%b", curr_addr, state, delay_slot, next_delay_slot, j_reg);
     //     $display("instr_address=%h", instr_address);
+    //     $display("data_writedata=%h, data_address=%h", data_writedata, data_address);
     // end
 
 endmodule

@@ -1,4 +1,4 @@
-module beq_4_tb ();
+module bne_2_tb ();
 
     logic clk;
     logic     reset;
@@ -81,11 +81,10 @@ module beq_4_tb ();
             i += 1;
         end
 
-        tb_read = 1;
         tb_addr = 32'h200;
         i = 2;
         repeat (29) begin
-            exp_val = 32'hABCDEF00;
+            exp_val = 32'hFFFF0000 + i;
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
             #1;
@@ -107,7 +106,7 @@ module beq_4_tb ();
         end
     end
 
-    beq_4_dram dram(
+    bne_4_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -116,7 +115,7 @@ module beq_4_tb ();
         .data_readdata(data_readdata)
     );
 
-    beq_4_iram iram(
+    bne_4_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );

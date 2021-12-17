@@ -1,4 +1,4 @@
-module beq_4_tb ();
+module bne_2_tb ();
 
     logic clk;
     logic     reset;
@@ -71,20 +71,6 @@ module beq_4_tb ();
         tb_addr = 32'h100;
         i = 2;
         repeat (29) begin
-            exp_val = 32'hFFFFFFFF;
-            #1;
-            $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
-            #1;
-            assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
-            tb_addr += 4;
-            #1;
-            i += 1;
-        end
-
-        tb_read = 1;
-        tb_addr = 32'h200;
-        i = 2;
-        repeat (29) begin
             exp_val = 32'hABCDEF00;
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
@@ -107,7 +93,7 @@ module beq_4_tb ();
         end
     end
 
-    beq_4_dram dram(
+    bne_3_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -116,7 +102,7 @@ module beq_4_tb ();
         .data_readdata(data_readdata)
     );
 
-    beq_4_iram iram(
+    bne_3_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );

@@ -46,6 +46,15 @@ module beq_4_dram(
             i += 1;
         end
 
+        w_addr = 32'h100;
+        repeat (30) begin
+            test_val = 32'hFFFFFFFF;
+            data_ram[w_addr >> 2] = reverse_endian(test_val);
+            //$display("mem[%h] = %h", w_addr >> 2, reverse_endian(data_ram[w_addr >> 2]));
+            w_addr += 4;
+            i += 1;
+        end
+
         // $display("Data RAM contents:");
         // w_addr = 0;
         // repeat (50) begin

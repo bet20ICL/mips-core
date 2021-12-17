@@ -1,4 +1,4 @@
-module beq_2_iram(
+module bne_4_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
     output logic[31:0]   instr_readdata
@@ -61,10 +61,10 @@ module beq_2_iram(
         repeat (29) begin
             // beq i, i + 1, 2
             // jump 2 instructions ahead if two consecutive registers are equal
-            // jump to next sw instruction
+            // jump to next beq instruction
             // beq r2, r3, 2 | beq r3, r4, 2 | etc.
-            // registers should be equal so program should always branch
-            opcode = 6'b000100;     
+            // registers should not be equal so program should not branch
+            opcode = 6'b000101;     
             rs = i;
             rt = i + 1;
             imm = 2;
@@ -78,8 +78,7 @@ module beq_2_iram(
             w_addr += 4;
 
             // sw ri, (100 + i)(r0)
-            // store 0 to addresses 0x100 to 0x1
-            // should not run
+            // store r17 - r30 to addresses 0x100 to 0x1
             opcode = 6'b101011;     
             rs = 5'd0;
             rt = 0;

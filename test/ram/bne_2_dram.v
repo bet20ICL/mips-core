@@ -1,4 +1,4 @@
-module beq_2_dram(
+module bne_2_dram(
     /* Combinatorial read and single-cycle write access to data */
     input logic clk,
     input logic[31:0]  data_address,
@@ -40,15 +40,6 @@ module beq_2_dram(
         w_addr = 32'h0;
         repeat (30) begin
             test_val = 32'hFFFF0000;
-            data_ram[w_addr >> 2] = reverse_endian(test_val);
-            //$display("mem[%h] = %h", w_addr >> 2, reverse_endian(data_ram[w_addr >> 2]));
-            w_addr += 4;
-            i += 1;
-        end
-
-        w_addr = 32'h100;
-        repeat (30) begin
-            test_val = 32'hFFFFFFFF;
             data_ram[w_addr >> 2] = reverse_endian(test_val);
             //$display("mem[%h] = %h", w_addr >> 2, reverse_endian(data_ram[w_addr >> 2]));
             w_addr += 4;
