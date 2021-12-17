@@ -93,7 +93,7 @@ module timing_1_tb ();
         end
     end
 
-    timing_1_dram dram(
+    or_2_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -102,7 +102,7 @@ module timing_1_tb ();
         .data_readdata(data_readdata)
     );
 
-    timing_1_iram iram(
+    or_2_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );

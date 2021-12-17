@@ -1,4 +1,4 @@
-module timing_1_iram(
+module beq_2_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
     output logic[31:0]   instr_readdata
@@ -61,7 +61,9 @@ module timing_1_iram(
         repeat (29) begin
             // beq i, i + 1, 2
             // jump 2 instructions ahead if two consecutive registers are equal
+            // jump to next beq instruction
             // beq r2, r3, 2 | beq r3, r4, 2 | etc.
+            // registers should not be equal so program should not branch
             opcode = 6'b000100;     
             rs = i;
             rt = i + 1;
@@ -75,19 +77,12 @@ module timing_1_iram(
             //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
             w_addr += 4;
 
-            
-
-            i += 1;
-        end
-
-        i = 17;
-        repeat (14) begin
-            // sw ri, (i-2) * 4 (r0)  
-            // store r17 - r30 to addresses 0x100 to 0x134
+            // sw ri, (100 + i)(r0)
+            // store r17 - r30 to addresses 0x100 to 0x1
             opcode = 6'b101011;     
             rs = 5'd0;
             rt = i;
-            imm = 16'h100 + (i - 17) * 4;
+            imm = 16'h100 + (i - 2) * 4;
             instr_ram[w_addr >> 2] = imm_instr; 
             //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
             w_addr += 4;
@@ -105,15 +100,17 @@ module timing_1_iram(
         //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
-        // addiu r2, 0(r0)   nop
-        opcode = 6'b001001;     
-        rs = 5'd0;
-        rt = 5'd2;
-        imm = 16'h0;
-        instr_ram[w_addr >> 2] = imm_instr; 
+        // nop
+        instr_ram[w_addr >> 2] = 0; 
         //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
+        // $display("Instruction RAM Contents");
+        // w_addr = 0;
+        // repeat (200) begin
+        //     $display("mem[%h] = %b", w_addr, instr_ram[w_addr >> 2]);
+        //     w_addr += 4;
+        // end
     end
 
     always_comb begin

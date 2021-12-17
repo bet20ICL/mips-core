@@ -69,9 +69,9 @@ module beq_2_tb ();
         
         tb_read = 1;
         tb_addr = 32'h100;
-        i = 3;
-        repeat (14) begin
-            exp_val = 32'h12345678 + (i - 3) * 32'hdcba1234 | (32'h12345678 + (i - 2) * 32'hdcba1234);
+        i = 2;
+        repeat (29) begin
+            exp_val = 32'hFFFF0000 + i;
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
             #1;
@@ -93,7 +93,7 @@ module beq_2_tb ();
         end
     end
 
-    timing_1_dram dram(
+    beq_2_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -102,7 +102,7 @@ module beq_2_tb ();
         .data_readdata(data_readdata)
     );
 
-    timing_1_iram iram(
+    beq_2_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );

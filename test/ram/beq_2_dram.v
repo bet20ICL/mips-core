@@ -36,7 +36,6 @@ module beq_2_dram(
         // initialise data memory
         // arithmetic series, inital value 32'h12345678 and difference 32'hdcba1234
         // #1;
-        // $display("Data RAM contents:");
         i = 2;
         w_addr = 32'h0;
         repeat (30) begin
@@ -46,6 +45,13 @@ module beq_2_dram(
             w_addr += 4;
             i += 1;
         end
+
+        // $display("Data RAM contents:");
+        // w_addr = 0;
+        // repeat (50) begin
+        //     $display("mem[%h] = %h", w_addr, reverse_endian(data_ram[w_addr >> 2]));
+        //     w_addr += 4;
+        // end
     end
 
     always_comb begin

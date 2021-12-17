@@ -1,4 +1,4 @@
-module timing_1_iram(
+module or_2_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
     output logic[31:0]   instr_readdata
