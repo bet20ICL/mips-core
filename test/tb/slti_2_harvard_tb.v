@@ -1,4 +1,4 @@
-module slt_2_tb ();
+module slti_2_tb ();
 
     logic clk;
     logic     reset;
@@ -70,8 +70,8 @@ module slt_2_tb ();
         tb_read = 1;
         tb_addr = 32'h100;
         i = 3;
-        repeat (14) begin
-            exp_val = $signed(32'h12345678 + (i - 3) * 32'hdcba1234) < $signed(32'h12345678 + (i - 2) * 32'hdcba1234);
+        repeat (30) begin
+            exp_val = $signed(32'h12345678 + (i - 3) * 32'hdcba1234) < (16'h0001);
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
             #1;
@@ -93,7 +93,7 @@ module slt_2_tb ();
         end
     end
 
-    slt_2_dram dram(
+    slti_2_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -102,7 +102,7 @@ module slt_2_tb ();
         .data_readdata(data_readdata)
     );
 
-    slt_2_iram iram(
+    slti_2_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );
