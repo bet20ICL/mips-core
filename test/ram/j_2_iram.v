@@ -1,4 +1,4 @@
-module beq_2_iram(
+module beq_4_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
     output logic[31:0]   instr_readdata
@@ -59,14 +59,14 @@ module beq_2_iram(
 
         i = 2;
         repeat (29) begin
-            // beq i, i + 1, 2
-            // jump 2 instructions ahead if two consecutive registers are equal
-            // jump to next sw instruction
-            // beq r2, r3, 2 | beq r3, r4, 2 | etc.
-            // registers should be equal so program should always branch
-            opcode = 6'b000100;     
+            // j w_addr
+            // jump 2 instructions ahead if ri is >= 0
+            // jump to next bgez instruction
+            // bgez r2, 2 | etc.
+            // registers should be >= so should always branch
+            opcode = 6'b1;     
             rs = i;
-            rt = i + 1;
+            rt = 0;
             imm = 2;
             instr_ram[w_addr >> 2] = imm_instr; 
             //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
@@ -78,22 +78,11 @@ module beq_2_iram(
             w_addr += 4;
 
             // sw ri, (100 + i)(r0)
-            // store 0 to addresses 0x100 to 0x1
-            // should not run
+            // store r17 - r30 to addresses 0x100 to 0x1
             opcode = 6'b101011;     
             rs = 5'd0;
             rt = 0;
             imm = 16'h100 + (i - 2) * 4;
-            instr_ram[w_addr >> 2] = imm_instr; 
-            //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-            w_addr += 4;
-
-            // sw ri, (100 + i)(r0)
-            // store r17 - r30 to addresses 0x100 to 0x1
-            opcode = 6'b101011;     
-            rs = 5'd0;
-            rt = i;
-            imm = 16'h200 + (i - 2) * 4;
             instr_ram[w_addr >> 2] = imm_instr; 
             //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
             w_addr += 4;

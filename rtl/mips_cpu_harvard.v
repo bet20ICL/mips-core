@@ -224,7 +224,7 @@ module mips_cpu_harvard(
             next_delay_slot = delay_slot + b_offset;
         end
         else if (j_imm) begin 
-            next_delay_slot = {delay_slot[31:28], instr_readdata[25:0], 2'b0};
+            next_delay_slot = {curr_addr[31:28], instr_readdata[25:0], 2'b0};
         end
         else if (j_reg) begin
             next_delay_slot = reg_a_read_data;

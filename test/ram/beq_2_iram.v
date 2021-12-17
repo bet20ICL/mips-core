@@ -113,8 +113,13 @@ module beq_2_iram(
         // end
     end
 
-    always_comb begin
-        instr_readdata = instr_ram[inst >> 2];
+    always @(*) begin
+        if (instr_address[31:16] == 16'hBFC0) begin
+            instr_readdata = instr_ram[inst >> 2];
+        end
+        else if(instr_address == 32'h0) begin
+            instr_readdata = 32'h0; //mem[0x0] = nop;
+        end
     end
 
 endmodule
