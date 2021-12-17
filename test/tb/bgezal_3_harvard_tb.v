@@ -71,7 +71,7 @@ module beq_4_tb ();
         tb_addr = 32'h100;
         i = 2;
         repeat (29) begin
-            exp_val = 32'hFFFFFFFF;
+            exp_val = 32'h0;
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
             #1;
@@ -86,7 +86,7 @@ module beq_4_tb ();
         i = 2;
         repeat (29) begin
             tmp = 32'hdcba1234 * i;
-            exp_val = {1'b0, tmp[30:0]};;
+            exp_val = {1'b1, tmp[30:0]};;
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
             #1;
