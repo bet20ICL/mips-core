@@ -19,12 +19,10 @@ module jr_3_dram(
         // inital value 32'h12345678 and difference 32'hdcba1234
         i = 0;
         w_addr = 32'h00;
-        repeat (30) begin
             data_in = 1000 + i*100;
             data_ram[w_addr] = data_in;
             w_addr = w_addr + 4;
             i += 1;
-        end
     end
 
     always_comb begin

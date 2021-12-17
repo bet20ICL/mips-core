@@ -40,7 +40,6 @@ module jr_3_iram(
         // memory locations 0x4: instruction memory starts here
         i = 2;
         w_addr = 32'h4;
-        repeat (30) begin
             // lw ri 0(0)   load arithemtic series into registers 2 - 31
             opcode = 6'b100011;
             rs = 5'b0;
@@ -49,19 +48,17 @@ module jr_3_iram(
             instr_ram[w_addr] = imm_instr; 
             w_addr += 4;
             i += 1;
-        end
 
         i = 2;
-        repeat (30) begin
-            // addiu ri ri imm    add 0x11111111 * i to ri
-            opcode = 6'b001001;
+            // j rs    add 0x11111111 * i to ri
+            opcode = 6'b000000;
             rs = i;
-            rt = i;
-            imm = 1;
-            instr_ram[w_addr] = imm_instr; 
+            ze =0;
+            funct = 001000;
+            r_instr = {opcode, rd, ze, funct};
+            instr_ram[w_addr] = r_instr; 
             w_addr += 4;
             i += 1;
-        end
 
         i = 2;
         repeat (30) begin
