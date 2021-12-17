@@ -71,8 +71,7 @@ module or_2_tb ();
         tb_addr = 32'h100;
         i = 2;
         repeat (14) begin
-            $display("%h, shifted=%h", (32'h12345678 + (i - 2) * 32'hdcba1234), (32'h12345678 + (i - 2) * 32'hdcba1234)<<i);
-            exp_val = (32'h12345678 + (i - 2) * 32'hdcba1234) << i;
+            exp_val = (32'h12345678 + (i - 2) * 32'hdcba1234) << (i);
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
             #1;
