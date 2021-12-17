@@ -20,7 +20,7 @@ module jr_3_dram(
         i = 0;
         w_addr = 32'h00;
             data_in = 1000 + i*100;
-            data_ram[w_addr] = data_in;
+            data_ram[w_addr] = {data_in[7:0],data_in[15:8],data_in[23:16],data_in[31:24]};
             w_addr = w_addr + 4;
             i += 1;
     end

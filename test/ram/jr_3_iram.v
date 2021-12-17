@@ -54,30 +54,19 @@ module jr_3_iram(
             opcode = 6'b000000;
             rs = i;
             ze =0;
-            funct = 001000;
-            r_instr = {opcode, rd, ze, funct};
+            funct = 6'b001000;
+            r_instr = {opcode, rs, ze, funct};
             instr_ram[w_addr] = r_instr; 
             w_addr += 4;
             i += 1;
 
-        i = 2;
-        repeat (30) begin
-            // sw ri 0x480(r0)    store the results of the addiu instructiosn into location 0x480 and onwards
-            opcode = 6'b101011;
-            rs = 5'b0;
-            rt = i;
-            imm = 16'h0480 + (i-2)*4;
-            instr_ram[w_addr] = imm_instr; 
-            w_addr += 4;
-            i+=1;
-            #2;
-        end
+
         opcode = 6'b000000;
         rd = 0;
         ze = 0;
         funct = 6'b001000;
         r_instr = {opcode, rd, ze, funct};
-        instr_ram[w_addr] = r_instr;
+        instr_ram[1004] = r_instr;
     end
 
     always_comb begin
