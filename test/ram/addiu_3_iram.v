@@ -8,7 +8,7 @@ module addiu_3_iram(
 
     logic[31:0] inst;
 
-    assign inst = instr_address % (3217031168) + 4;
+    assign inst = instr_address % (3217031168);
     
     // variables to generate instruction word
     logic [31:0] w_addr;
@@ -39,7 +39,7 @@ module addiu_3_iram(
         // memorry location 0x0: last instruction before halt 
         // memory locations 0x4: instruction memory starts here
         i = 2;
-        w_addr = 32'h4;
+        w_addr = 32'h0;
         repeat (30) begin
             // lw ri 0(0)   load arithemtic series into registers 2 - 31
             opcode = 6'b100011;
