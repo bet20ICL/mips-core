@@ -31,21 +31,23 @@ module beq_4_dram(
 
     logic [5:0] i;
     logic [31:0] test_val;
-    logic [31:0] tmp;
     // logic [31:0] re_test_val;
     initial begin
         // initialise data memory
-        // arithmetic series, inital value 32'h0 and difference 32'hdcba1234, forced to be a positive number
+        // arithmetic series, inital value 32'h12345678 and difference 32'hdcba1234
         // #1;
         i = 2;
         w_addr = 32'h0;
-        data_ram[w_addr >> 2] = reverse_endian(32'h10000000);
-        
-        w_addr += 4;
-        data_ram[w_addr >> 2] = reverse_endian(32'hF0000000);
+        repeat (30) begin
+            test_val = 32'hABCDEF00;
+            data_ram[w_addr >> 2] = reverse_endian(test_val);
+            //$display("mem[%h] = %h", w_addr >> 2, reverse_endian(data_ram[w_addr >> 2]));
+            w_addr += 4;
+            i += 1;
+        end
 
         w_addr = 32'h100;
-        repeat (29) begin
+        repeat (30) begin
             test_val = 32'hFFFFFFFF;
             data_ram[w_addr >> 2] = reverse_endian(test_val);
             //$display("mem[%h] = %h", w_addr >> 2, reverse_endian(data_ram[w_addr >> 2]));

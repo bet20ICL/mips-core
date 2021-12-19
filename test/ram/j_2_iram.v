@@ -4,16 +4,6 @@ module beq_4_iram(
     output logic[31:0]   instr_readdata
 );
 
-    reg [31:0] instr_ram [0:4095];
-
-    logic[31:0] inst;
-
-    assign inst = instr_address % (32'hBFC00000);
-    
-    // variables to generate instruction word
-    logic[31:0] w_addr;
-    // logic[31:0] w_addr_s;
-    // assign w_addr_s = w_addr >> 2;
     logic [5:0] i;
 
     // instantiate variables for easier instruction building
@@ -38,88 +28,196 @@ module beq_4_iram(
     logic [31:0] j_instr;
     assign j_instr = {opcode, j_addr};
     
-    initial begin
-        //$display("Instruction RAM contents");
-        // memorry location 0x0: first instruction in program, last instruction before halt 
-        w_addr = 32'h0;
-
-        i = 2;
-        repeat (30) begin
-            // lw ri, (i-2) * 4 (r0)  
-            // load different into r2 - r31
-            opcode = 6'b100011;     
-            rs = 5'd0;
-            rt = i;
-            imm = (i - 2) * 4;
-            instr_ram[w_addr >> 2] = imm_instr; 
-            //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-            w_addr += 4;
-            i += 1;
-        end
-
-        i = 2;
-        repeat (29) begin
-            // j w_addr
-            // jump 2 instructions ahead if ri is >= 0
-            // jump to next bgez instruction
-            // bgez r2, 2 | etc.
-            // registers should be >= so should always branch
-            opcode = 6'b1;     
-            rs = i;
-            rt = 0;
-            imm = 2;
-            instr_ram[w_addr >> 2] = imm_instr; 
-            //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-            w_addr += 4;
-
-            // nop
-            instr_ram[w_addr >> 2] = 32'h0; 
-            //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-            w_addr += 4;
-
-            // sw ri, (100 + i)(r0)
-            // store r17 - r30 to addresses 0x100 to 0x1
-            opcode = 6'b101011;     
-            rs = 5'd0;
-            rt = 0;
-            imm = 16'h100 + (i - 2) * 4;
-            instr_ram[w_addr >> 2] = imm_instr; 
-            //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-            w_addr += 4;
-            i += 1;
-        end
-
-        // jr r0    halt after running next instruction
-        opcode = 6'b0;
-        rs = 5'd0;
-        rt = 5'd0;
-        rd = 5'd0;
-        shamt = 5'd0;
-        funct = 6'b001000;
-        instr_ram[w_addr >> 2] = r_instr; 
-        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
-
-        // nop
-        instr_ram[w_addr >> 2] = 0; 
-        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
-
-        // $display("Instruction RAM Contents");
-        // w_addr = 0;
-        // repeat (200) begin
-        //     $display("mem[%h] = %b", w_addr, instr_ram[w_addr >> 2]);
-        //     w_addr += 4;
-        // end
-    end
-
     always @(*) begin
-        if (instr_address[31:16] == 16'hBFC0) begin
-            instr_readdata = instr_ram[inst >> 2];
-        end
-        else if(instr_address == 32'h0) begin
-            instr_readdata = 32'h0; //mem[0x0] = nop;
-        end
+        case (instr_address)
+            32'hBFC00000: begin
+                // lw r2, 0(r0)
+                // r2 -> 32'h10000000
+                opcode = 6'b100011;     
+                rs = 0;
+                rt = 2;
+                imm = 16'h0;
+                instr_readdata = {opcode, rs, rt, imm}; 
+            end
+            32'hBFC00004: begin
+                // lw r3, 4(r0)
+                // r2 -> 32'h10000000
+                opcode = 6'b100011;     
+                rs = 0;
+                rt = 3;
+                imm = 16'h4;
+                instr_readdata = {opcode, rs, rt, imm};
+            end
+            32'hBFC00008: begin
+                // j 1C0
+                // jumps to BFC000700
+                opcode = 6'b000010;     
+                j_addr = 26'h1C0;
+                instr_readdata = {opcode, j_addr};
+            end
+            32'hBFC0000C: begin
+                instr_readdata = 0;
+            end
+            32'hBFC00010: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'hBFC00014: begin
+                instr_readdata = 0;
+            end
+            32'hB0000700: begin
+                // j 1C0
+                // jumps to BFC000700
+                opcode = 6'b000010;     
+                j_addr = 26'h280;
+                instr_readdata = {opcode, j_addr};
+            end
+            32'hB0000704: begin
+                instr_readdata = 0;
+            end
+            32'hB0000708: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'hB000070C: begin
+                instr_readdata = 0;
+            end
+            32'hB0000A00: begin
+                // j 380
+                // jumps to BFC000700
+                opcode = 6'b000010;     
+                j_addr = 16'h3F00380;
+                instr_readdata = {opcode, j_addr};
+            end
+            32'hB0000A04: begin
+                instr_readdata = 0;
+            end
+            32'hB0000A08: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'hB0000A0C: begin
+                instr_readdata = 0;
+            end
+            32'hBFC00E00: begin
+                // jr r2    halt after running next instruction
+                opcode = 6'b0;
+                rs = 5'd2;
+                rt = 5'd0;
+                rd = 5'd0;
+                shamt = 5'd0;
+                funct = 6'b001000;
+                instr_readdata = {opcode, rs, rt, rd, shamt, funct};
+            end
+            32'hBFC00E04: begin
+                instr_readdata = 0;
+            end
+            32'hBFC00E08: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'hBFC00E0C: begin
+                instr_readdata = 0;
+            end
+            32'h10000000: begin
+                // j 380
+                // jumps to BFC000700
+                opcode = 6'b000010;     
+                j_addr = 26'h41C0;
+                instr_readdata = {opcode, j_addr};
+            end
+            32'h10000004: begin
+                instr_readdata = 0;
+            end
+            32'h10000008: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'h1000000C: begin
+                instr_readdata = 0;
+            end
+            32'h10010700: begin
+                // j 380
+                // jumps to BFC000700
+                opcode = 6'b000010;     
+                j_addr = 26'h3C00380;
+                instr_readdata = {opcode, j_addr};
+            end
+            32'h10010704: begin
+                instr_readdata = 0;
+            end
+            32'h10010708: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'h1001070C: begin
+                instr_readdata = 0;
+            end
+            32'h1F000E00: begin
+                // jr r3    halt after running next instruction
+                opcode = 6'b0;
+                rs = 5'd3;
+                rt = 5'd0;
+                rd = 5'd0;
+                shamt = 5'd0;
+                funct = 6'b001000;
+                instr_readdata = {opcode, rs, rt, rd, shamt, funct};
+            end
+            32'h1F000E04: begin
+                instr_readdata = 0;
+            end
+            32'h1F000E08: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'h1F000E0C: begin
+                instr_readdata = 0;
+            end
+            32'hF0000000: begin
+                // j 380
+                // jumps to BFC000700
+                opcode = 6'b000010;     
+                j_addr = 26'h3FFC00;
+                instr_readdata = {opcode, j_addr};
+            end
+            32'hF0000004: begin
+                instr_readdata = 0;
+            end
+            32'hF0000008: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'hF000000C: begin
+                instr_readdata = 0;
+            end
+            32'hFFFF0000: begin
+                // sw 0 100(r0)
+                opcode = 6'b101011;     
+                rs = 5'd0;
+                rt = 0;
+                imm = 16'h100;
+                instr_readdata = {opcode, rs, rt, imm};
+            end
+            32'hFFFF0004: begin
+                instr_readdata = 0;
+            end
+            32'hFFFF0008: begin
+                // jr r0    halt after running next instruction
+                funct = 6'b001000;
+                instr_readdata = {26'h0, funct};
+            end
+            32'hFFFF000C: begin
+                instr_readdata = 0;
+            end
+        endcase
     end
 
 endmodule

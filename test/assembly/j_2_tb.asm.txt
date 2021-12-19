@@ -1,0 +1,48 @@
+mem[0xBFC0 0000] = lw r2 0(r0)   // r2 -> 0x1000 0000
+mem[0xBFC0 0004] = lw r3 4(r0)   // r2 -> 0xF000 0000
+mem[0xBFC0 0008] = j 1C0    // jump 
+mem[0xBFC0 000C] = nop      
+mem[0xBFC0 0010] = jr r0    // stop
+mem[0xBFC0 0014] = nop
+
+mem[0xBFC0 0700] = j 280    // jump 
+mem[0xBFC0 0704] = nop      
+mem[0xBFC0 0708] = jr r0    // stop
+mem[0xBFC0 070C] = nop
+
+mem[0xBFC0 0A00] = j 380    // jump 
+mem[0xBFC0 0A04] = nop      
+mem[0xBFC0 0A08] = jr r0    // stop
+mem[0xBFC0 0A0C] = nop
+
+mem[0xBFC0 0E00] = jr r2    // jump to new region
+mem[0xBFC0 0704] = nop      
+mem[0xBFC0 0708] = jr r0    // stop
+mem[0xBFC0 070C] = nop
+
+mem[0x1000 0000] = j 41C0    // jump 
+mem[0x1000 0004] = nop      
+mem[0x1000 0008] = jr r0    // stop
+mem[0x1000 000C] = nop
+
+mem[0x1001 0700] = j 3C00380    // jump 
+mem[0x1001 0704] = nop      
+mem[0x1001 0708] = jr r0    // stop
+mem[0x1001 070C] = nop
+
+mem[0x1F00 0E00] = jr r3    // jump 
+mem[0x1F00 0E04] = nop      
+mem[0x1F00 0E08] = jr r0    // stop
+mem[0x1F00 0E0C] = nop
+       
+mem[0xF000 0000] = j 3FFC000    // jump 
+mem[0xF000 0004] = nop      
+mem[0xF000 0008] = jr r0    // stop
+mem[0xF000 0014] = nop
+
+mem[0xFFFF 0000] = sw r0, 100(r0)   // jump 
+mem[0xFFFF 0004] = nop      
+mem[0xFFFF 0008] = jr r0    // stop
+mem[0xFFFF 0014] = nop
+
+
