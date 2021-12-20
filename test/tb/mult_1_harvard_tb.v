@@ -1,6 +1,6 @@
-module mult_tb();
+module mult_1_tb ();
 
-    logic     clk;
+    logic clk;
     logic     reset;
     logic    active;
     logic[31:0] register_v0;
@@ -19,118 +19,107 @@ module mult_tb();
     logic[31:0]  data_writedata;
     logic[31:0]  data_readdata;
 
-    /* memory initialisation */
-    logic init_mem, instr_active;
-    logic[31:0] init_mem_addr;
-    logic[31:0] init_instr;
+    logic[5:0] i;
+    logic[31:0] exp_hi, exp_lo;
+    logic[63:0] big_boi;
+
+    logic read, tb_read;
+    logic [31:0] addr, tb_addr;
+    logic [31:0] test;
+
+    logic lo;
+
+    function [31:0] reverse_endian;
+        input [31:0] a;
+        begin
+            logic [31:0] tmp;
+            tmp[7:0] = a[31:24];
+            tmp[15:8] = a[23:16];
+            tmp[23:16] = a[15:8];
+            tmp[31:24] = a[7:0];
+            reverse_endian = tmp; 
+        end
+    endfunction
 
     initial begin
         clk = 0;
         #4;
-        repeat (100) begin
+        repeat (10000) begin
             clk = ~clk;
             #4;
         end
+        $fatal(2, "too long");
     end
+
+    logic [31:0] test_addr;
+    logic [31:0] undefined;
 
     initial begin
-        //instantiate variables for easier instruction building
-        logic [5:0] opcode;
-        logic [4:0] rt;
-        logic [4:0] rs;
-        logic [15:0] imm;
-        logic [31:0] imm_instr;
-        //r type
-        logic [4:0] rd; 
-        logic [5:0] funct;
-        logic [31:0] r_instr;
-        logic [4:0] shamt;
-        logic[4:0] i;
-        logic [63:0] expected;
-        logic [31:0] test;
-        logic [31:0] next_test;
-  
-        reset = 1;
+        tb_read=0;
         clk_enable = 1;
-
+        reset = 1;
         @(posedge clk);
         #2;
+
         reset = 0;
-
         @(posedge clk);
         #2;
 
-        i = 3;
-        data_readdata = 32'h12345678;
-        repeat (29) begin
-            //lw ri, offset 
-            //ri = 
-            opcode = 6'b100011;
-            rs = 5'b0;
-            rt = i;
-            imm = 16'b0;
-            imm_instr = {opcode, rs, rt, imm};
-
-            instr_readdata = imm_instr;
-            // $display("%h", data_readdata);
+        while (active) begin
             @(posedge clk);
             #2;
-            assert(!data_write) else $fatal(1, "data_write should not be active but is");
-            assert(data_read) else $fatal(1, "data_read isn't active but should be");
-            data_readdata = data_readdata + 32'hdcba1234;
-            i = i + 1;
         end
-
+        
+        tb_read = 1;
+        tb_addr = 32'h400;
         i = 3;
-        test = 32'h12345678;
+        lo = 0;
         repeat (28) begin
-            //mult r(i), r(i + 1)
-            opcode = 6'b0;
-            funct = 6'b011000;
-            shamt = 6'b0;
-            rs = i;
-            rt = i + 1;
-            rd = 0;
-            r_instr = {opcode, rs, rt, rd, shamt, funct};
-            instr_readdata = r_instr;
-            expected = $signed(test) * $signed(test + 32'hdcba1234);
-            // expected = (32'h11111111 * (i - 1)) & (32'h11111111 * i);
-            // $display("%h", expected);
-
-            @(posedge clk);
-            #2;
-            // mflo 0
-            opcode = 6'b0;
-            funct = 6'b010010;
-            shamt = 6'b0;
-            rs = 0;
-            rt = 0;
-            rd = 2;
-            r_instr = {opcode, rs, rt, rd, shamt, funct};
-            instr_readdata = r_instr;
-            
-            @(posedge clk);
-            #2;
-            assert(register_v0 == expected[31:0]) else $fatal(1, "expected=%h, v0=%h", expected[31:0], register_v0);
-
-            // mfhi 0
-            opcode = 6'b0;
-            funct = 6'b010000;
-            shamt = 6'b0;
-            rs = 0;
-            rt = 0;
-            rd = 2;
-            r_instr = {opcode, rs, rt, rd, shamt, funct};
-            instr_readdata = r_instr;
-
-            @(posedge clk);
-            #2;
-            assert(register_v0 == expected[63:32]) else $fatal(1, "expected=%h, v0=%h", expected[63:32], register_v0);
-            test = test + 32'hdcba1234;
-            i = i + 1;
-        end 
-
+            big_boi = $signed(32'h12345678 + (i - 3) * 32'hdcba1234)*$signed(32'h12345678 + (i - 2) * 32'hdcba1234);
+            exp_hi = big_boi[63:32];
+            exp_lo = big_boi[31:0];
+            #1;
+            $display("mem[%h] = %h, exp_hi=%h, exp_lo=%h", tb_addr, reverse_endian(data_readdata), exp_hi, exp_lo);
+            #1;
+            if (lo) begin
+                assert( exp_lo == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_lo);
+                #1;
+                i += 1;
+            end
+            else begin
+                assert( exp_hi == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_hi);
+                #1;
+            end
+            tb_addr += 4;
+            #1;
+            lo = ~lo;
+        end
+        $finish(0);
     end
+
+    assign read = data_read | tb_read;
+    always_comb begin
+        if (tb_read) begin
+            addr = tb_addr;
+        end
+        else begin
+            addr = data_address;
+        end
+    end
+
+    mult_1_dram  dram(
+        .clk(clk),
+        .data_address(addr),
+        .data_write(data_write),
+        .data_read(read),
+        .data_writedata(data_writedata),
+        .data_readdata(data_readdata)
+    );
+
+    mult_1_iram iram(
+        .instr_address(instr_address),
+        .instr_readdata(instr_readdata)
+    );
 
     mips_cpu_harvard dut(
         .clk(clk),
@@ -145,6 +134,6 @@ module mult_tb();
         .data_read(data_read),
         .data_writedata(data_writedata),
         .data_readdata(data_readdata)
-    );
+    ); 
 
 endmodule

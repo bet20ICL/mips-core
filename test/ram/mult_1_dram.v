@@ -1,4 +1,4 @@
-module mult_2_dram(
+module mult_1_dram(
     /* Combinatorial read and single-cycle write access to data */
     input logic clk,
     input logic[31:0]  data_address,

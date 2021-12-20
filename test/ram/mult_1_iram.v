@@ -1,4 +1,4 @@
-module mult_2_iram(
+module mult_1_iram(
     /* Combinatorial read access to instructions */
     input logic[31:0]  instr_address,
     output logic[31:0]   instr_readdata
