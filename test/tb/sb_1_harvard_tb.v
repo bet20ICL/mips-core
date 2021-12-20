@@ -1,4 +1,4 @@
-module mtlo_1_tb ();
+module sb_1_tb ();
 
     logic clk;
     logic     reset;
@@ -20,14 +20,11 @@ module mtlo_1_tb ();
     logic[31:0]  data_readdata;
 
     logic[5:0] i;
-    logic[31:0] exp_hi, exp_lo;
-    logic[63:0] big_boi;
+    logic[7:0] exp_val;
 
     logic read, tb_read;
     logic [31:0] addr, tb_addr;
-    logic [31:0] test;
-
-    logic lo;
+    logic [31:0] test, int_val, res, tr, fin_val;
 
     function [31:0] reverse_endian;
         input [31:0] a;
@@ -71,17 +68,19 @@ module mtlo_1_tb ();
         end
         
         tb_read = 1;
-        tb_addr = 32'h400;
-        i = 17;
+        tb_addr = 32'h100;
+        i = 3;
         repeat (14) begin
-            exp_lo = 32'h12345678 + 32'hdcba1234 * (i-17);
+            int_val = ((32'h12345678 + (i - 3) * 32'hdcba1234));
+            exp_val = int_val[7:0];
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+            res = reverse_endian(data_readdata);
             #1;
-            assert( exp_lo == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_lo);
+            assert(exp_val == {res[31:24]}) else $fatal(1, "expected = %h", exp_val);
+            tb_addr += 4;
             #1;
             i += 1;
-            tb_addr += 4;
         end
         $finish(0);
     end
@@ -96,7 +95,7 @@ module mtlo_1_tb ();
         end
     end
 
-    mtlo_1_dram  dram(
+    sb_1_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -105,7 +104,7 @@ module mtlo_1_tb ();
         .data_readdata(data_readdata)
     );
 
-    mtlo_1_iram iram(
+    sb_1_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );
