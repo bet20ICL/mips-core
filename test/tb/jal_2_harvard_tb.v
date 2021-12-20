@@ -74,6 +74,49 @@ module beq_4_tb ();
         $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
         #1;
         assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+
+        tb_addr = 32'h200;
+        exp_val = 32'hbfc00010;
+        #1;
+        $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+        #1;
+        assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+        
+        tb_addr = 32'h204;
+        exp_val = 32'hb0000708;
+        #1;
+        $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+        #1;
+        assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+
+        tb_addr = 32'h208;
+        exp_val = 32'hb0000a08;
+        #1;
+        $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+        #1;
+        assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+
+        tb_addr = 32'h20C;
+        exp_val = 32'h10000008;
+        #1;
+        $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+        #1;
+        assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+
+        tb_addr = 32'h210;
+        exp_val = 32'h10010708;
+        #1;
+        $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+        #1;
+        assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+
+        tb_addr = 32'h214;
+        exp_val = 32'hF0000008;
+        #1;
+        $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
+        #1;
+        assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
+
         $finish(0);
     end
 

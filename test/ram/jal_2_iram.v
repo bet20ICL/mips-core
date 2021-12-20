@@ -49,14 +49,19 @@ module beq_4_iram(
                 instr_readdata = {opcode, rs, rt, imm};
             end
             32'hBFC00008: begin
-                // j 1C0
+                // jal 1C0
                 // jumps to BFC000700
-                opcode = 6'b000010;     
+                opcode = 6'b000011;     
                 j_addr = 26'h1C0;
                 instr_readdata = {opcode, j_addr};
             end
             32'hBFC0000C: begin
-                instr_readdata = 0;
+                // sw 0 100(r0)
+                opcode = 6'b101011;     
+                rs = 5'd0;
+                rt = 5'd31;
+                imm = 16'h200;
+                instr_readdata = {opcode, rs, rt, imm};
             end
             32'hBFC00010: begin
                 // jr r0    halt after running next instruction
@@ -67,14 +72,19 @@ module beq_4_iram(
                 instr_readdata = 0;
             end
             32'hB0000700: begin
-                // j 1C0
-                // jumps to BFC000700
-                opcode = 6'b000010;     
+                // jal 1C0
+                // jumps to hB0000A00
+                opcode = 6'b000011;     
                 j_addr = 26'h280;
                 instr_readdata = {opcode, j_addr};
             end
             32'hB0000704: begin
-                instr_readdata = 0;
+                // sw 0 100(r0)
+                opcode = 6'b101011;     
+                rs = 5'd0;
+                rt = 5'd31;
+                imm = 16'h204;
+                instr_readdata = {opcode, rs, rt, imm};
             end
             32'hB0000708: begin
                 // jr r0    halt after running next instruction
@@ -85,14 +95,19 @@ module beq_4_iram(
                 instr_readdata = 0;
             end
             32'hB0000A00: begin
-                // j 380
+                // jal 380
                 // jumps to BFC000700
-                opcode = 6'b000010;     
+                opcode = 6'b000011;     
                 j_addr = 26'h3F00380;
                 instr_readdata = {opcode, j_addr};
             end
             32'hB0000A04: begin
-                instr_readdata = 0;
+                // sw 0 100(r0)
+                opcode = 6'b101011;     
+                rs = 5'd0;
+                rt = 5'd31;
+                imm = 16'h208;
+                instr_readdata = {opcode, rs, rt, imm};
             end
             32'hB0000A08: begin
                 // jr r0    halt after running next instruction
@@ -124,14 +139,19 @@ module beq_4_iram(
                 instr_readdata = 0;
             end
             32'h10000000: begin
-                // j 380
+                // jal 41c0
                 // jumps to BFC000700
-                opcode = 6'b000010;     
+                opcode = 6'b000011;     
                 j_addr = 26'h41C0;
                 instr_readdata = {opcode, j_addr};
             end
             32'h10000004: begin
-                instr_readdata = 0;
+                // sw 0 100(r0)
+                opcode = 6'b101011;     
+                rs = 5'd0;
+                rt = 5'd31;
+                imm = 16'h20C;
+                instr_readdata = {opcode, rs, rt, imm};
             end
             32'h10000008: begin
                 // jr r0    halt after running next instruction
@@ -142,14 +162,19 @@ module beq_4_iram(
                 instr_readdata = 0;
             end
             32'h10010700: begin
-                // j 380
+                // jal 3c00380
                 // jumps to BFC000700
-                opcode = 6'b000010;     
+                opcode = 6'b000011;     
                 j_addr = 26'h3C00380;
                 instr_readdata = {opcode, j_addr};
             end
             32'h10010704: begin
-                instr_readdata = 0;
+                // sw 0 100(r0)
+                opcode = 6'b101011;     
+                rs = 5'd0;
+                rt = 5'd31;
+                imm = 16'h210;
+                instr_readdata = {opcode, rs, rt, imm};
             end
             32'h10010708: begin
                 // jr r0    halt after running next instruction
@@ -181,14 +206,19 @@ module beq_4_iram(
                 instr_readdata = 0;
             end
             32'hF0000000: begin
-                // j 380
+                // jal 380
                 // jumps to BFC000700
-                opcode = 6'b000010;     
+                opcode = 6'b000011;     
                 j_addr = 26'h3FFC000;
                 instr_readdata = {opcode, j_addr};
             end
             32'hF0000004: begin
-                instr_readdata = 0;
+                // sw 0 100(r0)
+                opcode = 6'b101011;     
+                rs = 5'd0;
+                rt = 5'd31;
+                imm = 16'h214;
+                instr_readdata = {opcode, rs, rt, imm};
             end
             32'hF0000008: begin
                 // jr r0    halt after running next instruction
