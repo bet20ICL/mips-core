@@ -1,0 +1,38 @@
+-------------------------------------------------------------------------------
+reset=1, clk_enable=1
+i_word=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, active=x, reg_write_enable=x
+reg_a_read_index= x, reg_b_read_index= x
+reg_a_read_data=xxxxxxxx, reg_b_read_data=xxxxxxxx
+reg_write_data=xxxxxxxx, result=xxxxxxxx, reg_write_index= x, load_instr=x
+muldiv=x, result_lo=xxxxxxxx, result_hi=xxxxxxxx, lo_out=xxxxxxxx, hi_out=xxxxxxxx
+b_flag=0, b_offset=xxxxxxxX
+pc=xxxxxxxx, state=x, delay_slot=xxxxxxxx, next_delay=xxxxxxxx, j_reg=x
+j_imm=x
+instr_address=xxxxxxxx
+data_writedata=xxxxxxxx, data_address=xxxxxxxx
+-------------------------------------------------------------------------------
+reset=1, clk_enable=1
+i_word=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, active=1, reg_write_enable=0
+reg_a_read_index= x, reg_b_read_index= x
+reg_a_read_data=xxxxxxxx, reg_b_read_data=xxxxxxxx
+reg_write_data=xxxxxxxx, result=xxxxxxxx, reg_write_index= x, load_instr=x
+muldiv=x, result_lo=xxxxxxxx, result_hi=xxxxxxxx, lo_out=00000000, hi_out=00000000
+b_flag=0, b_offset=xxxxxxxX
+pc=bfc00000, state=0, delay_slot=bfc00004, next_delay=bfc00008, j_reg=x
+j_imm=x
+instr_address=bfc00000
+data_writedata=xxxxxxxx, data_address=xxxxxxxx
+-------------------------------------------------------------------------------
+reset=0, clk_enable=1
+i_word=10001100001000110000000000000000, active=1, reg_write_enable=0
+reg_a_read_index= 1, reg_b_read_index= 3
+reg_a_read_data=00000000, reg_b_read_data=00000000
+reg_write_data=xxxxxxxx, result=xxxxxxxx, reg_write_index= 3, load_instr=1
+muldiv=0, result_lo=xxxxxxxx, result_hi=xxxxxxxx, lo_out=00000000, hi_out=00000000
+b_flag=0, b_offset=00000000
+pc=bfc00000, state=0, delay_slot=bfc00004, next_delay=bfc00008, j_reg=0
+j_imm=0
+instr_address=bfc00000
+data_writedata=xxxxxxxx, data_address=00000000
+FATAL: test/tb/beq_1_harvard_tb.v:90: expected pc=bfc00004, actual pc=bfc00000
+       Time: 22  Scope: jal_tb.$unm_blk_3

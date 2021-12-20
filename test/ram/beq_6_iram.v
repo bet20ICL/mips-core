@@ -81,7 +81,7 @@ module beq_4_iram(
                 opcode = 6'b000100;     
                 rs = 20;
                 rt = 25;
-                imm = 16'h8000;
+                imm = -256;
                 instr_readdata = {opcode, rs, rt, imm}; 
             end
             32'h20000004: begin
@@ -95,7 +95,7 @@ module beq_4_iram(
             32'h2000000C: begin
                 instr_readdata = 0;
             end
-            32'h1ffe0004: begin
+            32'h1fffff04: begin
                 // sw 0 100(r0)
                 opcode = 6'b101011;     
                 rs = 5'd0;
@@ -103,12 +103,12 @@ module beq_4_iram(
                 imm = 16'h100;
                 instr_readdata = {opcode, rs, rt, imm};
             end
-            32'h1ffe0008: begin
+            32'h1fffff08: begin
                 // jr r0    halt after running next instruction
                 funct = 6'b001000;
                 instr_readdata = {26'h0, funct};
             end
-            32'h1ffe000C: begin
+            32'h1fffff0C: begin
                 instr_readdata = 0;
             end
         endcase
