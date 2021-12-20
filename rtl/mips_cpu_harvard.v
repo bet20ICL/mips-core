@@ -269,19 +269,19 @@ module mips_cpu_harvard(
     
     assign instr_address = curr_addr;
 
-    always @(posedge clk) begin
-        $display("-------------------------------------------------------------------------------");
-        $display("reset=%h, clk_enable=%h", reset, clk_enable);
-        $display("i_word=%b, active=%h, reg_write_enable=%h", instr_readdata, active, reg_write_enable);
-        $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
-        $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
-        $display("reg_write_data=%h, result=%h, reg_write_index=%d, load_instr=%h", reg_write_data, result, reg_write_index, load_instr);
-        $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
-        $display("b_flag=%h, b_offset=%h", b_flag, b_offset);
-        $display("pc=%h, state=%h, delay_slot=%h, next_delay=%h, j_reg=%b", curr_addr, state, delay_slot, next_delay_slot, j_reg);
-        $display("j_imm=%h", j_imm);
-        $display("instr_address=%h", instr_address);
-        $display("data_writedata=%h, data_address=%h", data_writedata, data_address);
-    end
+    // always @(posedge clk) begin
+    //     $display("-------------------------------------------------------------------------------");
+    //     $display("reset=%h, clk_enable=%h", reset, clk_enable);
+    //     $display("i_word=%b, active=%h, reg_write_enable=%h", instr_readdata, active, reg_write_enable);
+    //     $display("reg_a_read_index=%d, reg_b_read_index=%d", reg_a_read_index, reg_b_read_index);
+    //     $display("reg_a_read_data=%h, reg_b_read_data=%h", reg_a_read_data, reg_b_read_data);
+    //     $display("reg_write_data=%h, result=%h, reg_write_index=%d, load_instr=%h", reg_write_data, result, reg_write_index, load_instr);
+    //     $display("muldiv=%h, result_lo=%h, result_hi=%h, lo_out=%h, hi_out=%h", muldiv, result_lo, result_hi, lo_out, hi_out);
+    //     $display("b_flag=%h, b_offset=%h", b_flag, b_offset);
+    //     $display("pc=%h, state=%h, delay_slot=%h, next_delay=%h, j_reg=%b", curr_addr, state, delay_slot, next_delay_slot, j_reg);
+    //     $display("j_imm=%h", j_imm);
+    //     $display("instr_address=%h", instr_address);
+    //     $display("data_writedata=%h, data_address=%h", data_writedata, data_address);
+    // end
 
 endmodule
