@@ -1,4 +1,4 @@
-module lwl_1_tb ();
+module lwr_1_tb ();
 
     logic clk;
     logic     reset;
@@ -79,7 +79,7 @@ module lwl_1_tb ();
         // use tb_addr to read the data ram at that address
         tb_addr = 32'd16;
         // set the expected value at the address
-        exp_val = 32'hBBBBFFFF;
+        exp_val = 32'hFFBBBBCC;
         #1;
         // no endian conversion required in this case because we are dealing with byte addresses
         $display("mem[%h] = %h", tb_addr, data_readdata);
@@ -87,7 +87,7 @@ module lwl_1_tb ();
         assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
 
         tb_addr = 32'd20;
-        exp_val = 32'b11110000100101100011111011111000;
+        exp_val = 32'b11111111111111111000110011110000;
         $display("mem[%h] = %h", tb_addr, data_readdata);
         #1;
         assert(exp_val == reverse_endian(data_readdata)) else $fatal(1, "expected = %h", exp_val);
@@ -105,7 +105,7 @@ module lwl_1_tb ();
         end
     end
 
-    lwl_1_dram dram(
+    lwr_1_dram dram(
         .clk(clk),
         .data_address(addr),
         .data_write(data_write),
@@ -114,7 +114,7 @@ module lwl_1_tb ();
         .data_readdata(data_readdata)
     );
 
-    lwl_1_iram iram(
+    lwr_1_iram iram(
         .instr_address(instr_address),
         .instr_readdata(instr_readdata)
     );
