@@ -109,11 +109,11 @@ module lui_1_iram(
         instr_ram[w_addr >> 2] = imm_instr; 
 
         w_addr += 4;
-        // sw r9, -976(r10) // MEM[24] = r9
+        // sw r9, 24(0) // MEM[24] = r9
         opcode = 6'b101011;     
-        rs = 5'd10;
+        rs = 5'd0;
         rt = 5'd9;
-        imm = -976;
+        imm = 24;
         instr_ram[w_addr >> 2] = imm_instr; 
 
         w_addr += 4;
