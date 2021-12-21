@@ -80,16 +80,10 @@ module lw_1_iram(
         funct = 6'b001000;
         instr_ram[w_addr >> 2] = r_instr; 
         //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        
         w_addr += 4;
-
-        // addiu r2, 0(r0)   nop
-        opcode = 6'b001001;     
-        rs = 5'd0;
-        rt = 5'd2;
-        imm = 16'h0;
-        instr_ram[w_addr >> 2] = imm_instr; 
-        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
+        // nop
+        instr_ram[w_addr >> 2] = 0;
 
     end
 
