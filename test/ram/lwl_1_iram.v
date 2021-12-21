@@ -50,47 +50,63 @@ module lwl_1_iram(
         rt = 5'd2;
         imm = 16'hFFFF;
         instr_ram[w_addr >> 2] = imm_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
-        // lwl r3, 0x480(r0)    r3 -> 0x78
-        opcode = 6'b100000;
+        // addiu r3, r0,1000110010110011 // r3  = 11111111111111111000110010110011
+        opcode = 6'b001001;     
         rs = 5'd0;
         rt = 5'd3;
-        imm = 16'h0483;
+        imm = 16'b1000110010110011;
+        // w_addr shifted right by 2 bits to save space
         instr_ram[w_addr >> 2] = imm_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
         w_addr += 4;
 
-        // subu r4, r2, r3      r4 -> 0xFFFFAB55
-        opcode = 6'b0;
-        rs = 5'd2;
-        rt = 5'd3;
-        rd = 5'd4;
-        shamt = 5'd0;
-        funct = 6'b100011;
-        instr_ram[w_addr >> 2] = r_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
-        
-        // bne r3, r4, 0x1   branch to  0x114
-        opcode = 6'b000101;     
-        rs = 5'd3;
-        rt = 5'd4;
-        imm = 16'h40;
-        instr_ram[w_addr >> 2] = imm_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
-
-        // sh r4, 0x484(0)  mem[0x484] = 0xxxxabbb
-        opcode = 6'b101001;     
+        // addiu r4, r0,100 // r4  = 100
+        opcode = 6'b001001;     
         rs = 5'd0;
         rt = 5'd4;
-        imm = 16'h484;
+        imm = 16'd100;
+        // w_addr shifted right by 2 bits to save space
         instr_ram[w_addr >> 2] = imm_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        w_addr += 4;
 
-        w_addr = 32'h110;
+        // lwl r2, 2(r0)    r2 -> 0xBBBBFFFF
+        opcode = 6'b100010;
+        rs = 5'd0;
+        rt = 5'd2;
+        imm = 16'd2;
+        instr_ram[w_addr >> 2] = imm_instr; 
+        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        w_addr += 4;
+
+        // lwl r3, 0(r4)    r3 -> 10010110111100001000110010110011
+        opcode = 6'b100010;
+        rs = 5'd4;
+        rt = 5'd3;
+        imm = 16'd0;
+        instr_ram[w_addr >> 2] = imm_instr; 
+        //$display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        w_addr += 4;
+
+        // sw r2, 16(r0) // MEM[16] = r2
+        opcode = 6'b101011;     
+        rs = 5'd0;
+        rt = 5'd2;
+        imm = 16'd16;
+        instr_ram[w_addr >> 2] = imm_instr; 
+        w_addr += 4;
+
+        // sw r3, 20(r0) // MEM[20] = r3
+        opcode = 6'b101011;     
+        rs = 5'd0;
+        rt = 5'd3;
+        imm = 16'd20;
+        instr_ram[w_addr >> 2] = imm_instr; 
+
+        w_addr += 4;
         // jr r0    halt after running next instruction
         opcode = 6'b0;
         rs = 5'd0;
@@ -99,17 +115,10 @@ module lwl_1_iram(
         shamt = 5'd0;
         funct = 6'b001000;
         instr_ram[w_addr >> 2] = r_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
+        
         w_addr += 4;
-
-        // sb r2, 0x480(0)    mem[0x480] = 0x123456cd
-        opcode = 6'b101000;     
-        rs = 5'd0;
-        rt = 5'd2;
-        imm = 16'h480;
-        instr_ram[w_addr >> 2] = imm_instr; 
-        $display("mem[%h] = %b", w_addr >> 2, instr_ram[w_addr >> 2]);
-        w_addr += 4;
+        // nop
+        instr_ram[w_addr >> 2] = 0; 
 
     end
 

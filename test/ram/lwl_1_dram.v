@@ -26,16 +26,27 @@ module lwl_1_dram(
     assign data_addr_s = data_address >> 2;
 
     logic[31:0] w_addr;
-    // logic[31:0] w_addr_s;
-    // assign w_addr_s = w_addr >> 2;
+    logic[31:0] w_addr_2;
 
     logic [5:0] i;
+    logic [31:0] test_val;
+    logic [31:0] test_val_2;
     initial begin
         // initialise data memory
-        i = 0;
-        w_addr = 32'h480;
-        data_ram[w_addr >> 2] = 32'h12345678;
-        w_addr += 4;
+        w_addr = 32'h0;
+        test_val = 32'hBBBBAACC;
+        data_ram[w_addr >> 2] = test_val;
+        
+        w_addr_2 = 32'd100;
+        test_val_2 = 32'b11111000001111101001011011110000;
+        data_ram[w_addr_2 >> 2] = test_val_2;
+        // uncomment to display RAM contents at start of testbench execution
+        // $display("Data RAM contents:");
+        // w_addr = 0;
+        // repeat (50) begin
+        //     $display("mem[%h] = %h", w_addr, reverse_endian(data_ram[w_addr >> 2]));
+        //     w_addr += 4;
+        // end
     end
 
     always_comb begin
