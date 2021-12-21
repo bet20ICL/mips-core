@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eou pipefail
 
-rm mips_cpu_harvard
+# rm mips_cpu_harvard
 
 srcs="mips_cpu/*.v"
 
