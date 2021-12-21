@@ -281,7 +281,7 @@ module mips_cpu_harvard(
     //     $display("pc=%h, state=%h, delay_slot=%h, next_delay=%h, j_reg=%b", curr_addr, state, delay_slot, next_delay_slot, j_reg);
     //     $display("j_imm=%h", j_imm);
     //     $display("instr_address=%h", instr_address);
-    //     $display("data_writedata=%h, , data_readdata=%h, data_address=%h", data_writedata, data_readdata, data_address);
+    //     $display("data_writedata=%h, , data_readdata=%h, data_address=%h, data_write=%b", data_writedata, data_readdata, data_address, data_write);
     // end
 
 endmodule
