@@ -15,16 +15,9 @@ do
     RAMFILES="test/ram/$(basename ${i} _harvard_tb.v)_*.v"
 
     set +e
-    iverilog -Wall -g2012 -o test/tb_outputs/$(basename ${i} .v)  ${i} ${INTERNAL_FILES_1} ${INTERNAL_FILES_2} 2> test/tb_outputs/$(basename ${i} .v)_dump.log
+    iverilog -Wall -g2012 -o test/tb_outputs/$(basename ${i} .v)  ${i} ${RAMFILES} ${INTERNAL_FILES_1} ${INTERNAL_FILES_2} 2> test/tb_outputs/$(basename ${i} .v)_dump.log
     RESULT=$?
     set -e
-
-    if [[ RESULT -ne 0 ]] ; then 
-        set +e
-        iverilog -Wall -g2012 -o test/tb_outputs/$(basename ${i} .v)  ${i} ${RAMFILES} ${INTERNAL_FILES_1} ${INTERNAL_FILES_2} 2> test/tb_outputs/$(basename ${i} .v)_dump.log
-        RESULT=$?
-        set -e
-    fi
 
     if [[ RESULT -ne 0 ]] ; then
         echo "$(basename ${i} _harvard_tb.v) ${INSTRUCTION} Fail     Failed to compile"
