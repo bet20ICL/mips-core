@@ -25,7 +25,7 @@ module store_block(
             // big endian
             case (bytenum)
                 3: storedata = {regbyte, dataword[23:0]};
-                2: storedata = {dataword[31:24], regbyte, dataword[25:0]};
+                2: storedata = {dataword[31:24], regbyte, dataword[15:0]};
                 1: storedata = {dataword[31:16], regbyte, dataword[7:0]};
                 0: storedata = {dataword[31:8], regbyte};
             endcase
