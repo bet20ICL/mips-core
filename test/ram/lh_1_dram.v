@@ -34,10 +34,6 @@ module beq_4_dram(
         w_addr = 32'h8;
         test_val = 32'hF4F3F2F1;
         data_ram[w_addr >> 2] = test_val;
-
-        // lw r2, 8(r0)
-        // r2 = 0xf1f2f3f4
-        // r2 != 0xF4F3F2F1
         
         // uncomment to display RAM contents at start of testbench execution
         // $display("Data RAM contents:");

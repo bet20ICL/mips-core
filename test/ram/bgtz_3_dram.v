@@ -26,20 +26,30 @@ module beq_4_dram(
     assign data_addr_s = data_address >> 2;
 
     logic[31:0] w_addr;
+    // logic[31:0] w_addr_s;
+    // assign w_addr_s = w_addr >> 2;
 
     logic [5:0] i;
     logic [31:0] test_val;
+    // logic [31:0] re_test_val;
     initial begin
         // initialise data memory
-        w_addr = 32'h8;
-        test_val = 32'hF4F3F2F1;
-        data_ram[w_addr >> 2] = test_val;
+        // arithmetic series, inital value 32'h12345678 and difference 32'hdcba1234
+        // #1;
+        i = 2;
+        w_addr = 32'h0;
+        test_val = 32'h20000000;
+        data_ram[w_addr >> 2] = reverse_endian(test_val);
 
-        // lw r2, 8(r0)
-        // r2 = 0xf1f2f3f4
-        // r2 != 0xF4F3F2F1
-        
-        // uncomment to display RAM contents at start of testbench execution
+        w_addr = 32'h100;
+        repeat (30) begin
+            test_val = 32'hFFFFFFFF;
+            data_ram[w_addr >> 2] = reverse_endian(test_val);
+            //$display("mem[%h] = %h", w_addr >> 2, reverse_endian(data_ram[w_addr >> 2]));
+            w_addr += 4;
+            i += 1;
+        end
+
         // $display("Data RAM contents:");
         // w_addr = 0;
         // repeat (50) begin
