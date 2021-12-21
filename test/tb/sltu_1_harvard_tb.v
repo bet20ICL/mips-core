@@ -72,6 +72,8 @@ module xor_2_tb ();
         i = 3;
         repeat (14) begin
             exp_val = $unsigned(32'h12345678 + (i - 3) * 32'hdcba1234) < $unsigned(32'h12345678 + (i - 2) * 32'hdcba1234);
+            $display("%h, %h", $unsigned(32'h12345678 + (i - 3) * 32'hdcba1234), $unsigned(32'h12345678 + (i - 2) * 32'hdcba1234));
+            $display("%h",exp_val);
             #1;
             $display("mem[%h] = %h", tb_addr, reverse_endian(data_readdata));
             #1;
