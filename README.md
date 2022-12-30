@@ -26,4 +26,4 @@ Contains the SystemVerilog files of the CPU core. `mips_harvard.v` is the top le
 Contains the Issie schematic files for the CPU. Checkout Issie: https://tomcl.github.io/issie/
 
 # tests
-Contains the testbench for the CPU
+Contains the testbench for the CPU. `tb` directory contains the actual SystemVerilog files. Run `test_mips_cpu_harvard.sh` to run all tests as an Iverilog simulation. Alternatively, test each instruction individually by running `run_one_instr.sh <instruction name>`.
