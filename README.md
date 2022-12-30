@@ -6,11 +6,17 @@ This is a CPU core that satisfys the MIPS IV ISA (https://www.cs.cmu.edu/afs/cs/
 It is a single cycle CPU with a Harvard memory interface.
 
 # Contributors
+
 Bryan Tan
+
 Luc Jones
+
 Nick Mytilineos
+
 Bardia Mohammadzadeh
+
 Bakhtiar Mohammadzadeh
+
 Kiril Avramov
 
 # rtl
@@ -20,4 +26,4 @@ Contains the SystemVerilog files of the CPU core. `mips_harvard.v` is the top le
 Contains the Issie schematic files for the CPU. Checkout Issie: https://tomcl.github.io/issie/
 
 # tests
-Contains the test
+Contains the testbench for the CPU
